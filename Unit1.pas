@@ -845,8 +845,17 @@ type
     procedure DoUSOperation6;
     procedure DoUSOperation7;
     function DoEchoStart:integer;
+    function SaveSpinStauus(filename:string):integer;
+    function SetOptelCard:integer;
+    procedure LoadINIFile(file_name1:string;file_name2:string);
 
     procedure CalcDGS;
+    procedure DoDAC_US4;
+    function DoUS4(in_check:integer):integer;
+    procedure DOUS0;
+    procedure Fill_draw_ascn_new;
+    procedure Do_Average;
+    procedure Do_Alarm;
   end;
 
 
@@ -983,74 +992,42 @@ begin
 SpTBXEdit1.Text:=FloatToStr(Edit7.Value/mm_us);
 end;
 
-function TForm1.StartUS_optel:integer;
+function TForm1.SaveSpinStauus(filename:string):integer;
 var
-check,i,j:integer;
-lFile: TFileStream;
-file_data:Tfile_us20;
-spinFile:TextFile;
 s:string;
-StringGrid:TStringGrid;
+spinFile:TextFile;
+i:integer;
 begin
-  try
-    result:=0;
-    us_starting:=true;
-    US_Connected:= true;
+                  if FileExists(filename) then begin
+                  AssignFile(spinFile,filename);
+                  Reset(spinFile) ;
+                  for i:= 0 to ComponentCount-1 do
+                      if Components[i] is TSpTBXSpinEdit then begin
+                         ReadLn(spinFile,s);
+                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
+                      end;
+                  for i:= 0 to ComponentCount-1 do
+                      if Components[i] is TSpTBXButton then begin
+                         ReadLn(spinFile, s);
+                         TSpTBXButton(Components[i]).Caption:=s;
+                      end;
+                  CloseFile(spinFile);
+                  end;
+end;
 
+function TForm1.SetOptelCard:integer;
+var check:integer;
+begin
       check := 0;
-      {
-      InitDll;    //opcard
-      Instr_Restet(); //opcard
-      check:=Im_data();
-      }
+      optel_pack:=10;
+      optel_frame:=100;
 
-     // check:=Instr_Restet();
-      //check:=Free_data();
+      CheckBox1.Checked:=false;
+      alarm_test:= false;
+      frame_buffer:=(52 + optel_frame) * optel_pack;
+      frame_cnt10:=optel_pack;
+      frame_buffer_old:=0;
 
-      {           //opcard
-      data_optel:=GetDataHandle();
-
-      check:=OpenOpbox();
-      if check <>0 then
-        US_Connected:= false;
-
-
-      check:=Instr_Restet();
-      if check <>0 then
-        US_Connected:= false;
-
-      check:=PowerOnOff(1);
-      if check <>0 then
-        US_Connected:= false;
-
-      optel_power:=false;
-      repeat
-            check := Get_Power_Info(1);
-            application.ProcessMessages;
-      until (check = 1)or(optel_power);
-
-      if optel_power and (check <> 1) then
-        US_Connected:= false;
-      }
-
-
-     optel_pack:=10;
-     optel_frame:=100;
-
-
-     CheckBox1.Checked:=false;
-     alarm_test:= false;
-     //check:=SetPacket_Len(optel_pack); //opcard
-
-     //FreeMem(data_optel);
-     frame_buffer:=(52 + optel_frame) * optel_pack;
-     //GetMem(data_optel,frame_buffer);
-     //GetMem(data_optel,2620800);
-     //GetMem(data_dac,262080);
-     //frame_buffer_old := frame_buffer;
-     frame_cnt10:=optel_pack;
-     //GetMem(data_dac,(52 + optel_frame) * optel_pack);
-       frame_buffer_old:=0;
       check:=check + Opcard_Reset(opcard_no);
       check:=check + Opcard_SetResetFifo(opcard_no);
       check:=check + Opcard_SetDriverEnable(opcard_no, opcard_driver_enable);
@@ -1058,7 +1035,6 @@ begin
       check:=check + Opcard_SetSeqLength(opcard_no, 1);
       check:=check + Opcard_SetSeqIndex(opcard_no, 0);
       check:=check + Opcard_SetSeqEnable(opcard_no, 0);
-
 
       check:=check + Opcard_SetAckMode(opcard_no, optel_false);
       optel_frame := (optel_frame div 4) * 4;
@@ -1082,59 +1058,43 @@ begin
       check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_b, 0);      //step 0
       check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_b, 0);   //enabled
       check:=check + Opcard_SetOutputEnable(opcard_no, 0, 0, 0 ,0 );
+      gpo0 := 0;
+      gpo1 := 0;
+      gpo2 := 0;
+      if inv_output then begin
+             if gpo0 = 1 then gpo0 := 0 else gpo0 := 1;
+             if gpo1 = 1 then gpo1 := 0 else gpo1 := 1;
+             if gpo2 = 1 then gpo2 := 0 else gpo2 := 1;
+          end;
 
-      if check> 0 then exit;
+      gpo3 := gpo1;
+      check:=check + Opcard_SetGpoSettings(opcard_no, gpo0, gpo1, gpo2, gpo3);
 
-{
-      check:=Instr_RestetFIFO();
-      if check <>0 then  US_Connected:= false;
+      SetLength(US_arr1,400);
 
-      check:=TrigEnable(1);
-      if check <>0 then US_Connected:= false;
+      result:=check;
+end;
 
-      check:=SetEncoder(0,4,1,1);
-      check:=SetEncoder(0,3,1,1);
-      check:=SetEncoder(1,1,1,1);
-      check:=SetEncoder(1,0,1,1);
-
-
-      check:=SetEncoder(0,4,1,0);
-      check:=SetEncoder(0,3,1,0);
-      check:=SetEncoder(1,1,1,0);
-      check:=SetEncoder(1,0,1,0);
-
-      if check <>0 then US_Connected:= false;
-}
-
-load_firest:=true;
-if load_firest and US_Connected then begin
-
+procedure TForm1.LoadINIFile(file_name1:string;file_name2:string);
+var
+i,j:integer;
+lFile: TFileStream;
+file_data:Tfile_us20;
+StringGrid:TStringGrid;
+begin
           form1.Edit5.SpinOptions.ValueType :=  spnFloat;
           form1.SpTBXSpinEdit9.SpinOptions.ValueType :=  spnFloat;
           form1.SpTBXSpinEdit16.SpinOptions.ValueType :=  spnFloat;
           form1.SpTBXSpinEdit18.SpinOptions.ValueType :=  spnFloat;
-          //form1.SpTBXSpinEdit20.SpinOptions.ValueType :=  spnFloat;
           form1.SpTBXSpinEdit21.SpinOptions.ValueType :=  spnFloat;
 
-          lFile := TFileStream.Create('defaultsafe.uss', fmOpenRead or fmShareDenyWrite);
+          lFile := TFileStream.Create(file_name1, fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
 		      lFile.Free;
 
-                  if FileExists('defaultsafe.spn') then begin
-                  AssignFile(spinFile,'defaultsafe.spn');
-                  Reset(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXSpinEdit then begin
-                         ReadLn(spinFile,s);
-                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
-                      end;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXButton then begin
-                         ReadLn(spinFile, s);
-                         TSpTBXButton(Components[i]).Caption:=s;
-                      end;
-                  CloseFile(spinFile);
-                  end;
+          SaveSpinStauus(file_name2);
+
+
           load_firest:=false;
           RadioButton26.Checked:=true;
           US_Gain:=file_data[0].US_Gain ;
@@ -1240,13 +1200,6 @@ if load_firest and US_Connected then begin
       RadioButton25.Checked:=true;
       GroupBox7.Enabled :=true;
       GroupBox8.Enabled :=true;
-      //edit5.Enabled :=true;
-      //edit6.Enabled :=true;
-      //edit7.Enabled :=true;
-      //edit8.Enabled :=true;
-     // edit9.Enabled :=true;
-     // edit10.Enabled :=true;
-      //edit12.Enabled :=true;
       SpTBXComboBox1.ItemIndex:=trunc(us_filter_mode );
 
       Form11.image10.Canvas.Pen.Color:=clBlack;
@@ -1258,205 +1211,42 @@ if load_firest and US_Connected then begin
       time_scann_counter:=0;
 
       SetRangeMM;
-  end;
-
-  load_firest:=true;
-if load_firest and US_Connected then begin
-
-    form1.Edit5.SpinOptions.ValueType :=  spnFloat;
-    form1.SpTBXSpinEdit16.SpinOptions.ValueType :=  spnFloat;
-    form1.SpTBXSpinEdit18.SpinOptions.ValueType :=  spnFloat;
-  //form1.SpTBXSpinEdit20.SpinOptions.ValueType :=  spnFloat;
-     form1.SpTBXSpinEdit21.SpinOptions.ValueType :=  spnFloat;
-
-          lFile := TFileStream.Create(us_set_file_name, fmOpenRead or fmShareDenyWrite);
-		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
-		      lFile.Free;
-
-           if FileExists('default.spn') then begin
-//           if FileExists(copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn') then begin
-                  AssignFile(spinFile,'default.spn');
-//                  AssignFile(spinFile,copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn');
-                  Reset(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXSpinEdit then begin
-                         ReadLn(spinFile,s);
-                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
-                      end;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXButton then begin
-                         ReadLn(spinFile, s);
-                         TSpTBXButton(Components[i]).Caption:=s;
-                      end;
-                  CloseFile(spinFile);
-                  end;
-          load_firest:=false;
-          RadioButton26.Checked:=true;
-          US_Gain:=file_data[0].US_Gain ;
-          US_Delay:=file_data[0].US_Delay ;
-          US_Width:=file_data[0].US_Width ;
-          US_SV:=file_data[0].us_sv ;
-          Gates:=file_data[0].gates;
-          us_preamp:=file_data[0].us_preamp;
-
-          us_echo_start_threshold:=file_data[0].us_echo_start_threshold;
-          us_echo_start_mode:=file_data[0].us_echo_start_mode;
-          us_echo_width:=file_data[0].us_echo_width;
-          us_echo_start:=file_data[0].us_echo_start;
-          us_pulse_wave_train:=file_data[0].us_pulse_wave_train;
-          us_pulse_count:=file_data[0].us_pulse_count;
-          us_pulse_width:=file_data[0].us_pulse_width;
-          us_pulse_voltage:=file_data[0].us_pulse_voltage;
-          us_pulse_delay:=file_data[0].us_pulse_delay;
-          us_prf:=file_data[0].us_prf;
-          us_relays:=file_data[0].us_relays;
-          us_wave:=file_data[0].us_wave;
-          us_samplingfreq:=file_data[0].us_samplingfreq;
-          us_pulse_echo:=file_data[0].us_pulse_echo;
-          us_filter_mode:=file_data[0].us_filter_mode;
-          us_ascan_wave:=file_data[0].us_ascan_wave;
-          us_ascan_hf:=file_data[0].us_ascan_hf;
-          us_probe_delay:=file_data[0].us_probe_delay;
-          us_reject:=file_data[0].us_reject;
-          us_angle:=file_data[0].us_angle;
-          us_info:=file_data[0].us_info ;
-          probe_details:=file_data[0].probe_details ;
-
-
-          if file_data[0].d1 = 1 then SpTBXCheckBox13.Checked := true else SpTBXCheckBox13.Checked := false;
-          if file_data[0].d2 = 1 then SpTBXCheckBox21.Checked := true else SpTBXCheckBox21.Checked := false;
-          if file_data[0].d3 = 1 then SpTBXCheckBox22.Checked := true else SpTBXCheckBox22.Checked := false;
-          if file_data[0].d4 = 1 then SpTBXCheckBox23.Checked := true else SpTBXCheckBox23.Checked := false;
-          if file_data[0].d5 = 1 then SpTBXCheckBox2.Checked := true else SpTBXCheckBox2.Checked := false;
-          SpTBXSpinEdit17.Value := file_data[0].e1;
-          if file_data[0].e2 = 1 then SpTBXCheckBox17.Checked := true else SpTBXCheckBox17.Checked := false;
-          if file_data[0].e3 = 1 then SpTBXCheckBox18.Checked := true else SpTBXCheckBox18.Checked := false;
-          if file_data[0].e4 = 1 then SpTBXCheckBox19.Checked := true else SpTBXCheckBox19.Checked := false;
-          if file_data[0].e5 = 1 then CheckBox3.Checked := true else CheckBox3.Checked := false;
-
-          Up_date_gates;
-                SpTBXComboBox1.ItemIndex:=trunc(us_filter_mode );
-
-
-
-      StringGrid := StringGrid4;
-      ARow4Count :=0;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow4Count;
-      if file_data[0].c1 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c1);
-      end;
-      if file_data[0].c2 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c2);
-      end;
-      if file_data[0].c3 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c3);
-      end;
-
-      ARow5Count := 0;
-      StringGrid := StringGrid5;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow5Count;
-      if file_data[0].c4 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c4);
-      end;
-      if file_data[0].c5 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c5);
-      end;
-      if file_data[0].c6 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c6);
-      end;
-
-          for i:= 0 to StringGrid4.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid4.Cells[0,i] = StringGrid2.Cells[0,j] then
-                       StringGrid4.Cells[1,i] := StringGrid2.Cells[1,j];
-                end;
-          end;
-          for i:= 0 to StringGrid5.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid5.Cells[0,i] = StringGrid3.Cells[0,j] then
-                       StringGrid5.Cells[1,i] := StringGrid3.Cells[1,j];
-                end;
-          end;
-
-
-      RadioButton25.Checked:=true;
-      GroupBox7.Enabled :=true;
-      GroupBox8.Enabled :=true;
-     // edit5.Enabled :=true;
-      //edit6.Enabled :=true;
-   //   edit7.Enabled :=true;
-   //   edit8.Enabled :=true;
-    //  edit9.Enabled :=true;
-   //   edit10.Enabled :=true;
-   //   edit12.Enabled :=true;
-
-      Form11.image10.Canvas.Pen.Color:=clBlack;
-      Form11.image10.Canvas.Pen.Width:=1;
-
-      Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-      Form11.image10.Canvas.Brush.Color :=clBlack;
-      Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-      time_scann_counter:=0;
-
-      SetRangeMM;
-  end;
-
-    //GetMem(data_optel,(52 + 100) * 100);
-    SetLength(US_arr1,400);
-    us_starting:=false;
-
-    result:=0;
-
-    optel_loaded:=US_Connected;
-
-
-           inv_output:=CheckBox3.Checked;
-         //  if inv_output then SpTBXButton173.Caption:="1" else SpTBXButton173.Caption:="0" ;
-
-
-           edit1.Text:= SpTBXButton169.Caption;
-
-           edit2.Text:= Floattostr(us_pulse_wave_train);//SpTBXButton171.Caption;
-
+     edit1.Text:= SpTBXButton169.Caption;
+     edit2.Text:= Floattostr(us_pulse_wave_train);//SpTBXButton171.Caption;
      TrackBar1.Position := trunc(us_wave);
      avr_const:= TrackBar1.Position/100;
-
-     gpo0 := 0;
-     gpo1 := 0;
-     gpo2 := 0;
-     if inv_output then begin
-            if gpo0 = 1 then gpo0 := 0 else gpo0 := 1;
-            if gpo1 = 1 then gpo1 := 0 else gpo1 := 1;
-            if gpo2 = 1 then gpo2 := 0 else gpo2 := 1;
-         end;
-
-         gpo3 := gpo1;
-
-         Opcard_SetGpoSettings(opcard_no, gpo0, gpo1, gpo2, gpo3);
-
-     try
+     inv_output:=CheckBox3.Checked;
+    try
         alarm_timer:= StrToInt(edit2.Text);
      except
-           alarm_timer:= 10;
+        alarm_timer:= 10;
      end;
+end;
+
+
+function TForm1.StartUS_optel:integer;
+var
+i,j:integer;
+lFile: TFileStream;
+file_data:Tfile_us20;
+s:string;
+StringGrid:TStringGrid;
+begin
+  try
+     result:=0;
+     us_starting:=true;
+     US_Connected:= true;
+
+     LoadINIFile('defaultsafe.uss','defaultsafe.spn');
+     LoadINIFile(us_set_file_name,'default.spn');
+
+     if SetOptelCard > 0 then exit;
+
      timer2.Enabled:=true;
 
-    //SpTBXComboBox1.ItemIndex :=0;
-    US_Operation:=4;
+     US_Operation:=4;
+     us_starting:=false;
+     optel_loaded:=US_Connected;
 
   except
     on E : Exception do begin
@@ -1524,9 +1314,6 @@ if instrument_type = 1 then begin
 end;
 
   form14.SpTBXButton22.Enabled :=  form14.SpTBXCheckBox5.Checked and form1.CheckBox2.Checked ;
-   // form11.SpTBXButton5.Enabled := form14.SpTBXButton22.Enabled;
-
-
 end;
 
 procedure TForm1.Timer2Timer(Sender: TObject);
@@ -1583,16 +1370,10 @@ try
 
          result := Opcard_SetGpoSettings(opcard_no, gpo0, gpo1, gpo2, gpo3);
 
-except
-on E : Exception do
-      ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-
-end;
-
-
-
-        //  Label89.caption:= inttostr(gpo0_c)  + ' '  +   inttostr(gpo1_c)  + ' ' + inttostr(gpo2_c)  + ' '+ inttostr(gpo0)  + ' ' +  inttostr(gpo1)  + ' ' +inttostr(gpo2)  + ' ' ;
-
+  except
+    on E : Exception do
+          ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+    end;
 end;
 
 
@@ -1718,49 +1499,82 @@ begin
   //////////////////////////////////////////echo start
 end;
 
-procedure TForm1.OptelAScan;
+procedure TForm1.DoDAC_US4;
 var
-check,i,j,k,l:integer;
-frame_cnt1:integer;
-tmp:real;
-tmp1,tmp2,tmp3,tmp4:integer;
-tmp11,tmp21,tmp31,tmp41:PByte;
-tmp12,tmp22,tmp32,tmp42:PByte;
-
-tmp5:AnsiChar;
-x_start,ttt,ttt1:real;
-x_stop:real;
-
-r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
-db_val100,db_val200,db_val300:real;
-l_val:longint;
-point_rezx,x1,y1,x11,y11:real;
-point_rezy:real;
-penmode:TPenMode;
-//img100:TBitmap;
-img100:Timage;
-my_label:TLabel;
-a1x,a2x:integer;
+i,j:integer;
+r_val, r_val1, r_val2:double;
 dac:array of char;
 pdac:PCHAR;
 sdac:string;
 sdac1:string;
 begin
-  try
-  check := 0;
-  new(tmp11);
-  new(tmp21);
-  new(tmp31);
-  new(tmp41);
+        if SpTBXComboBox6.ItemIndex = 1 then  begin
+             dac_range:=edit7.value/us_mm;
+             dac_str:=US_Delay*US_SV/1000;
+             dac_att:=SpTBXSpinEdit10.Value/2;
 
-  check := check + SetOptelOutputs;
-  DoUSOperation6;
-  DoUSOperation7;
-  check := check + DoEchoStart;
+              sdac:='';
+              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
+               r_val:=US_gain*256/45*1/exp( -1*(dac_str+dac_range*1/optel_frame)*dac_att );
+               //r_val:=US_gain*256/45;
+               if r_val>255 then r_val:=255;
+               for j:=1 to 52 do begin
+                    sdac:=sdac + chr(trunc(r_val));
+               end;
+               for j:=1 to optel_frame-1 do  begin
+                   r_val:=US_gain*1/exp( -1*(dac_str+dac_range*j/optel_frame)*dac_att )*256/45;
+                    if r_val>255 then r_val:=255;
+                    sdac:=sdac + chr(trunc(r_val));
+               end;
+              end;
+        end;
 
-    if us_operation = 4 then begin
+        if SpTBXComboBox6.ItemIndex = 2 then
+        if dac_list_count >1 then begin
+     //   if dac_refresh then
+              dac_refresh :=false;
+              dac_range:=edit7.value/us_mm;
+              dac_str:=US_Delay*US_SV/1000;
 
+              sdac:='';
+              sdac1:='';
+               r_val1 := DAC_X(1);
+               r_val:=dac_str+1*dac_range/optel_frame;
+//               r_val:=( dac_db + (us_gain-dac_db) + (r_val1-DAC_X(1)))*256/45;
+               r_val:=2*(DAC_X(1)+32);
 
+               if r_val>255 then r_val:=255;
+               for j:=1 to 52 do begin
+                    sdac1:=sdac1 + chr(trunc(r_val));
+               end;
+               for j:=1 to optel_frame-1 do  begin
+                   r_val2:=dac_str+j*dac_range/optel_frame;
+//                   r_val:=( dac_db + (us_gain-dac_db) + 0.3*(r_val1-DAC_X(r_val2)) )*256/47.5;
+                   r_val:=2*( DAC_X(r_val2) + 32 );
+                   if r_val>255 then r_val:=255;
+                   sdac1:=sdac1 + chr(trunc(r_val));
+               end;
+
+              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
+                  sdac:=sdac+sdac1;
+              end;
+        end;
+
+        //check:=SetGainMode(1);      //opcard
+      //  check:=SetDAC(0);
+//        pdac:=PChar(sdac);
+       // check:=DoDAC(PChar(sdac),262144);   //opcard
+//        check:=DoDAC(PChar(sdac),(52 + optel_frame) * optel_pack);
+
+end;
+
+function TForm1.DoUS4(in_check:integer):integer;
+var
+check:integer;
+tmp, tmp1, tmp2:integer;
+begin
+check :=in_check;
+  if us_operation = 4 then begin
       check:=check + Opcard_SetTriggerEnable(opcard_no, optel_trigger_disable);
       if SpTBXCheckBox2.Checked then   Edit6.Value :=   SpTBXSpinEdit12.Value;
       US_SV:=form1.edit12.value ;
@@ -1924,239 +1738,27 @@ begin
 
 
       if dac_enabled then begin
-        US_Operation:=0;
-        if SpTBXComboBox6.ItemIndex = 1 then  begin
-             dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
-             dac_att:=SpTBXSpinEdit10.Value/2;
-
-              sdac:='';
-              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
-               r_val:=US_gain*256/45*1/exp( -1*(dac_str+dac_range*1/optel_frame)*dac_att );
-               //r_val:=US_gain*256/45;
-               if r_val>255 then r_val:=255;
-               for j:=1 to 52 do begin
-                    sdac:=sdac + chr(trunc(r_val));
-               end;
-               for j:=1 to optel_frame-1 do  begin
-                   r_val:=US_gain*1/exp( -1*(dac_str+dac_range*j/optel_frame)*dac_att )*256/45;
-                    if r_val>255 then r_val:=255;
-                    sdac:=sdac + chr(trunc(r_val));
-               end;
-              end;
-        end;
-
-        if SpTBXComboBox6.ItemIndex = 2 then
-        if dac_list_count >1 then begin
-     //   if dac_refresh then
-              dac_refresh :=false;
-              dac_range:=edit7.value/us_mm;
-              dac_str:=US_Delay*US_SV/1000;
-
-              sdac:='';
-              sdac1:='';
-               r_val1 := DAC_X(1);
-               r_val:=dac_str+1*dac_range/optel_frame;
-//               r_val:=( dac_db + (us_gain-dac_db) + (r_val1-DAC_X(1)))*256/45;
-               r_val:=2*(DAC_X(1)+32);
-
-               if r_val>255 then r_val:=255;
-               for j:=1 to 52 do begin
-                    sdac1:=sdac1 + chr(trunc(r_val));
-               end;
-               for j:=1 to optel_frame-1 do  begin
-                   r_val2:=dac_str+j*dac_range/optel_frame;
-//                   r_val:=( dac_db + (us_gain-dac_db) + 0.3*(r_val1-DAC_X(r_val2)) )*256/47.5;
-                   r_val:=2*( DAC_X(r_val2) + 32 );
-                   if r_val>255 then r_val:=255;
-                   sdac1:=sdac1 + chr(trunc(r_val));
-               end;
-
-              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
-                  sdac:=sdac+sdac1;
-              end;
-        end;
-
-        //check:=SetGainMode(1);      //opcard
+        DoDAC_US4;
         check:=check + Opcard_SetGainMode(opcard_no, 1)
-      //  check:=SetDAC(0);
-//        pdac:=PChar(sdac);
-
-       // check:=DoDAC(PChar(sdac),262144);   //opcard
-//        check:=DoDAC(PChar(sdac),(52 + optel_frame) * optel_pack);
       end;
      // check:=TrigEnable(1);    //opcard
       check:=check + Opcard_SetTriggerEnable(opcard_no, optel_trigger_enable);
       check:=check + Opcard_SetResetFifo(opcard_no);
-
      // frame_cnt10:=0;
       US_Operation:=0;
-    end;
+   end;
+result:=check
+end;
 
-
-
-    if US_Operation=0 then begin
-          //check := Get_Power_Info(1);      //opcard
-
-          check  := 0;
-          if  check  = 0 then begin
-              //check := Check_Frame_Ready(); //opcard
-
-              inc(free_time);
-	            if (check = 0) then begin
-                check := 0;
-                //frame_cnt1 := GetFrame_Cnt();   //opcard
-                check := check + Opcard_GetFifoCnt(opcard_no, @frame_buffer);
-
-                if frame_buffer >= (52 + optel_frame) then begin
-                  dec(free_time);
-                  inc(us_time_count);
-                  optel_pack := trunc(frame_buffer/(52 + optel_frame));
-                  label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(us_time_count)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
-//                  label90.caption := IntToStr(frame_cnt1) +' '+IntToStr(optel_pack);
-
-
-                  //FreeMem(data_optel);
-                  //FreeMem(data_dac);
-                  if frame_buffer_old < frame_buffer then begin
-                    GetMem(data_optel,frame_buffer);
-                    GetMem(data_dac,frame_buffer);
-                    frame_buffer_old := frame_buffer;
-                   // label90.caption := IntToStr(frame_buffer_old) +' '+IntToStr(frame_buffer);
-
-                  end;
-                  check := check + Opcard_ReadData(opcard_no, data_optel, (52 + optel_frame)*optel_pack);
-
-       case trunc(us_samplingfreq) of
-          0:tmp_sq:=100;
-          1:tmp_sq:=50;
-          2:tmp_sq:=25;
-          3:tmp_sq:=10
-       end;
-
-
-				have_new_enc:=true;
-				for k:=0 to optel_pack-1 do begin
-				
-                  inc(data_optel, 11);
-
-                  tmp1:=data_optel^; //8 + 3 =11   input
-                  inc(data_optel);
-
-                  tmp11^:=data_optel^; //9 + 3 =12
-                  inc(data_optel);
-                  tmp21^:=data_optel^; //10 + 3 =13
-                  inc(data_optel);
-                  tmp31^:=data_optel^; //11 + 3 =14
-                  inc(data_optel);
-                  tmp41^:=data_optel^; //12 + 3 =15
-                  inc(data_optel);
-                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_x:=r_val ;
-                  //enc_cur_x := enc_cur_x +0.1;
-
-
-                  tmp11^:=data_optel^; //13 + 3 =16
-                  inc(data_optel);
-                  tmp21^:=data_optel^; //14 + 3 =17
-                  inc(data_optel);
-                  tmp31^:=data_optel^; //15 + 3 =18
-                  inc(data_optel);
-                  tmp41^:=data_optel^; //16 + 3 =19
-                  inc(data_optel);
-                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_y:=r_val ;
-
-                  tmp1:=data_optel^; //17 + 3 =20            ///alaram
-                  inc(data_optel);
-                  tmp2:=data_optel^; //18 + 3 =21
-                  inc(data_optel);
-
-                  us_mess[1].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_11:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_21 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp1:=tmp1;
-
-
-                  us_mess[2].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_12:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_22 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp2:=tmp1;
-
-
-				          us_mess[3].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_13:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_23 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp3:=tmp1;
-
-                  inc(data_optel, 6);
-
-                  for i:=0 to (optel_frame-1) do begin
-                      US_arr1[i]:=(data_optel^);
-                      inc(data_optel);
-                  end;
-
-
+procedure TForm1.Fill_draw_ascn_new;
+var
+i, j:integer;
+tmp:real;
+tmp1,tmp2,tmp3,tmp4:integer;
+r_val:double;
+begin
                   r_val:=  (optel_frame_old/ 400);
                   if us_ascan_hf = 0 then
-                    begin
                       for i:=1 to 400 do begin
                           tmp2:=0;
                           tmp4:=0;
@@ -2170,10 +1772,7 @@ begin
                                 draw_ascn_new[i]:=200-trunc(tmp2/256*200)
                             else
                                 draw_ascn_new[i]:=200-trunc(tmp4/256*200)  ;
-                      end;
-                    end
-                  else
-                      begin
+                  end else
                       for i:=1 to 400 do begin
                           tmp2:=0;
                           for j:=trunc((i-1)*r_val) to trunc(i*r_val) do
@@ -2183,8 +1782,14 @@ begin
                           end;
                           draw_ascn_new[i]:=200-trunc(tmp2/128*200);
                       end;
-                    end ;
+end;
 
+
+procedure TForm1.Do_Average;
+var
+check, i, tmp1:integer;
+r_val:double;
+begin
 
 				// tmp := tmp_sq;//us_mm*optel_frame/us_width;
 {
@@ -2212,10 +1817,10 @@ begin
 
         //tmp1:=trunc((us_mess[1].tof-us_delay)/(us_width)*400);
 
-                    //avergae
-                    for i:=1 to 400 do begin
-                        draw_ascn[i]:=trunc(draw_ascn[i]*(1-avr_const)+draw_ascn_new[i]*avr_const);
-                    end;
+         //avergae
+        for i:=1 to 400 do begin
+             draw_ascn[i]:=trunc(draw_ascn[i]*(1-avr_const)+draw_ascn_new[i]*avr_const);
+        end;
 
 
         mess_avg_11:=0;
@@ -2243,7 +1848,7 @@ begin
             end;
 
 
-            
+
                   mess_avg_amp1:=(mess_avg_amp1/128*100-0);
                   mess_avg_amp2:=(mess_avg_amp2/128*100-0);
                   mess_avg_amp3:=(mess_avg_amp3/128*100-0);
@@ -2276,6 +1881,10 @@ begin
                   us_mess[2].tof1 := mess_avg_22_old ;
                   us_mess[3].tof1 := mess_avg_23_old ;
 
+end ;
+
+procedure TForm1.Do_Alarm;
+begin
                   if us_mess[1].amp > gates[1].height then us_mess[1].alarm := 1;
                   if us_mess[2].amp > gates[2].height then us_mess[2].alarm := 1;
                   if us_mess[3].amp > gates[3].height then us_mess[3].alarm := 1;
@@ -2348,9 +1957,163 @@ begin
 
 
                   end;
-                  //only for test
 
- ////////////////////////averag
+end;
+
+
+procedure TForm1.DOUS0;
+var
+tmp11,tmp21,tmp31,tmp41:PByte;
+check, i, j, k:integer;
+tmp:real;
+tmp1,tmp2,tmp3,tmp4:integer;
+r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
+
+begin
+  if frame_buffer >= (52 + optel_frame) then begin
+    dec(free_time);
+    inc(us_time_count);
+    optel_pack := trunc(frame_buffer/(52 + optel_frame));
+    //label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(us_time_count)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
+    //label90.caption := IntToStr(frame_cnt1) +' '+IntToStr(optel_pack);
+    if frame_buffer_old < frame_buffer then begin
+      GetMem(data_optel,frame_buffer);
+      GetMem(data_dac,frame_buffer);
+      frame_buffer_old := frame_buffer;
+    end;
+    new(tmp11);
+    new(tmp21);
+    new(tmp31);
+    new(tmp41);
+    check := check + Opcard_ReadData(opcard_no, data_optel, (52 + optel_frame)*optel_pack);
+
+    case trunc(us_samplingfreq) of
+          0:tmp_sq:=100;
+          1:tmp_sq:=50;
+          2:tmp_sq:=25;
+          3:tmp_sq:=10
+    end;
+
+
+		have_new_enc:=true;
+				for k:=0 to optel_pack-1 do begin
+
+                  inc(data_optel, 11);
+
+                  tmp1:=data_optel^; //8 + 3 =11   input
+                  inc(data_optel);
+
+                  tmp11^:=data_optel^; //9 + 3 =12
+                  inc(data_optel);
+                  tmp21^:=data_optel^; //10 + 3 =13
+                  inc(data_optel);
+                  tmp31^:=data_optel^; //11 + 3 =14
+                  inc(data_optel);
+                  tmp41^:=data_optel^; //12 + 3 =15
+                  inc(data_optel);
+                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
+                  if scaner_type <> 2 then enc_cur_x:=r_val ;
+                  //enc_cur_x := enc_cur_x +0.1;
+
+                  tmp11^:=data_optel^; //13 + 3 =16
+                  inc(data_optel);
+                  tmp21^:=data_optel^; //14 + 3 =17
+                  inc(data_optel);
+                  tmp31^:=data_optel^; //15 + 3 =18
+                  inc(data_optel);
+                  tmp41^:=data_optel^; //16 + 3 =19
+                  inc(data_optel);
+                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
+                  if scaner_type <> 2 then enc_cur_y:=r_val ;
+
+                  tmp1:=data_optel^; //17 + 3 =20            ///alaram
+                  inc(data_optel);
+                  tmp2:=data_optel^; //18 + 3 =21
+                  inc(data_optel);
+
+                  us_mess[1].alarm :=0;
+                  tmp1:=data_optel^; //19 + 3 =22
+                  inc(data_optel);
+                  tmp2:=data_optel^; //20 + 3 =23
+                  inc(data_optel);
+                  tmp3:=data_optel^; //21 + 3 =24
+                  inc(data_optel);
+                  mess_avg_11:=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //22 + 3 =22
+                  inc(data_optel);
+
+                  tmp1:=data_optel^; //24 + 3 =27
+                  inc(data_optel);
+                  tmp2:=data_optel^; //25 + 3 =28
+                  inc(data_optel);
+                  tmp3:=data_optel^; //26 + 3 =29
+                  inc(data_optel);
+                  mess_avg_21 :=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //27 + 3 =30
+                  inc(data_optel);
+                  mess_avg_amp1:=tmp1;
+
+                  us_mess[2].alarm :=0;
+                  tmp1:=data_optel^; //19 + 3 =22
+                  inc(data_optel);
+                  tmp2:=data_optel^; //20 + 3 =23
+                  inc(data_optel);
+                  tmp3:=data_optel^; //21 + 3 =24
+                  inc(data_optel);
+                  mess_avg_12:=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //22 + 3 =22
+                  inc(data_optel);
+
+                  tmp1:=data_optel^; //24 + 3 =27
+                  inc(data_optel);
+                  tmp2:=data_optel^; //25 + 3 =28
+                  inc(data_optel);
+                  tmp3:=data_optel^; //26 + 3 =29
+                  inc(data_optel);
+                  mess_avg_22 :=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //27 + 3 =30
+                  inc(data_optel);
+                  mess_avg_amp2:=tmp1;
+
+				          us_mess[3].alarm :=0;
+                  tmp1:=data_optel^; //19 + 3 =22
+                  inc(data_optel);
+                  tmp2:=data_optel^; //20 + 3 =23
+                  inc(data_optel);
+                  tmp3:=data_optel^; //21 + 3 =24
+                  inc(data_optel);
+                  mess_avg_13:=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //22 + 3 =22
+                  inc(data_optel);
+
+                  tmp1:=data_optel^; //24 + 3 =27
+                  inc(data_optel);
+                  tmp2:=data_optel^; //25 + 3 =28
+                  inc(data_optel);
+                  tmp3:=data_optel^; //26 + 3 =29
+                  inc(data_optel);
+                  mess_avg_23 :=tmp1+256*tmp2+256*256*tmp3;
+
+                  tmp1:=data_optel^; //27 + 3 =30
+                  inc(data_optel);
+                  mess_avg_amp3:=tmp1;
+
+                  inc(data_optel, 6);
+
+                  for i:=0 to (optel_frame-1) do begin
+                      US_arr1[i]:=(data_optel^);
+                      inc(data_optel);
+                  end;
+
+                  Fill_draw_ascn_new;
+                  Do_Average;
+                  Do_Alarm;
+
 
                   if SpTBXCheckBox13.Checked then
                   for i:=1 to 3 do begin
@@ -2360,10 +2123,6 @@ begin
                   end;
 
       //set echo start
-
-
-
-
 
                  // scann_counter_old :=scann_counter;
 					if start_scann then begin  //////////////////////////////////////  scann
@@ -2418,7 +2177,69 @@ begin
 				xy_coor_old:=xy_coor;
 				dec(data_optel, ( optel_frame+52)*optel_pack);
 				//check:=check + Opcard_SetResetFifo(opcard_no);
+        Dispose(tmp11);
+        Dispose(tmp21);
+        Dispose(tmp31);
+        Dispose(tmp41);
+
   end;     //////////////////////////////////////////////////////////////////////////
+end;
+
+
+procedure TForm1.OptelAScan;
+var
+check,i,j,k,l:integer;
+frame_cnt1:integer;
+tmp:real;
+tmp1,tmp2,tmp3,tmp4:integer;
+
+tmp5:AnsiChar;
+x_start,ttt,ttt1:real;
+x_stop:real;
+
+r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
+db_val100,db_val200,db_val300:real;
+l_val:longint;
+point_rezx,x1,y1,x11,y11:real;
+point_rezy:real;
+penmode:TPenMode;
+//img100:TBitmap;
+img100:Timage;
+my_label:TLabel;
+a1x,a2x:integer;
+begin
+  try
+  check := 0;
+  check := check + SetOptelOutputs;
+  DoUSOperation6;
+  DoUSOperation7;
+  check := check + DoEchoStart;
+  check := check + DoUS4(check);
+
+
+    if US_Operation=0 then begin
+          //check := Get_Power_Info(1);      //opcard
+
+          check  := 0;
+          if  check  = 0 then begin
+              //check := Check_Frame_Ready(); //opcard
+
+              inc(free_time);
+	            if (check = 0) then begin
+                check := 0;
+                //frame_cnt1 := GetFrame_Cnt();   //opcard
+                check := check + Opcard_GetFifoCnt(opcard_no, @frame_buffer);
+
+                DoUS0;
+
+
+
+
+
+
+
+
+
 
            //       dec( data_optel, optel_frame + 52);
    inc(display_counter);
@@ -3837,11 +3658,6 @@ end;
    if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
 
    end ;///here
-
-Dispose(tmp11);
-Dispose(tmp21);
-Dispose(tmp31);
-Dispose(tmp41);
 
 
 
