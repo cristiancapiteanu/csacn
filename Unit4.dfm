@@ -1,0 +1,94 @@
+object Form4: TForm4
+  Left = 543
+  Top = 174
+  BorderStyle = bsNone
+  Caption = 'Bericht'
+  ClientHeight = 513
+  ClientWidth = 676
+  Color = clTeal
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object FrameViewer1: TFrameViewer
+    Left = 0
+    Top = 0
+    Width = 673
+    Height = 465
+    NoSelect = False
+    PrintMarginLeft = 2.000000000000000000
+    PrintMarginRight = 2.000000000000000000
+    PrintMarginTop = 2.000000000000000000
+    PrintMarginBottom = 2.000000000000000000
+    PrintScale = 1.000000000000000000
+    DefFontName = 'Times New Roman'
+    DefPreFontName = 'Courier New'
+    HistoryMaxCount = 0
+    CharSet = EASTEUROPE_CHARSET
+    TabOrder = 0
+  end
+  object SpTBXButton3: TLMDButton
+    Left = 5
+    Top = 470
+    Width = 122
+    Height = 40
+    Caption = 'Tastatur'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnClick = SpTBXButton3Click
+    ButtonStyle = ubsOffice
+    Color = clMenu
+    ParentColor = False
+  end
+  object Button2: TLMDButton
+    Left = 418
+    Top = 470
+    Width = 122
+    Height = 40
+    Caption = 'Drucken'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 2
+    OnClick = Button2Click
+    ButtonStyle = ubsOffice
+    Color = clMenu
+    ParentColor = False
+  end
+  object Button1: TLMDButton
+    Left = 546
+    Top = 470
+    Width = 122
+    Height = 40
+    Caption = 'Schlie'#223'en'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 3
+    OnClick = Button1Click
+    ButtonStyle = ubsOffice
+    Color = clMenu
+    ParentColor = False
+  end
+  object PrintDialog1: TPrintDialog
+    Left = 40
+    Top = 440
+  end
+end
