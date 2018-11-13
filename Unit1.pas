@@ -852,10 +852,39 @@ type
     procedure CalcDGS;
     procedure DoDAC_US4;
     function DoUS4(in_check:integer):integer;
-    procedure DOUS0;
+    procedure DoUsCARDAq;
     procedure Fill_draw_ascn_new;
     procedure Do_Average;
     procedure Do_Alarm;
+    procedure Do_Select_TOF;
+    procedure Do_Proc_Enc(index:integer);
+    procedure Do_Update_scann_arr;
+    procedure Draw_ASCAN;
+    procedure Draw_ASCAN_Axis(var img100:Timage);
+    procedure Draw_ASCAN_create_img100 (var img100:Timage);
+    procedure Draw_ASCAN_HF1(var img100:Timage);
+    procedure Draw_ASCAN_HF1_DAC_TH(var img100:Timage);
+    procedure Draw_ASCAN_HF1_DAC_EXP(var img100:Timage);
+    procedure Draw_ASCAN_HF0(var img100:Timage);
+    procedure Draw_ASCAN_HF0_DAC_TH(var img100:Timage);
+    procedure Draw_ASCAN_HF0_DAC_EXP(var img100:Timage);
+    procedure Draw_ASCAN_HF0_DGS(var img100:Timage);
+    procedure Draw_ASCAN_measurements_points(var img100:Timage);
+    procedure Draw_ASCAN_Gates(var img100:Timage);
+    procedure Draw_ASCAN_Display_Measurement;
+    procedure Draw_ASCAN_Display_Measurement_Alarm;
+    procedure Draw_ASCAN_Display_Measurement_Sound;
+    procedure Draw_ASCAN_Display_DAC;
+    procedure Draw_ASCAN_Display_Measurement_values;
+    procedure Draw_ASCAN_CSCAN;
+    procedure Draw_ASCAN_Prep_SCANN;
+    procedure Draw_ASCAN_TOFD;
+    procedure Draw_ASCAN_BSCAN;
+    procedure Draw_ASCAN_Post_SCANN;
+    procedure DoUS0;
+
+
+
   end;
 
 
@@ -1960,16 +1989,92 @@ begin
 
 end;
 
+procedure TForm1.Do_Select_TOF;
+var
+i:integer;
+r_val:double;
+begin
+          if SpTBXCheckBox13.Checked then
+                  for i:=1 to 3 do begin
+                      r_val:=us_mess[i].tof1;
+                      us_mess[i].tof1:=us_mess[i].tof;
+                      us_mess[i].tof:=r_val;
+                  end;
+// scann_counter_old :=scann_counter;
+        if start_scann then   //////////////////////////////////////  scann
+									      inc(scann_counter);
 
-procedure TForm1.DOUS0;
+                  scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
+                  scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
+                  scann_arr[scann_counter].US_Mess[3] :=us_mess[3];
+
+
+end;
+
+procedure TForm1.Do_Proc_Enc(index:integer);
+begin
+                   //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
+                   //enc_cur_x:=encod_t;
+                   //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
+                   //enc_cur_y:=encod_t;
+
+                  if encoder_index>0 then
+                  begin
+                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
+                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
+
+                       enc_cur_x:=enc_cur_x*encoder[encoder_index].enc_x_rez;
+                       enc_cur_y:=enc_cur_y*encoder[encoder_index].enc_y_rez;
+                       enc_cur_x:=enc_cur_x-enc_cur_x_offset;
+                       enc_cur_y:=enc_cur_y-enc_cur_y_offset;
+
+                       if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
+                       if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
+                  end;
+
+                  //form15.Label20.Caption :='Pos: '+FloatToStrF((enc_cur_x),ffFixed,6,2)+'mm x '+FloatToStrF((enc_cur_y),ffFixed,6,2)+'mm';
+
+                  if scaner_type=2 then begin
+                     scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
+                     scann_arr[scann_counter].xy_coor.y := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
+                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
+                  end else begin
+//                    scann_arr[scann_counter].xy_coor := xy_coor;
+                      scann_arr[scann_counter].xy_coor.x := enc_cur_x;
+                      scann_arr[scann_counter].xy_coor.y := enc_cur_y;
+                  end;
+
+end;
+
+procedure TForm1.Do_Update_scann_arr;
+var
+i:integer;
+begin
+
+
+                  scann_arr[scann_counter].have_ascan:= true ;
+                  if scann_arr[scann_counter].have_ascan then
+                     for i:=1 to 400 do
+                         if not debug_not_us_key then
+                            scann_arr[scann_counter].US_arr1[i] := draw_ascn[i]
+                         else
+                             scann_arr[scann_counter].US_arr1[i] := i;
+
+end;
+
+
+procedure TForm1.DoUsCARDAq;
 var
 tmp11,tmp21,tmp31,tmp41:PByte;
 check, i, j, k:integer;
 tmp:real;
 tmp1,tmp2,tmp3,tmp4:integer;
-r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
+r_val1,r_val2,r_val,a_val,a_val1:double;
 
 begin
+  check := 0;
+  //frame_cnt1 := GetFrame_Cnt();   //opcard
+  check := check + Opcard_GetFifoCnt(opcard_no, @frame_buffer);
   if frame_buffer >= (52 + optel_frame) then begin
     dec(free_time);
     inc(us_time_count);
@@ -1981,10 +2086,7 @@ begin
       GetMem(data_dac,frame_buffer);
       frame_buffer_old := frame_buffer;
     end;
-    new(tmp11);
-    new(tmp21);
-    new(tmp31);
-    new(tmp41);
+
     check := check + Opcard_ReadData(opcard_no, data_optel, (52 + optel_frame)*optel_pack);
 
     case trunc(us_samplingfreq) of
@@ -1996,8 +2098,12 @@ begin
 
 
 		have_new_enc:=true;
-				for k:=0 to optel_pack-1 do begin
 
+		new(tmp11);
+    new(tmp21);
+    new(tmp31);
+    new(tmp41);
+    for k:=0 to optel_pack-1 do begin
                   inc(data_optel, 11);
 
                   tmp1:=data_optel^; //8 + 3 =11   input
@@ -2113,188 +2219,28 @@ begin
                   Fill_draw_ascn_new;
                   Do_Average;
                   Do_Alarm;
-
-
-                  if SpTBXCheckBox13.Checked then
-                  for i:=1 to 3 do begin
-                      r_val:=us_mess[i].tof1;
-                      us_mess[i].tof1:=us_mess[i].tof;
-                      us_mess[i].tof:=r_val;
-                  end;
-
-      //set echo start
-
-                 // scann_counter_old :=scann_counter;
-					if start_scann then begin  //////////////////////////////////////  scann
-									  inc(scann_counter);
-					end;
-
-                  scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
-                  scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
-                  scann_arr[scann_counter].US_Mess[3] :=us_mess[3];
-
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
-                   //enc_cur_x:=encod_t;
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
-                   //enc_cur_y:=encod_t;
-
-                  if encoder_index>0 then
-                  begin
-                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
-                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
-
-                       enc_cur_x:=enc_cur_x*encoder[encoder_index].enc_x_rez;
-                       enc_cur_y:=enc_cur_y*encoder[encoder_index].enc_y_rez;
-                       enc_cur_x:=enc_cur_x-enc_cur_x_offset;
-                       enc_cur_y:=enc_cur_y-enc_cur_y_offset;
-
-                       if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
-                       if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
-                  end;
-
-                  //form15.Label20.Caption :='Pos: '+FloatToStrF((enc_cur_x),ffFixed,6,2)+'mm x '+FloatToStrF((enc_cur_y),ffFixed,6,2)+'mm';
-
-                  if scaner_type=2 then begin
-                     scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+j*(xy_coor.x-xy_coor_old.x)/optel_pack;
-                     scann_arr[scann_counter].xy_coor.y := xy_coor_old.y+j*(xy_coor.y-xy_coor_old.y)/optel_pack;
-                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
-                  end else begin
-//                    scann_arr[scann_counter].xy_coor := xy_coor;
-                      scann_arr[scann_counter].xy_coor.x := enc_cur_x;
-                      scann_arr[scann_counter].xy_coor.y := enc_cur_y;
-                  end;
-
-                  scann_arr[scann_counter].have_ascan:= true ;
-                  if scann_arr[scann_counter].have_ascan then begin
-                     for i:=1 to 400 do
-                         if not debug_not_us_key then
-                            scann_arr[scann_counter].US_arr1[i] := draw_ascn[i]
-                         else
-                             scann_arr[scann_counter].US_arr1[i] := i;
-                  end;
+                  Do_Select_TOF;
+                  Do_Proc_Enc(k);
+                  Do_Update_scann_arr;
             end;
-      //end ;///////////////////////scann
-				xy_coor_old:=xy_coor;
-				dec(data_optel, ( optel_frame+52)*optel_pack);
-				//check:=check + Opcard_SetResetFifo(opcard_no);
+
         Dispose(tmp11);
         Dispose(tmp21);
         Dispose(tmp31);
         Dispose(tmp41);
 
+				xy_coor_old:=xy_coor;
+				dec(data_optel, ( optel_frame+52)*optel_pack);
+				//check:=check + Opcard_SetResetFifo(opcard_no);
+
+
   end;     //////////////////////////////////////////////////////////////////////////
 end;
 
-
-procedure TForm1.OptelAScan;
+procedure TForm1.Draw_ASCAN_Axis(var img100:Timage);
 var
-check,i,j,k,l:integer;
-frame_cnt1:integer;
-tmp:real;
-tmp1,tmp2,tmp3,tmp4:integer;
-
-tmp5:AnsiChar;
-x_start,ttt,ttt1:real;
-x_stop:real;
-
-r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
-db_val100,db_val200,db_val300:real;
-l_val:longint;
-point_rezx,x1,y1,x11,y11:real;
-point_rezy:real;
-penmode:TPenMode;
-//img100:TBitmap;
-img100:Timage;
-my_label:TLabel;
-a1x,a2x:integer;
+i, j:integer;
 begin
-  try
-  check := 0;
-  check := check + SetOptelOutputs;
-  DoUSOperation6;
-  DoUSOperation7;
-  check := check + DoEchoStart;
-  check := check + DoUS4(check);
-
-
-    if US_Operation=0 then begin
-          //check := Get_Power_Info(1);      //opcard
-
-          check  := 0;
-          if  check  = 0 then begin
-              //check := Check_Frame_Ready(); //opcard
-
-              inc(free_time);
-	            if (check = 0) then begin
-                check := 0;
-                //frame_cnt1 := GetFrame_Cnt();   //opcard
-                check := check + Opcard_GetFifoCnt(opcard_no, @frame_buffer);
-
-                DoUS0;
-
-
-
-
-
-
-
-
-
-
-           //       dec( data_optel, optel_frame + 52);
-   inc(display_counter);
-
-   if display_counter > 4 then display_counter:=0;
-////////////a-scan display///////////////////
-   if (display_counter mod 1) = 0 then begin         //// start here        //was 2
-//   if (form1.Visible ) then begin
-//   if (form1.Visible or form15.Visible) then begin
-
-    if not b_form15_on then begin
-      if  GroupBox7.Left < 1190 then begin
-        image4.Visible:=true;
-        image1.Visible:=false;
-
-       // img100:=TBitMap.Create;
-      //  img100.Width:=image4.Width;
-      //  img100.Height :=image4.Height ;
-
-        img100 := image4 ;
-       havebit100:=false;
-      end else begin
-        image1.Visible:=true;
-        image4.Visible:=false;
-//        img100:=TBitMap.Create;
-//        img100.Width:=image1.Width;
-//        img100.Height :=image1.Height ;
-        img100 := image1;
-       havebit100:=false;
-      end;
-    end;
-
-    if b_form15_on then begin
-//        img100:=TBitMap.Create;
-//        img100.Width:=form17.Image1.Width;
-//        img100.Height :=form17.Image1.Height ;
-
-       img100:=form17.Image1;
-       havebit100:=false;
-    end;
-    if b_form11_on then begin
-//        img100:=TBitMap.Create;
-//        img100.Width:=form17.Image1.Width;
-//        img100.Height :=form17.Image1.Height ;
-
-       img100:=form17.Image1;
-       havebit100:=false;
-    end;
-
-    havebit100:=false;
-    if havebit100 then begin
-      bmp100.Canvas.CopyRect(bmp100.Canvas.ClipRect,img100.Canvas,bmp100.Canvas.ClipRect);
-//      BitBlt(image1.Canvas.bmp100,0,0,image1.Width,image1.Height,bmp100.Canvas.Handle,0,0,SRCCOPY);
-    end;
-
 
     if not havebit100 then
     if us_freeze = 0 then begin
@@ -2355,10 +2301,63 @@ begin
     end;
 
 
-     img100.Canvas.Pen.Color:=clLime;
-     if (us_freeze=0) or (us_freeze=2) then begin
+end;
 
-      if us_ascan_hf=1 then begin
+procedure TForm1.Draw_ASCAN_create_img100(var img100:Timage);
+begin
+
+    if not b_form15_on then begin
+      if  GroupBox7.Left < 1190 then begin
+        image4.Visible:=true;
+        image1.Visible:=false;
+
+       // img100:=TBitMap.Create;
+      //  img100.Width:=image4.Width;
+      //  img100.Height :=image4.Height ;
+
+        img100 := image4 ;
+        havebit100:=false;
+      end else begin
+        image1.Visible:=true;
+        image4.Visible:=false;
+//        img100:=TBitMap.Create;
+//        img100.Width:=image1.Width;
+//        img100.Height :=image1.Height ;
+        img100 := image1;
+       havebit100:=false;
+      end;
+    end;
+
+    if b_form15_on then begin
+//        img100:=TBitMap.Create;
+//        img100.Width:=form17.Image1.Width;
+//        img100.Height :=form17.Image1.Height ;
+
+       img100:=form17.Image1;
+       havebit100:=false;
+    end;
+    if b_form11_on then begin
+//        img100:=TBitMap.Create;
+//        img100.Width:=form17.Image1.Width;
+//        img100.Height :=form17.Image1.Height ;
+
+       img100:=form17.Image1;
+       havebit100:=false;
+    end;
+
+    havebit100:=false;
+    if havebit100 then begin
+      bmp100.Canvas.CopyRect(bmp100.Canvas.ClipRect,img100.Canvas,bmp100.Canvas.ClipRect);
+//      BitBlt(image1.Canvas.bmp100,0,0,image1.Width,image1.Height,bmp100.Canvas.Handle,0,0,SRCCOPY);
+    end;
+
+
+end;
+
+procedure TForm1.Draw_ASCAN_HF1(var img100:Timage);
+var
+i:integer;
+begin
          img100.Canvas.MoveTo(0,0);
          for i:=1 to 400 do
           if draw_ascn[i]>((100-us_reject)*2)then
@@ -2366,6 +2365,12 @@ begin
             else
              img100.Canvas.LineTo(trunc(i*img100.Width/400),trunc((draw_ascn[i])*img100.Height/200)-10); ///ascan
 
+end;
+
+procedure TForm1.Draw_ASCAN_HF1_DAC_TH(var img100:Timage);
+var
+i:integer;
+begin
 
           if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
              dac_range:=edit7.value/us_mm;
@@ -2402,6 +2407,14 @@ begin
                 img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height-10)/dac_1));
 
           end;                      //DAC TH.
+
+end;
+
+procedure TForm1.Draw_ASCAN_HF1_DAC_EXP(var img100:Timage);
+var
+i:integer;
+begin
+
 
           if SpTBXComboBox6.ItemIndex = 2 then      //DAC EXP.
             if dac_list_count>1 then   begin
@@ -2447,10 +2460,26 @@ begin
            // dac_list[i].b:=dac_db*log10(tr_db)/2;
           end;              //DAC EXP.
 
-      end else begin
+end;
+
+
+
+procedure TForm1.Draw_ASCAN_HF0(var img100:Timage);
+var
+i:integer;
+begin
+
          img100.Canvas.MoveTo(0,0);
          for i:=1 to 400 do
             img100.Canvas.LineTo(trunc(i*img100.Width/400),trunc((draw_ascn[i])*img100.Height/200-img100.Height/2-10));
+
+
+end;
+
+procedure TForm1.Draw_ASCAN_HF0_DAC_TH(var img100:Timage);
+var
+i:integer;
+begin
 
           if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
 
@@ -2505,6 +2534,14 @@ begin
                 img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
 
           end;                     //DAC TH.
+
+end;
+
+procedure TForm1.Draw_ASCAN_HF0_DAC_EXP(var img100:Timage);
+var
+i:integer;
+begin
+
 
           if SpTBXComboBox6.ItemIndex = 2 then       //DAC EXP.
             if dac_list_count>1 then   begin
@@ -2570,6 +2607,12 @@ begin
           end;   //DAC EXP.
 
 
+end;
+
+procedure TForm1.Draw_ASCAN_HF0_DGS(var img100:Timage);
+var
+i:integer;
+begin
           if SpTBXComboBox6.ItemIndex = 3 then begin      //DGS
             if SpTBXRadioButton9.Checked then begin      //fbh
                 fbhDia := SpTBXSpinEdit29.value;
@@ -2585,46 +2628,15 @@ begin
             end;
 
           end;    //DGS
-
-
-      end;
-
-
-
-     end;
-
-    {
-
-      img100.Canvas.Pen.Color:=clLime;
-      if (us_freeze=0) or (us_freeze=2) then begin
-        if us_ascan_hf=1 then begin
-          img100.Canvas.MoveTo(0,0);
-          for i:=1 to img100.Width do
-            if trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/128*200)*100/200)>((100-us_reject)*1)then
-              img100.Canvas.LineTo(i,img100.Height-10)
-            else
-              img100.Canvas.LineTo(i,trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/128*200)*img100.Height/200)-10);
-        end else begin
-          img100.Canvas.MoveTo(0,0);
-          for i:=1 to img100.Width do
-            img100.Canvas.LineTo(i,trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/256*200)*img100.Height/200)-10);
-//          for i:=1 to trunc(optel_frame/1) do
-//            img100.Canvas.LineTo(trunc(i*img100.Width/optel_frame*1),trunc((200-US_arr1[i*1]/256*200)*img100.Height/200)-10);
-        end
-      end;
-
-     }
-      //measuremnts points
-
-if us_freeze = 0 then begin
-case trunc(us_samplingfreq) of
-          0:tmp:=100;
-          1:tmp:=50;
-          2:tmp:=25;
-          3:tmp:=10;                              // tmp := 2*1000/us_sv*optel_frame/us_width;
 end;
-img100.Canvas.Pen.Width:=4;
 
+
+procedure TForm1.Draw_ASCAN_measurements_points(var img100:Timage);
+var
+tmp1, tmp2:integer;
+begin
+
+img100.Canvas.Pen.Width:=4;
 if  SpTBXCheckBox13.Checked then begin
     img100.Canvas.Pen.Color:=clred;
     if SpTBXCheckBox17.Checked then begin
@@ -2723,12 +2735,17 @@ end else begin
       img100.Canvas.MoveTo(tmp1-4,tmp2+4);
       img100.Canvas.lineTo(tmp1+4,tmp2-4);
     end;
-  end;
-img100.Canvas.Pen.Width:=1;
+end;
 
+end;
 
+procedure TForm1.Draw_ASCAN_Gates(var img100:Timage);
+var
+tmp1, tmp2:integer;
+x_start, x_stop:real;
+a1x,a2x:integer;
+begin
 
-////////////a-scan display///////////////////
 
 ////////////draw gates///////////////////
 
@@ -2787,37 +2804,42 @@ if SpTBXCheckBox19.Checked  then begin
     img100.Canvas.MoveTo(trunc(x_start/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[3].height/100)*(img100.Height-10)));
     img100.Canvas.LineTo(trunc(x_stop/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[3].height/100)*(img100.Height-10)));
   end;
+
+end;
 end;
 
-     ////////////////////////////////end gates
-end;  //if freeze = 0
 
-//end;
-    {
+procedure TForm1.Draw_ASCAN;
+var
+img100:Timage;
+begin
 
-    if not b_form15_on then begin
-      if  GroupBox7.Left < 1190 then begin
-        image4.Canvas.Draw(0,0,img100);
-      end else begin
-        image1.Canvas.Draw(0,0,img100);
+      Draw_ASCAN_create_img100(img100);
+      Draw_ASCAN_Axis(img100);
+      img100.Canvas.Pen.Color:=clLime;
+
+      if (us_freeze=0) or (us_freeze=2) then
+        if us_ascan_hf=1 then begin
+           Draw_ASCAN_HF1(img100);
+           Draw_ASCAN_HF1_DAC_TH(img100);
+           Draw_ASCAN_HF1_DAC_EXP(img100);
+        end else begin
+           Draw_ASCAN_HF0(img100);
+           Draw_ASCAN_HF0_DAC_TH(img100);
+           Draw_ASCAN_HF0_DAC_EXP(img100);
+           Draw_ASCAN_HF0_DGS(img100);
+        end;
+
+      if us_freeze = 0 then begin
+          Draw_ASCAN_measurements_points(img100);
+          Draw_ASCAN_Gates(img100);
       end;
-    end;
 
-    if b_form15_on then begin
-        form17.Image1.Canvas.Draw(0,0,img100);
-    end;
-    if b_form11_on then begin
-        form17.Image1.Canvas.Draw(0,0,img100);
-    end;
-    img100.Free;
-     }
+end;
 
-end; //end here
-////////////draw gates///////////////////
 
-////////////mesuremnet display///////////////////
-   if (display_counter mod 4) = 0 then begin         //// start here
-
+procedure TForm1.Draw_ASCAN_Display_Measurement_Alarm;
+begin
   if SpTBXCheckBox6.Checked then begin
     label30.font.Color:=clGreen;
     if us_mess[1].alarm=1 then label30.font.Color :=clRed;
@@ -2892,6 +2914,12 @@ end; //end here
  // us_mess[3].alarm:=0;
 
 
+end;
+
+
+procedure TForm1.Draw_ASCAN_Display_Measurement_Sound;
+begin
+ 
   sound_play:=0;
 
   if SpTBXCheckBox17.Checked then
@@ -2912,6 +2940,11 @@ end; //end here
       sound_play:=sound_play+4;
 
 
+end;
+
+procedure TForm1.Draw_ASCAN_Display_DAC;
+begin
+
 
  // label14.Caption := IntToStr(i);
 
@@ -2926,7 +2959,7 @@ end; //end here
   }
 
 
-
+   {
 
   if radiobutton25.Checked then begin
       if radiobutton9.Checked then j:=1;
@@ -2944,16 +2977,24 @@ end; //end here
         end;
   end;
 
-  r_val:=US_Mess[1].amp;
-  if r_val > tr_db then begin
-      label64.Caption :=FloatToStrF(r_val,ffFixed,6,2)+ '[%]';
-      tr_db:=r_val;
+      }
+  //dac value
+  if US_Mess[1].amp > tr_db then begin
+      label64.Caption :=FloatToStrF(US_Mess[1].amp,ffFixed,6,2)+ '[%]';
+      tr_db:=US_Mess[1].amp;
       tr_x:=US_Mess[1].tof;
   end;
 
+end;
 
+procedure TForm1.Draw_ASCAN_Display_Measurement_values;
+var
+i:integer;
+my_label:TLabel;
+r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
+db_val100,db_val200,db_val300:real;
 
-
+begin
   {
 0     Time of Flight                   T(A) [us]
 1     Material Travel Distance s(A) [mm]
@@ -2972,10 +3013,7 @@ NONE
 
 
  try
-
-
-
- us_x:=SpTBXSpinEdit17.value;
+   us_x:=SpTBXSpinEdit17.value;
 
    label12.Caption:='';
    label33.Caption:='';
@@ -3124,16 +3162,21 @@ NONE
 
  end;
 
- end; ///here
+end;
+
+procedure TForm1.Draw_ASCAN_Display_Measurement;
+begin
+
+  Draw_ASCAN_Display_Measurement_Alarm;
+  Draw_ASCAN_Display_Measurement_Sound;
+  Draw_ASCAN_Display_DAC;
+  Draw_ASCAN_Display_Measurement_values;
+
+end;
 
 
-
-////////////mesuremnet display///////////
-
-
-   if (display_counter mod 4) = 0 then begin         //// start here
-
-//cscan////////////////////////////////////////////////////////
+procedure TForm1.Draw_ASCAN_Prep_SCANN;
+begin
       if start_copy_img1_2 then begin
         start_copy_img1_1:=false;
         start_copy_img1_2:=false;
@@ -3174,12 +3217,24 @@ NONE
         //form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
       end;
 
-  if form15.Visible and (form15.CheckBox2.Checked ) then begin
+end;
+
+procedure TForm1.Draw_ASCAN_CSCAN;
+var
+j, l:integer;
+r_val, r_val1:double;
+point_rezx,x1,y1,x11,y11, ttt, ttt1:real;
+point_rezy:real;
+penmode:TPenMode;
+begin
+//cscan////////////////////////////////////////////////////////
+
+
 
               form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
 
               j:=0;
-              if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
+              if radiobutton9.Checked  and SpTBXCheckBox17.Checked then j:=1;
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
               if j>0 then begin
@@ -3208,7 +3263,8 @@ NONE
                       Form15.label2.Caption :='Val : N/C'
               end;
 
-         if j>0 then
+         point_rezx:=form15.image1.Width/(X_axis_len/x_axis_rez);
+         point_rezy:=form15.image1.height/(y_axis_len/y_axis_rez);
          for l:=(scann_counter_old+1) to (scann_counter) do begin
           //form15.label1.Caption:=IntToStr(scann_counter-scann_counter_old-1);
 
@@ -3222,8 +3278,6 @@ NONE
               r_val1:=r_val;
               x1:=scann_arr[l].xy_coor.x;
               y1:=scann_arr[l].xy_coor.y;
-              point_rezx:=form15.image1.Width/(X_axis_len/x_axis_rez);
-              point_rezy:=form15.image1.height/(y_axis_len/y_axis_rez);
 
               if live_scan_grid then begin
                 x11:=(x1/x_axis_rez);
@@ -3262,6 +3316,7 @@ NONE
 
                 x1:=x1*form15.Image1.Width/X_axis_len;
                 y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
+
                 if form15.SpTBXRadioButton1.Checked then x1:=x1+0;
                 if form15.SpTBXRadioButton2.Checked then x1:=x1+form15.Image1.Width/2;
                 if form15.SpTBXRadioButton3.Checked then x1:=x1+form15.Image1.Width;
@@ -3294,6 +3349,7 @@ NONE
 
                 x1:=x1*form15.Image1.Width/X_axis_len;
                 y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
+                
                 if form15.SpTBXRadioButton1.Checked then x1:=x1+0;
                 if form15.SpTBXRadioButton2.Checked then x1:=x1+form15.Image1.Width/2;
                 if form15.SpTBXRadioButton3.Checked then x1:=x1+form15.Image1.Width;
@@ -3383,11 +3439,14 @@ NONE
 
 
 
-  end;
+end;
 
-//cscan////////////////////////////////////////////////////////
-//time scann
-if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemIndex = 1) then begin    //tofd
+procedure TForm1.Draw_ASCAN_TOFD;
+var
+j, l, k:integer;
+r_val, r_val1:double;
+l_val:longint;
+begin
 //if form11.CheckBox2.Checked and form11.Visible and (SpTBXComboBox7.ItemIndex=2) then begin
             if rest_scr then begin
                 d_time_scann_counter:=0;
@@ -3498,8 +3557,14 @@ if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemInde
 
 
 end;
-if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemIndex = 0) then begin      //line
-//if form11.CheckBox2.Checked and form11.Visible and(SpTBXComboBox7.ItemIndex=1) then begin
+
+
+procedure TForm1.Draw_ASCAN_BSCAN;
+var
+i, j, l, k:integer;
+r_val, r_val1:double;
+l_val:longint;
+begin
 
             if rest_scr then begin
                 d_time_scann_counter:=0;
@@ -3625,6 +3690,12 @@ if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemInde
               end;
             end;
 
+end;
+
+
+procedure TForm1.Draw_ASCAN_Post_SCANN;
+Begin
+
             if start_copy_img1_3 then begin
                   form17.Hide;
 
@@ -3642,31 +3713,53 @@ if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemInde
                 form1.BringToFront;
                 form1.SpTBXButton75Click(nil);
             end;
-
 end;
 
-              end;
+procedure TForm1.DoUS0;
+begin
+if US_Operation=0 then begin
+                inc(free_time);
+                DoUsCARDAq;//data aquisition
+                inc(display_counter);
+                if display_counter > 4 then display_counter:=0;
+
+                if (display_counter mod 1) = 0 then Draw_ASCAN;   //
+                if (display_counter mod 4) = 0 then begin
+                    Draw_ASCAN_Display_Measurement;
+                    Draw_ASCAN_Prep_SCANN;
+                    if form15.Visible and (form15.CheckBox2.Checked ) then Draw_ASCAN_CSCAN;
+                    if form11.CheckBox2.Checked and form11.Visible then begin
+                        if (form8.SpTBXListBox2.ItemIndex = 1) then Draw_ASCAN_TOFD;
+                        if (form8.SpTBXListBox2.ItemIndex = 0) then Draw_ASCAN_BSCAN;
+                    end;
+                    Draw_ASCAN_Post_SCANN ;
+                end;
+
+                if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
+                if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
+    end ;
+end;
 
 
-
-          end;
-    end else begin
-   //   us_connected:= false;
-    end;
-
-   if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
-   if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
-
-   end ;///here
-
-
-
-
+procedure TForm1.OptelAScan;
+var
+check:integer;
+begin
+  try
+    check := 0;
+    check := check + SetOptelOutputs;
+    DoUSOperation6;
+    DoUSOperation7;
+    check := check + DoEchoStart;
+    check := check + DoUS4(check);
+    //if check <>0 then exit;  //TODO
+    DoUS0;
   except
     on E : Exception do  begin
       //us_connected:= false;
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-    end;                    end;
+    end;
+  end;
 end;
 
 procedure TForm1.USAScan;
