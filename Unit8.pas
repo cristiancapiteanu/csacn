@@ -113,7 +113,7 @@ begin
      width:=1300;
      height:=850;
   end else begin
-    form1.FormStyle:=fsStayOnTop;
+    //form1.FormStyle:=fsStayOnTop;
    // form1.BringToFront;
     form1.CheckBox2.Checked:=true;
   end;
@@ -466,7 +466,8 @@ begin
       Label26.Caption:= 'Breite';
       Label27.Caption:= 'Höhe';
 
-      SpTBXButton74.Caption:= 'DAC/DGS';
+      //SpTBXButton74.Caption:= 'DAC/DGS';
+      SpTBXButton74.Caption:= 'Scann';
 
       SpTBXButton79.Caption:= 'Messung';
       GroupBox23.Caption:= 'Messung';

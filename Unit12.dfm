@@ -89,7 +89,7 @@ object Form12: TForm12
       Height = 45
       Caption = '+'
       Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
+      Font.Color = clWhite
       Font.Height = -37
       Font.Name = 'Tahoma'
       Font.Style = []

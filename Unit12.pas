@@ -819,7 +819,7 @@ Screen.Cursor := crArrow;
       image20.Canvas.Brush.Style:=bsSolid	 ;
       image20.Canvas.Brush.Color :=clBlack;
       image20.Canvas.Rectangle(0,0,image9.Width,image9.Height );
-     if form13.SpTBXCheckBox3.Checked then form13.Button7Click(Sender);
+      if form13.SpTBXCheckBox3.Checked then form13.Button7Click(Sender);
          form6.Draw_TOFD_Ox;
 Screen.Cursor := crArrow;
 
@@ -1323,7 +1323,7 @@ end;
 procedure TForm12.LMDButton1Click(Sender: TObject);
 begin
 
-form6.have_data2:=false;
+  form6.have_data2:=false;
   form6.have_data1:=false;
   form6.have_data10:=false;
   form6.have_data11:=true;

@@ -1,10 +1,9 @@
 object Form1: TForm1
-  Left = 239
-  Top = 123
-  BorderIcons = [biSystemMenu, biMinimize]
+  Left = 408
+  Top = 0
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 808
+  ClientHeight = 969
   ClientWidth = 1280
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -3139,8 +3138,8 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Label57: TLabel
-    Left = 400
-    Top = 934
+    Left = 104
+    Top = 878
     Width = 28
     Height = 13
     Caption = 'Wave'
@@ -8803,49 +8802,6 @@ object Form1: TForm1
         Height = 35
         Caption = 'Alarm time [100x ms]'
       end
-      object SpTBXButton95: TSpTBXButton
-        Left = 350
-        Top = 72
-        Width = 241
-        Height = 81
-        Caption = 'Line Scan'
-        TabOrder = 0
-        Visible = False
-        OnClick = SpTBXButton95Click
-      end
-      object SpTBXButton96: TSpTBXButton
-        Left = 350
-        Top = 160
-        Width = 241
-        Height = 81
-        Caption = 'TOF-D'
-        Enabled = False
-        TabOrder = 1
-        Visible = False
-        OnClick = SpTBXButton96Click
-      end
-      object SpTBXButton97: TSpTBXButton
-        Left = 350
-        Top = 248
-        Width = 241
-        Height = 81
-        Caption = 'Floor Map'
-        Enabled = False
-        TabOrder = 2
-        Visible = False
-        OnClick = SpTBXButton97Click
-      end
-      object SpTBXButton98: TSpTBXButton
-        Left = 350
-        Top = 336
-        Width = 241
-        Height = 81
-        Caption = 'C-Scan'
-        Enabled = False
-        TabOrder = 3
-        Visible = False
-        OnClick = SpTBXButton98Click
-      end
       object SpTBXButton104: TSpTBXButton
         Left = 8
         Top = 660
@@ -8858,7 +8814,7 @@ object Form1: TForm1
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 0
         OnClick = SpTBXButton84Click
       end
       object TrackBar1: TTrackBar
@@ -8869,7 +8825,7 @@ object Form1: TForm1
         Max = 100
         Min = 1
         Position = 100
-        TabOrder = 5
+        TabOrder = 1
         OnChange = TrackBar1Change
       end
       object CheckBox1: TCheckBox
@@ -8878,7 +8834,7 @@ object Form1: TForm1
         Width = 200
         Height = 32
         Caption = 'Speed Test '
-        TabOrder = 6
+        TabOrder = 2
         OnClick = CheckBox1Click
       end
       object Edit1: TEdit
@@ -8886,7 +8842,7 @@ object Form1: TForm1
         Top = 340
         Width = 250
         Height = 43
-        TabOrder = 7
+        TabOrder = 3
         Text = 'unitedndt'
         OnExit = Edit1Exit
       end
@@ -8902,7 +8858,7 @@ object Form1: TForm1
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 8
+        TabOrder = 4
         Visible = False
         OnClick = SpTBXButton84Click
       end
@@ -8911,7 +8867,7 @@ object Form1: TForm1
         Top = 244
         Width = 250
         Height = 43
-        TabOrder = 9
+        TabOrder = 5
         Text = '500'
         OnExit = Edit2Exit
       end
@@ -8927,7 +8883,7 @@ object Form1: TForm1
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 10
+        TabOrder = 6
         Visible = False
         OnClick = SpTBXButton84Click
       end
@@ -8943,7 +8899,7 @@ object Form1: TForm1
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 11
+        TabOrder = 7
         Visible = False
         OnClick = SpTBXButton84Click
       end
@@ -8953,12 +8909,12 @@ object Form1: TForm1
         Width = 297
         Height = 32
         Caption = 'Umkehrung OUTPUT'
-        TabOrder = 12
+        TabOrder = 8
         OnClick = CheckBox3Click
       end
     end
     object GroupBox9: TGroupBox
-      Left = 1190
+      Left = 300
       Top = 8
       Width = 377
       Height = 749
@@ -8974,45 +8930,39 @@ object Form1: TForm1
       TabOrder = 11
       Visible = False
       object SpTBXButton99: TSpTBXButton
-        Left = 350
-        Top = 80
-        Width = 300
+        Left = 54
+        Top = 40
+        Width = 243
         Height = 81
         Caption = 'Time Scanner'
-        Enabled = False
         TabOrder = 0
         OnClick = SpTBXButton99Click
       end
       object SpTBXButton100: TSpTBXButton
-        Left = 350
-        Top = 160
-        Width = 300
+        Left = 54
+        Top = 128
+        Width = 243
         Height = 81
         Caption = 'Encoder Scan'
-        Enabled = False
         TabOrder = 1
         OnClick = SpTBXButton100Click
       end
       object SpTBXButton101: TSpTBXButton
-        Left = 350
-        Top = 248
+        Left = 102
+        Top = 40
         Width = 241
         Height = 81
         Caption = 'X-Y Scanner'
-        Enabled = False
         TabOrder = 2
-        Visible = False
         OnClick = SpTBXButton101Click
       end
       object SpTBXButton102: TSpTBXButton
-        Left = 350
-        Top = 336
+        Left = 102
+        Top = 128
         Width = 241
         Height = 81
         Caption = 'DrawWire'
-        Enabled = False
         TabOrder = 3
-        Visible = False
         OnClick = SpTBXButton102Click
       end
       object SpTBXButton103: TSpTBXButton
@@ -9031,13 +8981,50 @@ object Form1: TForm1
         OnClick = SpTBXButton84Click
       end
       object SpTBXButton72: TSpTBXButton
-        Left = 350
-        Top = 544
+        Left = 30
+        Top = 560
         Width = 300
         Height = 81
         Caption = 'Post Processing'
         TabOrder = 5
         OnClick = SpTBXButton72Click
+      end
+      object SpTBXButton95: TSpTBXButton
+        Left = 24
+        Top = 40
+        Width = 241
+        Height = 81
+        Caption = 'Line Scan'
+        TabOrder = 6
+        OnClick = SpTBXButton95Click
+      end
+      object SpTBXButton96: TSpTBXButton
+        Left = 24
+        Top = 128
+        Width = 241
+        Height = 81
+        Caption = 'TOF-D'
+        TabOrder = 7
+        OnClick = SpTBXButton96Click
+      end
+      object SpTBXButton97: TSpTBXButton
+        Left = 32
+        Top = 472
+        Width = 241
+        Height = 81
+        Caption = 'Floor Map'
+        TabOrder = 8
+        Visible = False
+        OnClick = SpTBXButton97Click
+      end
+      object SpTBXButton98: TSpTBXButton
+        Left = 24
+        Top = 216
+        Width = 241
+        Height = 81
+        Caption = 'C-Scan'
+        TabOrder = 9
+        OnClick = SpTBXButton98Click
       end
     end
     object GroupBox8: TGroupBox
@@ -13243,7 +13230,7 @@ object Form1: TForm1
   end
   object SpTBXComboBox7: TSpTBXComboBox
     Left = 608
-    Top = 936
+    Top = 896
     Width = 201
     Height = 41
     Font.Charset = DEFAULT_CHARSET
@@ -13337,11 +13324,11 @@ object Form1: TForm1
     ParentColor = False
   end
   object SpTBXButton74: TLMDButton
-    Left = 488
-    Top = 834
+    Left = 648
+    Top = 764
     Width = 122
     Height = 40
-    Caption = 'DAC/DGS'
+    Caption = 'Scann'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -24
@@ -13373,7 +13360,7 @@ object Form1: TForm1
     ParentColor = False
   end
   object SpTBXButton80: TLMDButton
-    Left = 768
+    Left = 776
     Top = 764
     Width = 122
     Height = 40
@@ -13463,8 +13450,8 @@ object Form1: TForm1
     ParentColor = False
   end
   object SpTBXComboBox3: TSpTBXComboBox
-    Left = 400
-    Top = 948
+    Left = 104
+    Top = 892
     Width = 105
     Height = 21
     ItemHeight = 13
@@ -13494,8 +13481,8 @@ object Form1: TForm1
     OnClick = CheckBox2Click
   end
   object Memo1: TMemo
-    Left = 784
-    Top = 872
+    Left = 832
+    Top = 824
     Width = 441
     Height = 89
     Lines.Strings = (
@@ -13520,14 +13507,14 @@ object Form1: TForm1
     Interval = 100
     OnTimer = Timer2Timer
     ThreadPriority = tpHigher
-    Left = 312
-    Top = 952
+    Left = 64
+    Top = 880
   end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 184
-    Top = 920
+    Left = 32
+    Top = 880
   end
   object SVATimer1: TSVATimer
     Interval = 500

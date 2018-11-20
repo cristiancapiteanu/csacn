@@ -4,7 +4,7 @@ object Form8: TForm8
   BorderStyle = bsNone
   Caption = 'US Card'
   ClientHeight = 697
-  ClientWidth = 128
+  ClientWidth = 1291
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -189,7 +189,7 @@ object Form11: TForm11
     end
     object SpTBXButton5: TSpTBXButton
       Left = 1160
-      Top = 541
+      Top = 653
       Width = 105
       Height = 92
       Caption = 'Start'
