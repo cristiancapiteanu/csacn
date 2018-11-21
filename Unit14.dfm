@@ -708,7 +708,6 @@ object Form14: TForm14
       Caption = 'Built in'
       Color = clTeal
       TabOrder = 6
-      Visible = False
       OnClick = SpTBXCheckBox10Click
     end
     object SpTBXButton23: TSpTBXButton

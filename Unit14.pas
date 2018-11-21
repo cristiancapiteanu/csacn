@@ -857,31 +857,28 @@ begin
 
       enc_cur_x1:= enc_cur_x;
       enc_cur_y1:= enc_cur_y;
-      if encoder[encoder_index].enc_x_inv then enc_cur_x1:=-1*enc_cur_x;
-      if encoder[encoder_index].enc_y_inv then enc_cur_y1:=-1*enc_cur_y;
+     // if encoder[encoder_index].enc_x_inv then enc_cur_x1:=-1*enc_cur_x;
+   //   if encoder[encoder_index].enc_y_inv then enc_cur_y1:=-1*enc_cur_y;
 
       enc_cal_x:=enc_cur_x1;
       enc_cal_y:=enc_cur_y1;
 
-      enc_cur_x1:=enc_cur_x1*encoder[encoder_index].enc_x_rez;
-      enc_cur_y1:=enc_cur_y1*encoder[encoder_index].enc_y_rez;
+   //   enc_cur_x1:=enc_cur_x1*encoder[encoder_index].enc_x_rez;
+   //   enc_cur_y1:=enc_cur_y1*encoder[encoder_index].enc_y_rez;
 
 
-      if offset_flag then begin
-          offset_flag:=false;
-          enc_cur_x_offset:=enc_cur_x1;
-          enc_cur_y_offset:=enc_cur_y1;
-          //enc_cur_x1 :=0;
-          //enc_cur_y1 :=0;
-          //enc_cal_x:=0;
-          //enc_cal_y:=0;
-      end;
 
-      enc_cur_x1:=enc_cur_x1-enc_cur_x_offset;
-      enc_cur_y1:=enc_cur_y1-enc_cur_y_offset;
+  //  enc_cur_x1:=enc_cur_x1-enc_cur_x_offset;
+    //  enc_cur_y1:=enc_cur_y1-enc_cur_y_offset;
 
-      if not encoder[encoder_index].enc_x_enbl then enc_cur_x1:=0;
-      if not encoder[encoder_index].enc_y_enbl then enc_cur_y1:=0;
+      
+
+
+
+   //   if not encoder[encoder_index].enc_x_enbl then enc_cur_x1:=0;
+    //  if not encoder[encoder_index].enc_y_enbl then enc_cur_y1:=0;
+
+      label3.Caption :='Coor Pos: '+intToStr(trunc(enc_cur_x))+'[mm] x '+IntToStr(trunc(enc_cur_y))+' [mm]';
 
       if SpTBXCheckBox7.Checked then begin
 //      if SpTBXCheckBox7.Checked and (enc_cur_x>X_axis_len) then begin
@@ -911,17 +908,17 @@ begin
       else
         xy_coor.y:=0;
 
-      label1.Caption :='Pos: '+intToStr(trunc(enc_cur_x))+'[stp] x '+IntToStr(trunc(enc_cur_y))+' [stp]';
+      
 
       label2.Caption :='Scan Pos: '+intToStr(trunc(xy_coor.x))+'[mm] x '+IntToStr(trunc(xy_coor.y))+' [mm]';
-      label3.Caption :='Coor Pos: '+intToStr(trunc(enc_cur_x1))+'[mm] x '+IntToStr(trunc(enc_cur_y1))+' [mm]';
 
       if SpTBXCheckBox8.Checked and (enc_cur_x1>X_axis_len) and (start_scann)then SpTBXButton22Click(sender);
       if SpTBXCheckBox9.Checked and (enc_cur_y1>Y_axis_len) and (start_scann)then SpTBXButton22Click(sender);
 
 
        form11.Label20.Caption :='Pos: '+FloatToStrF((xy_coor.x),ffFixed,6,2)+'mm ';//+FloatToStrF((enc_cur_x_offset),ffFixed,6,2)+'mm';;
-       form15.Label20.Caption :='Pos: '+FloatToStrF((xy_coor.x),ffFixed,6,2)+'mm x '+FloatToStrF((xy_coor.y),ffFixed,6,2)+'mm';
+       form15.Label20.Caption :=label3.Caption;//'Pos: '+FloatToStrF((xy_coor.x),ffFixed,6,2)+'mm x '+FloatToStrF((xy_coor.y),ffFixed,6,2)+'mm';
+      // form15.Label20.Caption :='Pos: '+FloatToStrF((xy_coor.x),ffFixed,6,2)+'mm x '+FloatToStrF((xy_coor.y),ffFixed,6,2)+'mm';
 
   end;
   except
@@ -1541,7 +1538,7 @@ begin
       if SpTBXButton22.Caption='Start' then   begin
 //      if not ScannerMove then   begin
 
-          timer1.Enabled := false;
+          //timer1.Enabled := false;
           SpTBXButton22.Caption:='Stop';
           form11.SpTBXButton5.Caption:=SpTBXButton22.Caption;
           form15.SpTBXButton5.Caption:=SpTBXButton22.Caption;
@@ -1604,7 +1601,7 @@ begin
 
           time_scann_counter:=Form11.image10.Width;
 
-          offset_flag:=true;
+          //offset_flag:=true;
           time_scann_counter:=0;
           rest_scr :=true;
 

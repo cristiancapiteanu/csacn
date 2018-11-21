@@ -2549,12 +2549,12 @@ try
                       us_mess[i].tof:=r_val;
                   end;
 // scann_counter_old :=scann_counter;
-        if start_scann then   //////////////////////////////////////  scann
+          if start_scann then   //////////////////////////////////////  scann
 									      inc(scann_counter);
 
-                  scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
-                  scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
-                  scann_arr[scann_counter].US_Mess[3] :=us_mess[3];
+          scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
+          scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
+          scann_arr[scann_counter].US_Mess[3] :=us_mess[3];
 
   except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
@@ -2570,13 +2570,22 @@ try
                    //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
                    //enc_cur_y:=encod_t;
 
-                  if encoder_index>0 then
+                  if encoder_index>=0 then
                   begin
+                       if form14.Visible then
+                          form14.label1.Caption :='Pos: '+intToStr(trunc(enc_cur_x))+'[stp] x '+IntToStr(trunc(enc_cur_y))+' [stp]';
+                          if form14.offset_flag then begin
+                                    form14.offset_flag:=false;
+                                    enc_cur_x_offset:=enc_cur_x;
+                                    enc_cur_y_offset:=enc_cur_y;
+                          end;
+
                        if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
                        if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
 
                        enc_cur_x:=enc_cur_x*encoder[encoder_index].enc_x_rez;
                        enc_cur_y:=enc_cur_y*encoder[encoder_index].enc_y_rez;
+
                        enc_cur_x:=enc_cur_x-enc_cur_x_offset;
                        enc_cur_y:=enc_cur_y-enc_cur_y_offset;
 
@@ -2584,7 +2593,6 @@ try
                        if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
                   end;
 
-                  //form15.Label20.Caption :='Pos: '+FloatToStrF((enc_cur_x),ffFixed,6,2)+'mm x '+FloatToStrF((enc_cur_y),ffFixed,6,2)+'mm';
 
                   if scaner_type=2 then begin
                      scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
@@ -3900,6 +3908,8 @@ begin
               r_val1:=r_val;
               x1:=scann_arr[l].xy_coor.x;
               y1:=scann_arr[l].xy_coor.y;
+
+
 
               if live_scan_grid then begin
                 x11:=(x1/x_axis_rez);

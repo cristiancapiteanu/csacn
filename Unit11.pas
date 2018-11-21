@@ -175,7 +175,7 @@ end;
 procedure TForm11.SpTBXButton1Click(Sender: TObject);
 
 begin
-  form14.offset_flag:=true;
+  //form14.offset_flag:=true;
   Form11.image10.Canvas.Pen.Color:=clBlack;
   Form11.image10.Canvas.Pen.Width:=1;
   Form11.image10.Canvas.Brush.Style:=bsSolid	 ;

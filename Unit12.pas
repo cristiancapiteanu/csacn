@@ -1243,7 +1243,7 @@ begin
       form12.Hide;
 
       form15.Show;
-      form15.FormStyle:=fsStayOnTop;
+      //form15.FormStyle:=fsStayOnTop;
       form15.BringToFront;
       b_form15_on := true;
      // form15.spTBXComboBox1.ItemIndex:=0;
