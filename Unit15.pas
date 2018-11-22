@@ -477,7 +477,7 @@ end;
 
 procedure TForm15.SpTBXButton3Click(Sender: TObject);
 begin
-form17.Hide;
+     form17.Hide;
 
 {
    if b_form11_on then begin

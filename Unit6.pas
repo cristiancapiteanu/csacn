@@ -7311,7 +7311,7 @@ Label36.Caption:='Status:';
 active_form:=1;
 LEFT :=0;
 TOP:=0;
-form6.WindowState:=wsMinimized;
+//form6.WindowState:=wsMinimized;
 end;
 
 procedure TForm6.SpTBXSpinEdit20Exit(Sender: TObject);

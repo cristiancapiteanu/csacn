@@ -1285,6 +1285,7 @@ s:string;
 StringGrid:TStringGrid;
 begin
   try
+     encoder_index := -1;
      result:=0;
      us_starting:=true;
      US_Connected:= true;
@@ -1852,7 +1853,7 @@ begin
 try
 //  timer2.Enabled:=false;
   //if (not US_Connected ) and checkBox2.Checked then checkBox2.Checked :=false;
-  if  us_starting then exit;
+  if us_starting then exit;
   if timer2_fire then exit;
 
 //  if US_Connected then begin
@@ -3962,13 +3963,13 @@ begin
                 ttt:=point_rezx;
                 ttt1:=point_rezy;
                 if form15.CheckBox4.checked then
-                if  point_rezx >= point_rezy then begin
-                  ttt:=point_rezx;
-                  ttt1:=point_rezx;
-                end else begin
-                  ttt:=point_rezy;
-                  ttt1:=point_rezy;
-                end;
+                   if  point_rezx >= point_rezy then begin
+                      ttt:=point_rezx;
+                      ttt1:=point_rezx;
+                   end else begin
+                       ttt:=point_rezy;
+                       ttt1:=point_rezy;
+                   end;
 
                 if form15.SpTBXRadioButton7.Checked then
                   form15.image1.canvas.rectangle(trunc(x1),trunc(y1),round(x1+ttt),round(y1+ttt1));
@@ -4379,6 +4380,7 @@ with form1 do begin
                         if (form8.SpTBXListBox2.ItemIndex = 0) then Draw_ASCAN_BSCAN;
                     end;
                     Draw_ASCAN_Post_SCANN ;
+                    scann_counter_old :=scann_counter;
                 end;
 
                 if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
@@ -10745,12 +10747,12 @@ begin
       SpTBXButton99.visible := false;
       SpTBXButton100.visible := false;
       SpTBXButton101.visible := false;
-      SpTBXButton102.visible := false;
+      //SpTBXButton102.visible := false;
     end else begin
         SpTBXButton99.visible := false;
         SpTBXButton100.visible := false;
         SpTBXButton101.visible := true;
-        SpTBXButton102.visible := true;
+       // SpTBXButton102.visible := true;
     end;
 
 
@@ -11110,9 +11112,16 @@ end;
 procedure TForm1.SpTBXButton72Click(Sender: TObject);
 begin
 
+     timer2.Enabled:= false;
+
   postpros:=true;
   start_scann:=false;
   form8.SpTBXListBox2Click(Sender);
+  form6.Height:=860;
+  form6.Width:=1300;
+  form6.Visible:= true;
+  form6.Show;
+  form6.WindowState:=wsNormal;
   form6.FormStyle:=fsStayOnTop;
   form6.BringToFront;
 

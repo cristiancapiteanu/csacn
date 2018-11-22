@@ -1,11 +1,11 @@
 object Form6: TForm6
-  Left = 0
-  Top = 14
+  Left = 80
+  Top = 19
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 0
-  ClientWidth = 116
+  ClientHeight = 43
+  ClientWidth = 128
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,6 +13,7 @@ object Form6: TForm6
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Visible = True
   WindowState = wsMinimized
   OnActivate = FormActivate
   OnCreate = FormCreate

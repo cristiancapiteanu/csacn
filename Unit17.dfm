@@ -29,7 +29,6 @@ object Form17: TForm17
     OnMouseUp = Image1MouseUp
   end
   object Timer1: TTimer
-    Interval = 2000
     OnTimer = Timer1Timer
     Left = 104
     Top = 40

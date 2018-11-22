@@ -566,8 +566,8 @@ object Form15: TForm15
       'Max')
   end
   object CheckBox3: TCheckBox
-    Left = 608
-    Top = 872
+    Left = 592
+    Top = 880
     Width = 105
     Height = 33
     Caption = 'Position'

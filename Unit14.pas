@@ -1613,11 +1613,19 @@ begin
 
          form1.Timer2.Enabled:=false;
 
+         while timer2_fire do
+         begin
+         application.ProcessMessages;
+         end;
+
+
        //  form19.label2.caption:=(IntToStr(scann_counter_old1)+' '+IntToStr(scann_counter));
        //  form19.show;
        //  form19.BringToFront;
        //  application.ProcessMessages;
-          scann_counter_old1:=scann_counter;
+
+         scann_counter_old1:=scann_counter;
+         //map
          if form8.TreeView1.Items.Item[6].Selected and (Form15.SpTBXComboBox1.ItemIndex=1) then begin
             scann_counter:=0;;
             for i:=0 to round(X_axis_len/x_axis_rez)+1 do begin
@@ -1631,14 +1639,14 @@ begin
          end;
 
          timer1.Enabled := true;
-          start_scann:=false;
-          ScannerMove:=false;
-          SpTBXButton22.Caption:='Start';
-          form11.SpTBXButton5.Caption:=SpTBXButton22.Caption;
-          form15.SpTBXButton5.Caption:=SpTBXButton22.Caption;
+         start_scann:=false;
+         ScannerMove:=false;
+         SpTBXButton22.Caption:='Start';
+         form11.SpTBXButton5.Caption:=SpTBXButton22.Caption;
+         form15.SpTBXButton5.Caption:=SpTBXButton22.Caption;
 
 
-
+  {
   form1.FormStyle:=fsNormal;
   form10.FormStyle:=fsNormal;
   form11.FormStyle:=fsNormal;
@@ -1650,7 +1658,7 @@ begin
   if form11.Visible then form11.SendToBack;
   if form14.Visible then form14.SendToBack;
   if form15.Visible then form15.SendToBack;
-
+   }
           TabSheet3.Enabled:=encoder[encoder_index].enc_x_enbl;
           TabSheet4.Enabled:=encoder[encoder_index].enc_y_enbl;
           {

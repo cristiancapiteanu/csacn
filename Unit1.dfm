@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 969
+  ClientHeight = 970
   ClientWidth = 1280
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -8930,39 +8930,40 @@ object Form1: TForm1
       TabOrder = 11
       Visible = False
       object SpTBXButton99: TSpTBXButton
-        Left = 54
-        Top = 40
-        Width = 243
+        Left = 30
+        Top = 48
+        Width = 299
         Height = 81
         Caption = 'Time Scanner'
         TabOrder = 0
         OnClick = SpTBXButton99Click
       end
       object SpTBXButton100: TSpTBXButton
-        Left = 54
-        Top = 128
-        Width = 243
+        Left = 30
+        Top = 136
+        Width = 299
         Height = 81
         Caption = 'Encoder Scan'
         TabOrder = 1
         OnClick = SpTBXButton100Click
       end
       object SpTBXButton101: TSpTBXButton
-        Left = 102
-        Top = 40
-        Width = 241
+        Left = 30
+        Top = 48
+        Width = 299
         Height = 81
         Caption = 'X-Y Scanner'
         TabOrder = 2
         OnClick = SpTBXButton101Click
       end
       object SpTBXButton102: TSpTBXButton
-        Left = 102
-        Top = 128
+        Left = 32
+        Top = 384
         Width = 241
         Height = 81
         Caption = 'DrawWire'
         TabOrder = 3
+        Visible = False
         OnClick = SpTBXButton102Click
       end
       object SpTBXButton103: TSpTBXButton
@@ -8990,18 +8991,18 @@ object Form1: TForm1
         OnClick = SpTBXButton72Click
       end
       object SpTBXButton95: TSpTBXButton
-        Left = 24
-        Top = 40
-        Width = 241
+        Left = 32
+        Top = 48
+        Width = 297
         Height = 81
         Caption = 'Line Scan'
         TabOrder = 6
         OnClick = SpTBXButton95Click
       end
       object SpTBXButton96: TSpTBXButton
-        Left = 24
-        Top = 128
-        Width = 241
+        Left = 32
+        Top = 136
+        Width = 297
         Height = 81
         Caption = 'TOF-D'
         TabOrder = 7
@@ -9018,9 +9019,9 @@ object Form1: TForm1
         OnClick = SpTBXButton97Click
       end
       object SpTBXButton98: TSpTBXButton
-        Left = 24
-        Top = 216
-        Width = 241
+        Left = 32
+        Top = 224
+        Width = 297
         Height = 81
         Caption = 'C-Scan'
         TabOrder = 9

@@ -35,7 +35,6 @@ begin
   Application.CreateForm(TForm8, Form8);
   Application.CreateForm(TForm6, Form6);
   Application.CreateForm(TForm11, Form11);
-  Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TForm3, Form3);
   Application.CreateForm(TForm4, Form4);
@@ -50,6 +49,7 @@ begin
   Application.CreateForm(TForm17, Form17);
   Application.CreateForm(TForm18, Form18);
   Application.CreateForm(TForm19, Form19);
+  Application.CreateForm(TForm1, Form1);
   start_redy:=true;
   Application.Run;
 end.
