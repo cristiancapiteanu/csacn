@@ -1,4 +1,4 @@
-                   unit Unit1;
+                               unit Unit1;
 
 interface
 
@@ -1086,7 +1086,7 @@ try
       check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_a, optel_encoder_enable);
       check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_a, 0);
       check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_a, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_a, 0);       //1x
+      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_a, 2);       //4x
       check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_a, 0);     //disable
       check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_a, 0);      //step 0
       check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_a, 0);   //enabled
@@ -1094,7 +1094,7 @@ try
       check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_b, optel_encoder_enable);
       check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_b, 0);
       check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_b, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_b, 0);       //1x
+      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_b, 2);       //4x
       check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_b, 0);     //enabled
       check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_b, 0);      //step 0
       check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_b, 0);   //enabled
@@ -1402,7 +1402,7 @@ begin
       check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_a, optel_encoder_enable);
       check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_a, 0);
       check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_a, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_a, 0);       //1x
+      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_a, 2);       //4x
       check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_a, 0);     //disable
       check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_a, 0);      //step 0
       check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_a, 0);   //enabled
@@ -1410,7 +1410,7 @@ begin
       check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_b, optel_encoder_enable);
       check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_b, 0);
       check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_b, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_b, 0);       //1x
+      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_b, 2);       //4x
       check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_b, 0);     //enabled
       check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_b, 0);      //step 0
       check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_b, 0);   //enabled
@@ -2581,14 +2581,20 @@ try
                                     enc_cur_y_offset:=enc_cur_y;
                           end;
 
-                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
-                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
-
-                       enc_cur_x:=enc_cur_x*encoder[encoder_index].enc_x_rez;
-                       enc_cur_y:=enc_cur_y*encoder[encoder_index].enc_y_rez;
+                       enc_cal_x:=enc_cur_x;
+                       enc_cal_y:=enc_cur_y;
 
                        enc_cur_x:=enc_cur_x-enc_cur_x_offset;
                        enc_cur_y:=enc_cur_y-enc_cur_y_offset;
+
+                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
+                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
+
+                       if encoder[encoder_index].enc_x_rez<>0 then
+                          enc_cur_x:=enc_cur_x*abs(encoder[encoder_index].enc_x_rez);
+                       if encoder[encoder_index].enc_y_rez <>0 then
+                          enc_cur_y:=enc_cur_y*abs(encoder[encoder_index].enc_y_rez);
+
 
                        if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
                        if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
@@ -3885,7 +3891,7 @@ begin
                   if radiobutton26.Checked  then Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
                   if radiobutton25.Checked  then
                     if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000)  ,ffFixed,6,2)+' [mm]'
+                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*0.5*us_sv/1000)  ,ffFixed,6,2)+' [mm]'
                     else
                         Form15.label2.Caption :='Val : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                 end ;
@@ -4056,7 +4062,7 @@ begin
               end;
               if radiobutton25.Checked  then begin
                     if TRCal((r_val1-us_probe_delay)*us_sv/1000) >=0 then
-                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),FloatToStrF(TRCal((r_val1-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),FloatToStrF(TRCal((r_val1-us_probe_delay)*0.5*us_sv/1000) ,ffFixed,6,2))
                     else
                       form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),'±');
 

@@ -1310,7 +1310,7 @@ begin
 //  form6.have_data10:=false;
 //  form6.have_data11:=true;
     for i:= 1 to 16 do begin
-        pallete[i].value := InvTRCal((form1.edit8.Value+(i-1)*form1.edit9.Value/15))*1000/us_sv+us_probe_delay;
+        pallete[i].value := InvTRCal((form1.edit8.Value+(i-1)*form1.edit9.Value/15))*1000/(0.5*us_sv)+us_probe_delay;
     end;
 
     Only_Draw_Pallete;

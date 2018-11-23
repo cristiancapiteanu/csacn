@@ -860,8 +860,8 @@ begin
      // if encoder[encoder_index].enc_x_inv then enc_cur_x1:=-1*enc_cur_x;
    //   if encoder[encoder_index].enc_y_inv then enc_cur_y1:=-1*enc_cur_y;
 
-      enc_cal_x:=enc_cur_x1;
-      enc_cal_y:=enc_cur_y1;
+//      enc_cal_x:=enc_cur_x1;
+//      enc_cal_y:=enc_cur_y1;
 
    //   enc_cur_x1:=enc_cur_x1*encoder[encoder_index].enc_x_rez;
    //   enc_cur_y1:=enc_cur_y1*encoder[encoder_index].enc_y_rez;
@@ -1508,7 +1508,7 @@ procedure TForm14.SpTBXButton1Click(Sender: TObject);
 begin
   if SpTBXButton1.Caption='Start' then begin
       SpTBXButton1.Caption:='Stop';
-       enc_cal_x_off:=enc_cal_x;
+      enc_cal_x_off:=enc_cal_x;
   end else begin
       SpTBXButton1.Caption:='Start';
       encoder[encoder_index].enc_x_steps:=enc_cal_x-enc_cal_x_off;
