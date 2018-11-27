@@ -1,10 +1,10 @@
 object Form15: TForm15
-  Left = 189
-  Top = 11
+  Left = 219
+  Top = 104
   BorderStyle = bsNone
   Caption = 'C-SCAN'
-  ClientHeight = 934
-  ClientWidth = 1278
+  ClientHeight = 806
+  ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,13 +23,13 @@ object Form15: TForm15
   object Label20: TLabel
     Left = 321
     Top = 760
-    Width = 64
-    Height = 35
+    Width = 53
+    Height = 29
     Caption = 'Pos: '
     Color = clTeal
     Font.Charset = ANSI_CHARSET
     Font.Color = clBlack
-    Font.Height = -29
+    Font.Height = -24
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentColor = False
@@ -38,26 +38,26 @@ object Form15: TForm15
   object Label1: TLabel
     Left = 16
     Top = 760
-    Width = 51
-    Height = 35
+    Width = 42
+    Height = 29
     Caption = 'REC'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -29
+    Font.Height = -24
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 81
+    Left = 65
     Top = 760
-    Width = 49
-    Height = 35
+    Width = 40
+    Height = 29
     Caption = 'Val:'
     Color = clTeal
     Font.Charset = ANSI_CHARSET
     Font.Color = clBlack
-    Font.Height = -29
+    Font.Height = -24
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentColor = False
@@ -83,7 +83,6 @@ object Form15: TForm15
     Top = 0
     Width = 1286
     Height = 757
-    Caption = 'C-Scan'
     TabOrder = 0
     object Shape1: TShape
       Left = 20
@@ -123,7 +122,7 @@ object Form15: TForm15
       Height = 600
     end
     object SpTBXGroupBox1: TSpTBXGroupBox
-      Left = 16
+      Left = 24
       Top = 6
       Width = 1017
       Height = 51
@@ -180,7 +179,7 @@ object Form15: TForm15
     end
     object SpTBXGroupBox2: TSpTBXGroupBox
       Left = 1064
-      Top = 14
+      Top = 6
       Width = 73
       Height = 737
       TabOrder = 2

@@ -1,12 +1,12 @@
 object Form12: TForm12
-  Left = 1080
-  Top = 6
+  Left = 1048
+  Top = 121
   HorzScrollBar.Visible = False
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'Pallete'
-  ClientHeight = 823
-  ClientWidth = 692
+  ClientHeight = 809
+  ClientWidth = 662
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -426,9 +426,9 @@ object Form12: TForm12
     end
   end
   object GroupBox5: TGroupBox
-    Left = 8
-    Top = 672
-    Width = 641
+    Left = 0
+    Top = 664
+    Width = 649
     Height = 81
     Caption = 'Files'
     Font.Charset = DEFAULT_CHARSET
@@ -653,7 +653,7 @@ object Form12: TForm12
     end
     object Edit11: TEdit
       Left = 208
-      Top = 64
+      Top = 40
       Width = 81
       Height = 41
       Font.Charset = DEFAULT_CHARSET
@@ -665,6 +665,21 @@ object Form12: TForm12
       TabOrder = 0
       Text = '0'
       OnChange = Edit11Change
+    end
+    object SpTBXCheckBox2: TSpTBXCheckBox
+      Left = 208
+      Top = 88
+      Width = 73
+      Height = 35
+      Caption = 'Auto'
+      Enabled = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
     end
   end
   object Button10: TLMDButton
@@ -770,6 +785,7 @@ object Form12: TForm12
     Font.Style = []
     ParentFont = False
     TabOrder = 13
+    Visible = False
     object LMDButton1: TLMDButton
       Left = 94
       Top = 33

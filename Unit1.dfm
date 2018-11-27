@@ -3,8 +3,8 @@ object Form1: TForm1
   Top = 0
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 970
-  ClientWidth = 1280
+  ClientHeight = 809
+  ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -8914,7 +8914,7 @@ object Form1: TForm1
       end
     end
     object GroupBox9: TGroupBox
-      Left = 300
+      Left = 1190
       Top = 8
       Width = 377
       Height = 749
@@ -8988,6 +8988,7 @@ object Form1: TForm1
         Height = 81
         Caption = 'Post Processing'
         TabOrder = 5
+        Visible = False
         OnClick = SpTBXButton72Click
       end
       object SpTBXButton95: TSpTBXButton
@@ -9029,7 +9030,7 @@ object Form1: TForm1
       end
     end
     object GroupBox8: TGroupBox
-      Left = 1190
+      Left = 300
       Top = 8
       Width = 377
       Height = 749
@@ -13329,7 +13330,7 @@ object Form1: TForm1
     Top = 764
     Width = 122
     Height = 40
-    Caption = 'Scann'
+    Caption = 'Scan'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -24

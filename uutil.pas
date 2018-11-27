@@ -265,6 +265,8 @@ function ColorsBetween(const ColorA, ColorB: TColor; const Count: Integer): TCol
 function TRCal( x:real):real;
 function InvTRCal( x:real):real;
 function DAC_X(x:real):real;
+function US_calc:real;
+function US1_calc:real;
 
 
 var
@@ -512,9 +514,23 @@ frame_buffer_old:integer;
         gpo0_c, gpo1_c ,gpo2_c ,gpo3_c ,gpo4_c ,gpo5_c :integer;
         alarm_timer:integer;
 
+        echo_dif:real;
+        gate1start,gate2start, gate3start:real;
+
 implementation
 
 uses unit1,unit7,unit6,unit9,unit3,unit8;
+
+function US_calc:real;
+begin
+     us_calc:= us_sv/1000/2;
+end;
+
+function US1_calc:real;
+begin
+     us1_calc:= us_sv1/1000/2;
+end;
+
 
 function DAC_X(x:real):real;
 var
@@ -1018,27 +1034,27 @@ begin
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate1Str%';
-		replaceString:=FloatToStrF(((gates[1].start-us_probe_delay)*us_sv/1000/mm_us) ,ffFixed	,6,2);
+		replaceString:=FloatToStrF(((gates[1].start-us_probe_delay)*us_calc) ,ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate2Str%';
-		replaceString:=FloatToStrF(((gates[2].start-us_probe_delay)*us_sv/1000/mm_us),ffFixed	,6,2);
+		replaceString:=FloatToStrF(((gates[2].start-us_probe_delay)*us_calc),ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate3Str%';
-		replaceString:=FloatToStrF(((gates[3].start-us_probe_delay)*us_sv/1000/mm_us) ,ffFixed	,6,2);
+		replaceString:=FloatToStrF(((gates[3].start-us_probe_delay)*us_calc) ,ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate1Wdt%';
-		replaceString:=FloatToStrF((gates[1].width*us_sv/1000/mm_us)  ,ffFixed	,6,2);
+		replaceString:=FloatToStrF((gates[1].width*us_calc)  ,ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate2Wdt%';
-		replaceString:=FloatToStrF((gates[2].width*us_sv/1000/mm_us)  ,ffFixed	,6,2);
+		replaceString:=FloatToStrF((gates[2].width*us_calc)  ,ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate3Wdt%';
-		replaceString:=FloatToStrF((gates[3].width*us_sv/1000/mm_us)  ,ffFixed	,6,2);
+		replaceString:=FloatToStrF((gates[3].width*us_calc)  ,ffFixed	,6,2);
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 		SearchString:='%Gate1Height%';

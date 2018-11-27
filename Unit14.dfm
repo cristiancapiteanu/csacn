@@ -1,13 +1,13 @@
 object Form14: TForm14
-  Left = 816
-  Top = 155
+  Left = 394
+  Top = 117
   VertScrollBar.ButtonSize = 20
   VertScrollBar.Size = 20
   VertScrollBar.Style = ssFlat
   VertScrollBar.Tracking = True
   BorderStyle = bsNone
   Caption = 'Back'
-  ClientHeight = 822
+  ClientHeight = 809
   ClientWidth = 632
   Color = clTeal
   Font.Charset = ANSI_CHARSET

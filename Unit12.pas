@@ -68,6 +68,7 @@ type
     SpTBXTrackBar4: TSpTBXTrackBar;
     GroupBox6: TGroupBox;
     LMDButton1: TLMDButton;
+    SpTBXCheckBox2: TSpTBXCheckBox;
     procedure RadioButton23Click(Sender: TObject);
     procedure RadioButton24Click(Sender: TObject);
     procedure SpTBXTrackBar1Change(Sender: TObject);
@@ -261,12 +262,12 @@ begin
     d:=pallete[2].value-pallete[1].value;
 
     if TrackBar2.Position >50 then begin
-      d:=d*1.05;
+      d:=d*1.01;
       for i:=1 to 16 do
          pallete[i].value:= x0+d*i;
     end ;
     if TrackBar2.Position <50 then begin
-      d:=d*0.95;
+      d:=d*0.99;
       for i:=1 to 16 do
          pallete[i].value:= x0+d*i;
     end;
@@ -305,13 +306,13 @@ begin
     d:=pallete[16].value-pallete[15].value;
 
     if TrackBar3.Position > 50 then begin
-      d:=d*0.95;
+      d:=d*0.99;
       for i:=15 downto 1 do
          pallete[i].value:= x0-d*(17-i);
     end ;
 
     if TrackBar3.Position < 50 then begin
-      d:=d*1.05;
+      d:=d*1.01;
       for i:=15 downto 1 do
          pallete[i].value:= x0-d*(17-i);
     end;
@@ -334,14 +335,17 @@ begin
 
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              edit11.Text :=FloatToStrF(TRCal(((pallete[curentColor].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2)
+              edit11.Text :=FloatToStrF(TRCal(((pallete[curentColor].value)-us_probe_delay1)*us1_calc) ,ffFixed,6,2)
         else
-              edit11.Text :=FloatToStrF(TRCal(((pallete[curentColor].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2)
+              edit11.Text :=FloatToStrF(TRCal(((pallete[curentColor].value)-us_probe_delay)*us_calc) ,ffFixed,6,2)
       end else
         edit11.Text :=FloatToStrF((pallete[curentColor].value) ,ffFixed,6,2) ;
 
 //      edit11.Text :=FloatToStrF(TRCal(pallete[curentColor].value ),ffFixed,6,2);
 
+        if( curentColor = 1 ) or (curentColor=16) then
+        SpTBXCheckBox2.Enabled := true else
+        SpTBXCheckBox2.enabled := false;
 
   except
     on E : Exception do
@@ -469,6 +473,9 @@ begin
 end;
 
 procedure TForm12.Edit11Change(Sender: TObject);
+var
+rval1, rval2, rval3:real;
+i:integer;
 begin
     Screen.Cursor := crHourGlass;
   try
@@ -477,17 +484,88 @@ begin
 //  form6.have_data10:=false;       form6.have_data11:=true;
 
 
+
+       if SpTBXCheckBox1.Checked then begin
+             if active_form=1 then begin
+                rval1:=InvTRCal(StrToFloat(edit11.Text))/us1_calc+us_probe_delay1
+             end else begin
+                rval1:=InvTRCal(StrToFloat(edit11.Text))/us_calc+us_probe_delay
+          end
+       end else begin
+           rval1:=StrToFloat(edit11.Text ) ;
+       end;
+       rval1:=StrToFloat(edit11.Text ) ;
+
+
+    if SpTBXCheckBox2.Checked then begin
+       if curentColor = 1 then begin
+       if SpTBXCheckBox1.Checked then begin
+             if active_form=1 then begin
+                rval2:=TRCal(((pallete[16].value)-us_probe_delay1)*us1_calc )
+             end else begin
+                rval2:=TRCal(((pallete[16].value)-us_probe_delay)*us_calc)
+          end
+       end else begin
+           rval2:=pallete[16].value ;
+       end;
+
+          for i:= 1 to 16 do begin
+              rval3:=rval1+ (rval2-rval1)*(i-1)/15;
+              if SpTBXCheckBox1.Checked then begin
+              if active_form=1 then begin
+                  pallete[i].value:=InvTRCal(rval3)/us1_calc+us_probe_delay1
+              end  else begin
+                   pallete[i].value:=InvTRCal(rval3)/us_calc+us_probe_delay
+              end
+              end else
+                  pallete[i].value:=rval3 ;
+
+
+          end;
+       end;
+
+       if curentColor = 16 then begin
+       if SpTBXCheckBox1.Checked then begin
+             if active_form=1 then begin
+                rval2:=TRCal(((pallete[1].value)-us_probe_delay1)*us1_calc)
+             end else begin
+                rval2:=TRCal(((pallete[1].value)-us_probe_delay)*us_calc)
+          end
+       end else begin
+           rval2:=pallete[1].value ;
+       end;
+          for i:= 16 downto 1 do begin
+              rval3:=rval1 - (rval1-rval2)*(16-i)/15;
+              if SpTBXCheckBox1.Checked then begin
+              if active_form=1 then begin
+                  pallete[i].value:=InvTRCal(rval3)/us1_calc+us_probe_delay1
+              end  else begin
+                   pallete[i].value:=InvTRCal(rval3)/us_calc+us_probe_delay
+              end
+              end else
+                  pallete[i].value:=rval3 ;
+
+          end;
+       end;
+
+    end else begin
+
       if SpTBXCheckBox1.Checked then begin
-        if active_form=1 then begin               
-              pallete[curentColor].value:=InvTRCal(StrToFloat(edit11.Text))*1000/us_sv1+us_probe_delay1
+        if active_form=1 then begin
+              pallete[curentColor].value:=InvTRCal(StrToFloat(edit11.Text)/us1_calc)+us_probe_delay1
         end  else begin
-              pallete[curentColor].value:=InvTRCal(StrToFloat(edit11.Text))*1000/us_sv+us_probe_delay
+              rval1:=StrToFloat(edit11.Text)/us_calc;
+              rval2:=InvTRCal(rval1);
+              pallete[curentColor].value:=rval2+us_probe_delay
         end
       end else
         pallete[curentColor].value:=StrToFloat(edit11.Text ) ;
+    end;
 
 
-    Only_Draw_Pallete
+    Only_Draw_Pallete;
+  //  SpTBXButton3.SetFocus;
+
   except
     on E : Exception do
        edit11.Text:='0';
@@ -926,26 +1004,26 @@ begin
   for i:=1 to 15 do begin
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(pallete[i].value ,ffFixed,6,2))
 
   end;
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF((2*pallete[1].value-pallete[2].value) ,ffFixed,6,2));
 
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-18,FloatToStrF(TRCal((pallete[16].value-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-18,FloatToStrF(TRCal((pallete[16].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-18,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-18,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-18,FloatToStrF(pallete[16].value ,ffFixed,6,2));
 
@@ -1016,37 +1094,29 @@ begin
   for i:=1 to 15 do begin
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(TRCal((pallete[i].value-us_probe_delay)*us_calc) ,ffFixed,6,2))
         end else
           image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((i-0)*image7.Height/16)-6,FloatToStrF(pallete[i].value ,ffFixed,6,2))
   end;
 
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((0-0)*image7.Height/16)-0,FloatToStrF((2*pallete[1].value-pallete[2].value) ,ffFixed,6,2));
 
       if SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal((pallete[16].value-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal((pallete[16].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc ) ,ffFixed,6,2))
       end else
         image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(pallete[16].value ,ffFixed,6,2)) ;
-{
-      if SpTBXCheckBox1.Checked then begin
-        if active_form=1 then
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
-        else
-              image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
-      end else
-        image7.Canvas.TextOut(trunc(image7.Width/2)+4,trunc((16-0)*image7.Height/16)-16,FloatToStrF((2*pallete[16].value-pallete[15].value) ,ffFixed,6,2)) ;
- }
+
   if form13.SpTBXCheckBox3.Checked then form13.Button7Click(nil);
 
    if active_form=1 then begin
@@ -1303,6 +1373,8 @@ end;
 procedure TForm12.SpTBXButton3Click(Sender: TObject);
 var
 i:integer;
+r1,r2,r3:real ;
+
 begin
     Screen.Cursor := crHourGlass;
 //  form6.have_data2:=false;
@@ -1310,7 +1382,9 @@ begin
 //  form6.have_data10:=false;
 //  form6.have_data11:=true;
     for i:= 1 to 16 do begin
-        pallete[i].value := InvTRCal((form1.edit8.Value+(i-1)*form1.edit9.Value/15))*1000/(0.5*us_sv)+us_probe_delay;
+        r1:=form1.edit8.Value+(i-1)*form1.edit9.Value/15;
+        r2:=InvTRCal(r1);
+        pallete[i].value := r2*1000/(0.5*us_sv)+us_probe_delay;
     end;
 
     Only_Draw_Pallete;

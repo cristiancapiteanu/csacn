@@ -3106,11 +3106,6 @@ begin
 
 
 
-          //  TRCal((pallete[i].value-us_probe_delay)*us_sv/1000)
-
-            //if not (r_val>0) then r_val:=clWhite;
-//            if not (r_val>0) then r_val:=clLtGray;
-
             image2.Canvas.Pen.Color:=trunc(r_val);
             image2.Canvas.brush.Color:=image2.Canvas.Pen.Color;
 

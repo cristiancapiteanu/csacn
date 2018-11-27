@@ -60,8 +60,8 @@ begin
   //if  CheckBox3.Checked then begin
   if form8.SpTBXListBox2.ItemIndex = 0 then begin
        image2.Visible:=true;
-        min:=TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_sv/1000);
-        max:=TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_sv/1000) ;
+        min:=TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_calc);
+        max:=TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_calc) ;
 
         j:=20+ form11.Image2.Canvas.TextWidth(FloatToStrF( max ,ffFixed,6,2) );
 
@@ -105,26 +105,26 @@ begin
         for i :=1 to 16 do
           if form12.SpTBXCheckBox1.Checked then begin
             if active_form=1 then
-                Form11.image2.Canvas.TextOut(8,trunc((i-0)*Form11.image2.Height/17)-6,FloatToStrF(TRCal((pallete[17-i].value-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+                Form11.image2.Canvas.TextOut(8,trunc((i-0)*Form11.image2.Height/17)-6,FloatToStrF(TRCal((pallete[17-i].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
             else
-                Form11.image2.Canvas.TextOut(8,trunc((i-0)*Form11.image2.Height/17)-6,FloatToStrF(TRCal((pallete[17-i].value-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+                Form11.image2.Canvas.TextOut(8,trunc((i-0)*Form11.image2.Height/17)-6,FloatToStrF(TRCal((pallete[17-i].value-us_probe_delay)*us_calc) ,ffFixed,6,2))
           end else
               Form11.image2.Canvas.TextOut(8,trunc((i-0)*Form11.image2.Height/17)-6,FloatToStrF(pallete[17-i].value ,ffFixed,6,2));
 
 
       if form12.SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              Form11.image2.Canvas.TextOut(8,trunc((17-0)*Form11.image2.Height/17)-16,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              Form11.image2.Canvas.TextOut(8,trunc((17-0)*Form11.image2.Height/17)-16,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              Form11.image2.Canvas.TextOut(8,trunc((17-0)*Form11.image2.Height/17)-16,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              Form11.image2.Canvas.TextOut(8,trunc((17-0)*Form11.image2.Height/17)-16,FloatToStrF(TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         Form11.image2.Canvas.TextOut(8,trunc((17-0)*Form11.image2.Height/17)-16,FloatToStrF((2*pallete[1].value-pallete[2].value) ,ffFixed,6,2));
 
       if form12.SpTBXCheckBox1.Checked then begin
         if active_form=1 then
-              Form11.image2.Canvas.TextOut(8,trunc((0-0)*Form11.image2.Height/17)-0,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2))
+              Form11.image2.Canvas.TextOut(8,trunc((0-0)*Form11.image2.Height/17)-0,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay1)*us1_calc) ,ffFixed,6,2))
         else
-              Form11.image2.Canvas.TextOut(8,trunc((0-0)*Form11.image2.Height/17)-0,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
+              Form11.image2.Canvas.TextOut(8,trunc((0-0)*Form11.image2.Height/17)-0,FloatToStrF(TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_calc) ,ffFixed,6,2))
       end else
         Form11.image2.Canvas.TextOut(8,trunc((0-0)*Form11.image2.Height/17)-0,FloatToStrF((2*pallete[16].value-pallete[15].value) ,ffFixed,6,2)) ;
 

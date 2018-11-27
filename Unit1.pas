@@ -831,11 +831,9 @@ type
 
     function StartUS:integer;
     function StartUS_optel:integer;
-    function StartUS_optel0:integer;
     function StopUS_optel:integer;
     procedure USAScan;
     procedure OptelAScan;
-    procedure OptelAScan0;
     procedure Up_date_gates;
     procedure up_date_mess_list;
     procedure SetPanel;
@@ -1316,474 +1314,6 @@ end;
 
 
 
-function TForm1.StartUS_optel0:integer;
-var
-check,i,j:integer;
-lFile: TFileStream;
-file_data:Tfile_us20;
-spinFile:TextFile;
-s:string;
-StringGrid:TStringGrid;
-begin
-  try
-    result:=0;
-    us_starting:=true;
-    US_Connected:= true;
-
-      check := 0;
-      {
-      InitDll;    //opcard
-      Instr_Restet(); //opcard
-      check:=Im_data();
-      }
-
-     // check:=Instr_Restet();
-      //check:=Free_data();
-
-      {           //opcard
-      data_optel:=GetDataHandle();
-
-      check:=OpenOpbox();
-      if check <>0 then
-        US_Connected:= false;
-
-
-      check:=Instr_Restet();
-      if check <>0 then
-        US_Connected:= false;
-
-      check:=PowerOnOff(1);
-      if check <>0 then
-        US_Connected:= false;
-
-      optel_power:=false;
-      repeat
-            check := Get_Power_Info(1);
-            application.ProcessMessages;
-      until (check = 1)or(optel_power);
-
-      if optel_power and (check <> 1) then
-        US_Connected:= false;
-      }
-
-
-     optel_pack:=10;
-     optel_frame:=100;
-
-
-     CheckBox1.Checked:=false;
-     alarm_test:= false;
-     //check:=SetPacket_Len(optel_pack); //opcard
-
-     //FreeMem(data_optel);
-     frame_buffer:=(52 + optel_frame) * optel_pack;
-     //GetMem(data_optel,frame_buffer);
-     //GetMem(data_optel,2620800);
-     //GetMem(data_dac,262080);
-     //frame_buffer_old := frame_buffer;
-     frame_cnt10:=optel_pack;
-     //GetMem(data_dac,(52 + optel_frame) * optel_pack);
-       frame_buffer_old:=0;
-      check:=check + Opcard_Reset(opcard_no);
-      check:=check + Opcard_SetResetFifo(opcard_no);
-      check:=check + Opcard_SetDriverEnable(opcard_no, opcard_driver_enable);
-
-      check:=check + Opcard_SetSeqLength(opcard_no, 1);
-      check:=check + Opcard_SetSeqIndex(opcard_no, 0);
-      check:=check + Opcard_SetSeqEnable(opcard_no, 0);
-
-
-      check:=check + Opcard_SetAckMode(opcard_no, optel_false);
-      optel_frame := (optel_frame div 4) * 4;
-      check:=check + Opcard_SetBufferDepth(opcard_no, optel_frame);
-      check:=check + Opcard_SetTriggerSource(opcard_no, 3);
-      check:=check + Opcard_SetTriggerEnable(opcard_no, optel_trigger_enable);
-
-      check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_a, optel_encoder_enable);
-      check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_a, 0);
-      check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_a, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_a, 2);       //4x
-      check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_a, 0);     //disable
-      check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_a, 0);      //step 0
-      check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_a, 0);   //enabled
-
-      check:=check + Opcard_SetEncxEnable(opcard_no, optel_encoder_b, optel_encoder_enable);
-      check:=check + Opcard_SetEncxDirectionInvert(opcard_no, optel_encoder_b, 0);
-      check:=check + Opcard_SetEncxIndexEnable(opcard_no, optel_encoder_b, 0);
-      check:=check + Opcard_SetEncxDecodeMode(opcard_no, optel_encoder_b, 2);       //4x
-      check:=check + Opcard_SetEncxFilterEnable(opcard_no, optel_encoder_b, 0);     //enabled
-      check:=check + Opcard_SetEncxCompareStep(opcard_no, optel_encoder_b, 0);      //step 0
-      check:=check + Opcard_SetEncxCompareEnable(opcard_no, optel_encoder_b, 0);   //enabled
-      check:=check + Opcard_SetOutputEnable(opcard_no, 0, 0, 0 ,0 );
-
-      if check> 0 then exit;
-
-{
-      check:=Instr_RestetFIFO();
-      if check <>0 then  US_Connected:= false;
-
-      check:=TrigEnable(1);
-      if check <>0 then US_Connected:= false;
-
-      check:=SetEncoder(0,4,1,1);
-      check:=SetEncoder(0,3,1,1);
-      check:=SetEncoder(1,1,1,1);
-      check:=SetEncoder(1,0,1,1);
-
-
-      check:=SetEncoder(0,4,1,0);
-      check:=SetEncoder(0,3,1,0);
-      check:=SetEncoder(1,1,1,0);
-      check:=SetEncoder(1,0,1,0);
-
-      if check <>0 then US_Connected:= false;
-}
-
-load_firest:=true;
-if load_firest and US_Connected then begin
-
-          form1.Edit5.SpinOptions.ValueType :=  spnFloat;
-          form1.SpTBXSpinEdit9.SpinOptions.ValueType :=  spnFloat;
-          form1.SpTBXSpinEdit16.SpinOptions.ValueType :=  spnFloat;
-          form1.SpTBXSpinEdit18.SpinOptions.ValueType :=  spnFloat;
-          //form1.SpTBXSpinEdit20.SpinOptions.ValueType :=  spnFloat;
-          form1.SpTBXSpinEdit21.SpinOptions.ValueType :=  spnFloat;
-
-          lFile := TFileStream.Create('defaultsafe.uss', fmOpenRead or fmShareDenyWrite);
-		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
-		      lFile.Free;
-
-                  if FileExists('defaultsafe.spn') then begin
-                  AssignFile(spinFile,'defaultsafe.spn');
-                  Reset(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXSpinEdit then begin
-                         ReadLn(spinFile,s);
-                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
-                      end;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXButton then begin
-                         ReadLn(spinFile, s);
-                         TSpTBXButton(Components[i]).Caption:=s;
-                      end;
-                  CloseFile(spinFile);
-                  end;
-          load_firest:=false;
-          RadioButton26.Checked:=true;
-          US_Gain:=file_data[0].US_Gain ;
-          US_Delay:=file_data[0].US_Delay ;
-          US_Width:=file_data[0].US_Width ;
-          US_SV:=file_data[0].us_sv ;
-          Gates:=file_data[0].gates;
-          us_preamp:=file_data[0].us_preamp;
-
-          us_echo_start_threshold:=file_data[0].us_echo_start_threshold;
-          us_echo_start_mode:=file_data[0].us_echo_start_mode;
-          us_echo_width:=file_data[0].us_echo_width;
-          us_echo_start:=file_data[0].us_echo_start;
-          us_pulse_wave_train:=file_data[0].us_pulse_wave_train;
-          us_pulse_count:=file_data[0].us_pulse_count;
-          us_pulse_width:=file_data[0].us_pulse_width;
-          us_pulse_voltage:=file_data[0].us_pulse_voltage;
-          us_pulse_delay:=file_data[0].us_pulse_delay;
-          us_prf:=file_data[0].us_prf;
-          us_relays:=file_data[0].us_relays;
-          us_wave:=file_data[0].us_wave;
-          us_samplingfreq:=file_data[0].us_samplingfreq;
-          us_pulse_echo:=file_data[0].us_pulse_echo;
-          us_filter_mode:=file_data[0].us_filter_mode;
-          us_ascan_wave:=file_data[0].us_ascan_wave;
-          us_ascan_hf:=file_data[0].us_ascan_hf;
-          us_probe_delay:=file_data[0].us_probe_delay;
-          us_reject:=file_data[0].us_reject;
-          us_angle:=file_data[0].us_angle;
-          us_info:=file_data[0].us_info ;
-          probe_details:=file_data[0].probe_details ;
-
-
-          if file_data[0].d1 = 1 then SpTBXCheckBox13.Checked := true else SpTBXCheckBox13.Checked := false;
-          if file_data[0].d2 = 1 then SpTBXCheckBox21.Checked := true else SpTBXCheckBox21.Checked := false;
-          if file_data[0].d3 = 1 then SpTBXCheckBox22.Checked := true else SpTBXCheckBox22.Checked := false;
-          if file_data[0].d4 = 1 then SpTBXCheckBox23.Checked := true else SpTBXCheckBox23.Checked := false;
-          if file_data[0].d5 = 1 then SpTBXCheckBox2.Checked := true else SpTBXCheckBox2.Checked := false;
-
-          SpTBXSpinEdit17.Value := file_data[0].e1;
-          if file_data[0].e2 = 1 then SpTBXCheckBox17.Checked := true else SpTBXCheckBox17.Checked := false;
-          if file_data[0].e3 = 1 then SpTBXCheckBox18.Checked := true else SpTBXCheckBox18.Checked := false;
-          if file_data[0].e4 = 1 then SpTBXCheckBox19.Checked := true else SpTBXCheckBox19.Checked := false;
-
-          Up_date_gates;
-
-      StringGrid := StringGrid4;
-      ARow4Count :=0;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow4Count;
-      if file_data[0].c1 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c1);
-      end;
-      if file_data[0].c2 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c2);
-      end;
-      if file_data[0].c3 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c3);
-      end;
-
-      ARow5Count := 0;
-      StringGrid := StringGrid5;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow5Count;
-      if file_data[0].c4 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c4);
-      end;
-      if file_data[0].c5 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c5);
-      end;
-      if file_data[0].c6 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c6);
-      end;
-
-          for i:= 0 to StringGrid4.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid4.Cells[0,i] = StringGrid2.Cells[0,j] then
-                       StringGrid4.Cells[1,i] := StringGrid2.Cells[1,j];
-                end;
-          end;
-          for i:= 0 to StringGrid5.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid5.Cells[0,i] = StringGrid3.Cells[0,j] then
-                       StringGrid5.Cells[1,i] := StringGrid3.Cells[1,j];
-                end;
-          end;
-
-
-      RadioButton25.Checked:=true;
-      GroupBox7.Enabled :=true;
-      GroupBox8.Enabled :=true;
-      //edit5.Enabled :=true;
-      //edit6.Enabled :=true;
-      //edit7.Enabled :=true;
-      //edit8.Enabled :=true;
-     // edit9.Enabled :=true;
-     // edit10.Enabled :=true;
-      //edit12.Enabled :=true;
-      SpTBXComboBox1.ItemIndex:=trunc(us_filter_mode );
-
-      Form11.image10.Canvas.Pen.Color:=clBlack;
-      Form11.image10.Canvas.Pen.Width:=1;
-
-      Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-      Form11.image10.Canvas.Brush.Color :=clBlack;
-      Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-      time_scann_counter:=0;
-
-      SetRangeMM;
-  end;
-
-  load_firest:=true;
-if load_firest and US_Connected then begin
-
-    form1.Edit5.SpinOptions.ValueType :=  spnFloat;
-    form1.SpTBXSpinEdit16.SpinOptions.ValueType :=  spnFloat;
-    form1.SpTBXSpinEdit18.SpinOptions.ValueType :=  spnFloat;
-  //form1.SpTBXSpinEdit20.SpinOptions.ValueType :=  spnFloat;
-     form1.SpTBXSpinEdit21.SpinOptions.ValueType :=  spnFloat;
-
-          lFile := TFileStream.Create(us_set_file_name, fmOpenRead or fmShareDenyWrite);
-		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
-		      lFile.Free;
-
-           if FileExists('default.spn') then begin
-//           if FileExists(copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn') then begin
-                  AssignFile(spinFile,'default.spn');
-//                  AssignFile(spinFile,copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn');
-                  Reset(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXSpinEdit then begin
-                         ReadLn(spinFile,s);
-                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
-                      end;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXButton then begin
-                         ReadLn(spinFile, s);
-                         TSpTBXButton(Components[i]).Caption:=s;
-                      end;
-                  CloseFile(spinFile);
-                  end;
-          load_firest:=false;
-          RadioButton26.Checked:=true;
-          US_Gain:=file_data[0].US_Gain ;
-          US_Delay:=file_data[0].US_Delay ;
-          US_Width:=file_data[0].US_Width ;
-          US_SV:=file_data[0].us_sv ;
-          Gates:=file_data[0].gates;
-          us_preamp:=file_data[0].us_preamp;
-
-          us_echo_start_threshold:=file_data[0].us_echo_start_threshold;
-          us_echo_start_mode:=file_data[0].us_echo_start_mode;
-          us_echo_width:=file_data[0].us_echo_width;
-          us_echo_start:=file_data[0].us_echo_start;
-          us_pulse_wave_train:=file_data[0].us_pulse_wave_train;
-          us_pulse_count:=file_data[0].us_pulse_count;
-          us_pulse_width:=file_data[0].us_pulse_width;
-          us_pulse_voltage:=file_data[0].us_pulse_voltage;
-          us_pulse_delay:=file_data[0].us_pulse_delay;
-          us_prf:=file_data[0].us_prf;
-          us_relays:=file_data[0].us_relays;
-          us_wave:=file_data[0].us_wave;
-          us_samplingfreq:=file_data[0].us_samplingfreq;
-          us_pulse_echo:=file_data[0].us_pulse_echo;
-          us_filter_mode:=file_data[0].us_filter_mode;
-          us_ascan_wave:=file_data[0].us_ascan_wave;
-          us_ascan_hf:=file_data[0].us_ascan_hf;
-          us_probe_delay:=file_data[0].us_probe_delay;
-          us_reject:=file_data[0].us_reject;
-          us_angle:=file_data[0].us_angle;
-          us_info:=file_data[0].us_info ;
-          probe_details:=file_data[0].probe_details ;
-
-
-          if file_data[0].d1 = 1 then SpTBXCheckBox13.Checked := true else SpTBXCheckBox13.Checked := false;
-          if file_data[0].d2 = 1 then SpTBXCheckBox21.Checked := true else SpTBXCheckBox21.Checked := false;
-          if file_data[0].d3 = 1 then SpTBXCheckBox22.Checked := true else SpTBXCheckBox22.Checked := false;
-          if file_data[0].d4 = 1 then SpTBXCheckBox23.Checked := true else SpTBXCheckBox23.Checked := false;
-          if file_data[0].d5 = 1 then SpTBXCheckBox2.Checked := true else SpTBXCheckBox2.Checked := false;
-          SpTBXSpinEdit17.Value := file_data[0].e1;
-          if file_data[0].e2 = 1 then SpTBXCheckBox17.Checked := true else SpTBXCheckBox17.Checked := false;
-          if file_data[0].e3 = 1 then SpTBXCheckBox18.Checked := true else SpTBXCheckBox18.Checked := false;
-          if file_data[0].e4 = 1 then SpTBXCheckBox19.Checked := true else SpTBXCheckBox19.Checked := false;
-
-          Up_date_gates;
-                SpTBXComboBox1.ItemIndex:=trunc(us_filter_mode );
-
-
-
-      StringGrid := StringGrid4;
-      ARow4Count :=0;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow4Count;
-      if file_data[0].c1 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c1);
-      end;
-      if file_data[0].c2 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c2);
-      end;
-      if file_data[0].c3 > 0 then begin
-          ARow4Count :=ARow4Count +1;
-          StringGrid.RowCount := ARow4Count;
-          StringGrid.Cells[0,ARow4Count-1] := IntToStr(file_data[0].c3);
-      end;
-
-      ARow5Count := 0;
-      StringGrid := StringGrid5;
-      StringGrid.ColCount := 2;
-      StringGrid.RowCount := ARow5Count;
-      if file_data[0].c4 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c4);
-      end;
-      if file_data[0].c5 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c5);
-      end;
-      if file_data[0].c6 > 0 then begin
-          ARow5Count :=ARow5Count +1;
-          StringGrid.RowCount := ARow5Count;
-          StringGrid.Cells[0,ARow5Count-1] := IntToStr(file_data[0].c6);
-      end;
-
-          for i:= 0 to StringGrid4.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid4.Cells[0,i] = StringGrid2.Cells[0,j] then
-                       StringGrid4.Cells[1,i] := StringGrid2.Cells[1,j];
-                end;
-          end;
-          for i:= 0 to StringGrid5.rowcount-1 do begin
-                for j:= 0 to StringGrid2.RowCount-1 do begin
-                    if StringGrid5.Cells[0,i] = StringGrid3.Cells[0,j] then
-                       StringGrid5.Cells[1,i] := StringGrid3.Cells[1,j];
-                end;
-          end;
-
-
-      RadioButton25.Checked:=true;
-      GroupBox7.Enabled :=true;
-      GroupBox8.Enabled :=true;
-     // edit5.Enabled :=true;
-      //edit6.Enabled :=true;
-   //   edit7.Enabled :=true;
-   //   edit8.Enabled :=true;
-    //  edit9.Enabled :=true;
-   //   edit10.Enabled :=true;
-   //   edit12.Enabled :=true;
-
-      Form11.image10.Canvas.Pen.Color:=clBlack;
-      Form11.image10.Canvas.Pen.Width:=1;
-
-      Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-      Form11.image10.Canvas.Brush.Color :=clBlack;
-      Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-      time_scann_counter:=0;
-
-      SetRangeMM;
-  end;
-
-    //GetMem(data_optel,(52 + 100) * 100);
-    SetLength(US_arr1,400);
-    us_starting:=false;
-
-    result:=0;
-
-    optel_loaded:=US_Connected;
-
-
-           edit1.Text:= SpTBXButton169.Caption;
-
-           edit2.Text:= Floattostr(us_pulse_wave_train);//SpTBXButton171.Caption;
-
-     TrackBar1.Position := trunc(us_wave);
-     avr_const:= TrackBar1.Position/100;
-
-     try
-        alarm_timer:= StrToInt(edit2.Text);
-     except
-           alarm_timer:= 10;
-     end;
-     timer2.Enabled:=true;
-
-    //SpTBXComboBox1.ItemIndex :=0;
-    US_Operation:=4;
-
-  except
-    on E : Exception do begin
-      ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-
-      US_Connected:= false;
-      us_starting:=false;
-      result:=1;
-
-      end;
-    end;
-
-end;
-
 
 function TForm1.StartUS:integer;
 begin
@@ -2028,10 +1558,20 @@ try
 
             if us_echo_start_live > 0 then begin
 
-    //           US_Delay:= (us_echo_start_live-0.1);
-      //         edit6.value:=(us_echo_start_live-0.1);
-               US_Delay:=us_delay_old - (us_echo_start_live-tmp2);
-               form1.edit6.value:=us_delay_old - (us_echo_start_live-tmp2);
+        //       US_Delay:= (us_echo_start_live-0.1);
+        //       edit6.value:=(us_echo_start_live-0.1);
+
+//               US_Delay:=us_delay_old - (us_echo_start_live-tmp2);
+//               form1.edit6.value:=us_delay_old - (us_echo_start_live-tmp2);
+
+               US_Delay:=us_echo_start_live-(tmp2-us_delay_old);//-tmp2);
+               form1.edit6.value:=US_Delay;
+
+
+               Gates[1].start:= gate1start - (tmp2-us_echo_start_live);
+               Gates[2].start:= gate2start - (tmp2-us_echo_start_live);
+               Gates[3].start:= gate3start - (tmp2-us_echo_start_live);
+
 
                tmp1:=0;
                case trunc(us_samplingfreq) of
@@ -2062,7 +1602,7 @@ begin
 try
         if form1.SpTBXComboBox6.ItemIndex = 1 then  begin
              dac_range:=form1.edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
+             dac_str:=US_Delay*us_calc;
              dac_att:=form1.SpTBXSpinEdit10.Value/2;
 
               sdac:='';
@@ -2086,7 +1626,7 @@ try
      //   if dac_refresh then
               dac_refresh :=false;
               dac_range:=form1.edit7.value/us_mm;
-              dac_str:=US_Delay*US_SV/1000;
+              dac_str:=US_Delay*us_calc;
 
               sdac:='';
               sdac1:='';
@@ -2961,7 +2501,7 @@ begin
 try
           if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
              dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
+             dac_str:=US_Delay*us_calc;
              dac_att:=SpTBXSpinEdit10.Value/2;
              dac_1:=us_gain*exp( -1*(0+dac_range*0/100)*dac_att );
 
@@ -3018,7 +2558,7 @@ begin
                 img100.Canvas.Pen.Color:=clBlue;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
               end;
@@ -3026,7 +2566,7 @@ begin
                 img100.Canvas.Pen.Color:=clWhite;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
               end;
@@ -3034,7 +2574,7 @@ begin
                 img100.Canvas.Pen.Color:=clFuchsia;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
               end;
@@ -3042,7 +2582,7 @@ begin
               img100.Canvas.Pen.Color:=clRed;
               img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-dac_list[1].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
               for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10- dac_list[i].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
+                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10- dac_list[i].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
               end;
               img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-dac_list[dac_list_count].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
 
@@ -3080,7 +2620,7 @@ begin
           if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
 
              dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
+             dac_str:=US_Delay*us_calc;
              dac_att:=SpTBXSpinEdit10.Value/2;
              dac_1:=us_gain*exp( -1*(0+dac_range*0/100)*dac_att );
 
@@ -3145,19 +2685,19 @@ begin
           if SpTBXComboBox6.ItemIndex = 2 then       //DAC EXP.
             if dac_list_count>1 then   begin
               dac_range:=edit7.value/us_mm;
-              dac_str:=US_Delay*US_SV/1000;
+              dac_str:=US_Delay*us_calc;
 
               if SpTBXCheckBox4.Checked then begin
                 img100.Canvas.Pen.Color:=clBlue;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
@@ -3165,13 +2705,13 @@ begin
                 img100.Canvas.Pen.Color:=clWhite;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
@@ -3179,13 +2719,13 @@ begin
                 img100.Canvas.Pen.Color:=clFuchsia;
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
                 img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
                 end;
                 img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
@@ -3193,13 +2733,13 @@ begin
               img100.Canvas.Pen.Color:=clRed;
               img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
               img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
               img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
               img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
@@ -3222,7 +2762,7 @@ begin
 
               img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
+                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_calc)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
               end;
               img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
 
@@ -3361,10 +2901,6 @@ try
 
 ////////////draw gates///////////////////
 
-//if radiobutton26.Checked  then US_width:=(strtofloat(Edit7.Text)/1)/1.0;
-//if radiobutton25.Checked  then US_width:=(strtofloat(Edit7.Text)/1)/us_sv*1000.0/1.0;
-
-//if radiobutton25.Checked  then US_width:=(strtofloat(Edit7.Text)/1)*us_sv/1000.0/1.0;
 
   US_In3:=US_width;
 
@@ -3586,25 +3122,6 @@ begin
   }
 
 
-   {
-
-  if radiobutton25.Checked then begin
-      if radiobutton9.Checked then j:=1;
-      if radiobutton10.Checked then j:=2;
-      if radiobutton11.Checked then j:=3;
-
-      r_val:=US_Mess[j].tof;
-
-      if r_val> 0then
-        if r_val<trmin then begin
-            trmin :=r_val;
-            Label2.Caption := FloatToStrF(((trmin-us_probe_delay)*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-//        if radiobutton25.Checked then Label2.Caption := FloatToStrF(((trmin/1/2-us_probe_delay)/1*us_sv/1000*sin((90-us_angle)*pi/180)),ffFixed,6,2)+' [mm]';
-//        if radiobutton26.Checked then label2.Caption :=FloatToStrF(us_mess[1].tof/1*sin((90-us_angle)*pi/180),ffFixed,6,2)+' [us]';
-        end;
-  end;
-
-      }
   //dac value
   if US_Mess[1].amp > tr_db then begin
       label64.Caption :=FloatToStrF(US_Mess[1].amp,ffFixed,6,2)+ '[%]';
@@ -3663,14 +3180,14 @@ NONE
 
 
    if SpTBXComboBox6.ItemIndex = 1 then begin
-     db_val100 := -US_gain*exp( -1*(TRCal((r_val100-us_probe_delay)*us_sv/1000))*dac_att ) + a_val100*us_gain/100/power(10,(us_gain-us_gain)/20);
-     db_val200 := -US_gain*exp( -1*(TRCal((r_val200-us_probe_delay)*us_sv/1000))*dac_att ) + a_val200*us_gain/100/power(10,(us_gain-us_gain)/20);
-     db_val300 := -US_gain*exp( -1*(TRCal((r_val300-us_probe_delay)*us_sv/1000))*dac_att ) + a_val300*us_gain/100/power(10,(us_gain-us_gain)/20);
+     db_val100 := -US_gain*exp( -1*(TRCal((r_val100-us_probe_delay)*us_calc))*dac_att ) + a_val100*us_gain/100/power(10,(us_gain-us_gain)/20);
+     db_val200 := -US_gain*exp( -1*(TRCal((r_val200-us_probe_delay)*us_calc))*dac_att ) + a_val200*us_gain/100/power(10,(us_gain-us_gain)/20);
+     db_val300 := -US_gain*exp( -1*(TRCal((r_val300-us_probe_delay)*us_calc))*dac_att ) + a_val300*us_gain/100/power(10,(us_gain-us_gain)/20);
   end;
    if SpTBXComboBox6.ItemIndex = 2 then begin
-     db_val100 := a_val100*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val100-us_probe_delay)*us_sv/1000));
-     db_val200 := a_val200*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val200-us_probe_delay)*us_sv/1000));
-     db_val300 := a_val300*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val300-us_probe_delay)*us_sv/1000));
+     db_val100 := a_val100*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val100-us_probe_delay)*us_calc));
+     db_val200 := a_val200*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val200-us_probe_delay)*us_calc));
+     db_val300 := a_val300*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val300-us_probe_delay)*us_calc));
   end;
 
      //      dac_list[i].b:=tr_db*us_gain/100/power(10,(us_gain-dac_db)/20);
@@ -3686,13 +3203,13 @@ NONE
  for i := 0 to StringGrid4.RowCount-1 do begin
    case StrToInt(StringGrid4.Cells[0,i]) of
     100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     104: my_label.Caption :=my_label.Caption + 'T(B)-T(A)=' + FloatToStrF(TRCal(r_val200-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*US_calc)-TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     108: if a_val100 >100 then
               my_label.Caption :=my_label.Caption + 'H(A)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3702,13 +3219,13 @@ NONE
     111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(db_val100 ,ffFixed,6,2)+ ' [dB]  ';
 //    111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(20*log10(gates[1].height/db_val100) ,ffFixed,6,2)+ ' [dB]  ';
     200: my_label.Caption :=my_label.Caption + 'T(B)=' + FloatToStrF(TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     204: my_label.Caption :=my_label.Caption + 'T(C)-T(B)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc)-TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     208: if a_val200 >100 then
               my_label.Caption :=my_label.Caption + 'H(B)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3717,13 +3234,13 @@ NONE
     210: my_label.Caption :=my_label.Caption + 'V[C]-V(B)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
     211: my_label.Caption :=my_label.Caption + 'DVC(B)=' + FloatToStrF(db_val200 ,ffFixed,6,2)+ ' [dB]  ';
     300: my_label.Caption :=my_label.Caption + 'T(C)=' + FloatToStrF(TRCal(r_val300-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     304: my_label.Caption :=my_label.Caption + 'T(C)-T(A)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc)-TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     308: if a_val300 >100 then
               my_label.Caption :=my_label.Caption + 'H(C)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3740,13 +3257,13 @@ NONE
  for i := 0 to StringGrid5.RowCount-1 do begin
    case StrToInt(StringGrid5.Cells[0,i]) of
     100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     104: my_label.Caption :=my_label.Caption + 'T(B)-T(A)=' + FloatToStrF(TRCal(r_val200-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*US_calc)-TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     108: if a_val100 >100 then
               my_label.Caption :=my_label.Caption + 'H(A)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3755,13 +3272,13 @@ NONE
     110: my_label.Caption :=my_label.Caption + 'V[B]-V(A)=' + FloatToStrF(20*log10(a_val200/gates[2].height)-20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
     111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(db_val100 ,ffFixed,6,2)+ ' [dB]  ';
     200: my_label.Caption :=my_label.Caption + 'T(B)=' + FloatToStrF(TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     204: my_label.Caption :=my_label.Caption + 'T(C)-T(B)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc)-TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     208: if a_val200 >100 then
               my_label.Caption :=my_label.Caption + 'H(B)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3770,13 +3287,13 @@ NONE
     210: my_label.Caption :=my_label.Caption + 'V[C]-V(B)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
     211: my_label.Caption :=my_label.Caption + 'DVC(B)=' + FloatToStrF(db_val200 ,ffFixed,6,2)+ ' [dB]  ';
     300: my_label.Caption :=my_label.Caption + 'T(C)=' + FloatToStrF(TRCal(r_val300-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     304: my_label.Caption :=my_label.Caption + 'T(C)-T(A)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
+    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*US_calc)-TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
+    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*US_calc)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     308: if a_val300 >100 then
               my_label.Caption :=my_label.Caption + 'H(C)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
            else
@@ -3890,8 +3407,8 @@ begin
                   r_val:=US_Mess[j].tof;
                   if radiobutton26.Checked  then Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
                   if radiobutton25.Checked  then
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*0.5*us_sv/1000)  ,ffFixed,6,2)+' [mm]'
+                    if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
+                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
                     else
                         Form15.label2.Caption :='Val : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                 end ;
@@ -4061,8 +3578,8 @@ begin
                 form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
               end;
               if radiobutton25.Checked  then begin
-                    if TRCal((r_val1-us_probe_delay)*us_sv/1000) >=0 then
-                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),FloatToStrF(TRCal((r_val1-us_probe_delay)*0.5*us_sv/1000) ,ffFixed,6,2))
+                    if TRCal((r_val1-us_probe_delay)*us_calc) >=0 then
+                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),FloatToStrF(TRCal((r_val1-us_probe_delay)*US_calc) ,ffFixed,6,2))
                     else
                       form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),'±');
 
@@ -4261,8 +3778,8 @@ begin
                 r_val:=US_Mess[j].tof;
                 if radiobutton26.Checked  then Form11.label37.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
                 if radiobutton25.Checked  then begin
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000),ffFixed,6,2)+' [mm]'
+                    if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
+                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_calc),ffFixed,6,2)+' [mm]'
                     else
                       Form11.label37.Caption :='Val : '+FloatToStrF(0,ffFixed,6,2)+' [mm]';
                 end;
@@ -4316,8 +3833,8 @@ begin
                     Form11.label37.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
                 end;
                 if radiobutton25.Checked  then begin
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000),ffFixed,6,2)+' [mm]'
+                    if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
+                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_calc),ffFixed,6,2)+' [mm]'
                     else
                       Form11.label37.Caption :='Val : '+FloatToStrF(0,ffFixed,6,2)+' [mm]';
                 end;
@@ -4420,2141 +3937,8 @@ begin
     end;
   end;
 end;
-       
-procedure TForm1.OptelAScan0;
-var
-check,i,j,k,l:integer;
-frame_cnt1:integer;
-tmp:real;
-tmp1,tmp2,tmp3,tmp4:integer;
-tmp11,tmp21,tmp31,tmp41:PByte;
-tmp12,tmp22,tmp32,tmp42:PByte;
 
-tmp5:AnsiChar;
-x_start,ttt,ttt1:real;
-x_stop:real;
 
-r_val1,r_val2,r_val,a_val,a_val1,r_val100,r_val200,r_val300,a_val100,a_val200,a_val300:double;
-db_val100,db_val200,db_val300:real;
-l_val:longint;
-point_rezx,x1,y1,x11,y11:real;
-point_rezy:real;
-penmode:TPenMode;
-//img100:TBitmap;
-img100:Timage;
-my_label:TLabel;
-a1x,a2x:integer;
-dac:array of char;
-pdac:PCHAR;
-sdac:string;
-sdac1:string;
-begin
-  try
-  check := 0;
-  new(tmp11);
-  new(tmp21);
-  new(tmp31);
-  new(tmp41);
-
-  check := check + SetOptelOutputs;
-  DoUSOperation6;
-  DoUSOperation7;
-  check := check + DoEchoStart;
-
-    if us_operation = 4 then begin
-
-
-      check:=check + Opcard_SetTriggerEnable(opcard_no, optel_trigger_disable);
-      if SpTBXCheckBox2.Checked then   Edit6.Value :=   SpTBXSpinEdit12.Value;
-      US_SV:=form1.edit12.value ;
-      us_relays:=0;
-      if SpTBXCheckBox6.Checked then us_relays:=us_relays+1;
-      if SpTBXCheckBox7.Checked then us_relays:=us_relays+2;
-      if SpTBXCheckBox8.Checked then us_relays:=us_relays+4;
-
-      US_REJECT:=(SpTBXSpinEdit13.value );
-      us_angle:=SpTBXSpinEdit14.value;
-      us_probe_delay:=SpTBXSpinEdit12.Value ;
-         us_samplingfreq:=SpTBXComboBox2.ItemIndex ;
-         if us_samplingfreq = -1 then begin
-            us_samplingfreq := 0;
-            SpTBXComboBox2.ItemIndex:=0;
-         end;
-
- //set sampling freq
-         case trunc(us_samplingfreq) of
-          0:tmp1:=1;//(100);
-          1:tmp1:=2;//(50);
-          2:tmp1:=4;//(25);
-          3:tmp1:=10;//(10);
-         end;
-         check:=check + Opcard_SetSamplingFreq(opcard_no, tmp1);
-
-         if radiobutton26.Checked  then US_width:=strtofloat(Edit7.text);
-         if radiobutton25.Checked  then US_width:=strtofloat(Edit7.Text)/us_sv*1000.0;
-     //   if radiobutton25.Checked  then US_width:=(strtofloat(Edit7.Text)/1)*us_sv/1/1000.0/1.0;
-
-         if US_Width = 0 then US_Width:=10;
-
-         case trunc(us_samplingfreq) of
-          0:tmp1:=100;
-          1:tmp1:=50;
-          2:tmp1:=25;
-          3:tmp1:=10
-         end;
-//set buffer
-         optel_frame := trunc(tmp1*US_Width);
-         optel_frame_old := optel_frame;
-         tmp2 := trunc(us_width) div 4;
-         if ( tmp2*4 ) < us_width then optel_frame := (( ((tmp2+1)*4*tmp1) div 4) + 1) * 4;
-
-         SetLength(US_arr1,optel_frame);
-
-         check:=check + Opcard_SetBufferDepth(opcard_no, optel_frame);
-//set delay
-
-//if us_echo_start_live> 0 then US_Delay:=us_echo_start_live;
-
-         case trunc(us_samplingfreq) of
-          0:tmp1:=(trunc(100*US_Delay));
-          1:tmp1:=(trunc(50*US_Delay));
-          2:tmp1:=(trunc(25*US_Delay));
-          3:tmp1:=(trunc(10*US_Delay));
-         end;
-         check:=check + Opcard_SetDelay(opcard_no, tmp1);
-//set pulse voltage
-         us_pulse_voltage:=SpTBXSpinEdit5.Value ;
-         if us_pulse_voltage>16 then begin
-            us_pulse_voltage:=16;
-            SpTBXSpinEdit5.value := 16;
-         end;
-         check:=check + Opcard_SetPulseVoltage(opcard_no, trunc(us_pulse_voltage*63/10));
-//set trigger source
-         check:=check + Opcard_SetTriggerSource(opcard_no, 3);
-//set prf
-         us_prf:=SpTBXSpinEdit1.Value/1000 ;
-         check:=check + Opcard_SetTimerValues(opcard_no, optel_true, us_prf);
-
-//set pulser time     replaced with pulse width
-         us_pulse_delay:=SpTBXSpinEdit4.Value ;
-         //if us_pulse_delay = 0 then begin
-         // us_pulse_delay:=6.3;
-        //  SpTBXSpinEdit4.Value:=6.3;
-       //  end;
-         check:=check + Opcard_SetTimePulse(opcard_no, (us_pulse_delay));
-//set pulse width
-         //us_pulse_width:=SpTBXSpinEdit6.Value ;
-         //if us_pulse_width = 0 then us_pulse_width:=4;
-        // check:=check + Opcard_SetTimePulse(opcard_no, trunc(us_pulse_width));
-//set gainmode
-         if not dac_enabled then check:=check + Opcard_SetGainMode(opcard_no, 0);
-//set gain
-         us_gain:= Edit5.Value;
-         if not dac_enabled then check:=check + Opcard_SetConstGain(opcard_no, US_Gain);
-//set preamplf
-         check:=check + Opcard_SetAttenHilo(opcard_no, us_preamp);
-//set rf
-         us_ascan_hf:=SpTBXComboBox4.itemIndex;                                // ## 0 rf 1 abs
-         us_ascan_wave:=SpTBXComboBox5.itemIndex;
-         if us_ascan_hf=0 then check:=check + Opcard_SetDataProcMode(opcard_no, 0);    //0
-         if us_ascan_hf=1 then check:=check + Opcard_SetDataProcMode(opcard_no, 1);   //1
-
-         //Opcard_SetDataProcMode(opcard_no, 0);    //0
-
-//encoder reset
-          check:=check + Opcard_SetEncxReset(opcard_no, optel_encoder_a, 1);
-          check:=check + Opcard_SetEncxReset(opcard_no, optel_encoder_b, 1);
-
-//set analog filter
-         us_filter_mode:=SpTBXComboBox1.ItemIndex ;
-         check:=check + Opcard_SetAnalogFilters(opcard_no, trunc(us_filter_mode));
-//pulse echo
-         if us_pulse_echo=0 then check:=check + Opcard_SetAnalogInput(opcard_no, 1);
-         if us_pulse_echo=1 then check:=check + Opcard_SetAnalogInput(opcard_no, 3);
-////////////gates///////////////////
-         check:=check + Opcard_SetPdxEnable(opcard_no, 0, optel_false);
-         check:=check + Opcard_SetPdxEnable(opcard_no, 1, optel_false);
-         check:=check + Opcard_SetPdxEnable(opcard_no, 2, optel_false);
-
-         check:=check + Opcard_SetPdxMode(opcard_no, 0, 0);
-         check:=check + Opcard_SetPdxMode(opcard_no, 1, 0);
-         check:=check + Opcard_SetPdxMode(opcard_no, 2, 0);
-
-
-        tmp:=0;
-        case trunc(us_samplingfreq) of
-              0:tmp:=100;
-              1:tmp:=50;
-              2:tmp:=25;
-              3:tmp:=10;
-        end;
-
-          //tmp:=1;
-          //if us_width <>0 then
-          //  tmp:= optel_frame / US_Width;
-
-          tmp1:=trunc((gates[1].start-US_Delay)*tmp);
-          tmp2:=trunc((gates[1].start+gates[1].width-US_Delay)*tmp);
-          if tmp1<0 then tmp1:=0;
-          if tmp2<0 then tmp2:=0;
-          check:=check + Opcard_SetPdxLSSP(opcard_no, 0, tmp1, tmp2, trunc(gates[1].height/100*128+0));
-         // label90.Caption:=FloatToStr(tmp1)+' '+FloatToStr(tmp2)+' '+FloatToStr(gates[1].height/100*128+0);//+' '+FloatToStr(us_mess[2].amp)+' '+FloatToStr(us_mess[2].amp/128*100);
-
-
-          tmp1:=trunc((gates[2].start-US_Delay)*tmp);
-          tmp2:=trunc((gates[2].start+gates[2].width-US_Delay)*tmp);
-          if tmp1<0 then tmp1:=0;
-          if tmp2<0 then tmp2:=0;
-          check:=check + Opcard_SetPdxLSSP(opcard_no, 1, tmp1, tmp2, trunc(gates[2].height/100*128+0));
-
-          tmp1:=trunc((gates[3].start-US_Delay)*tmp);
-          tmp2:=trunc((gates[3].start+gates[3].width-US_Delay)*tmp);
-          if tmp1<0 then tmp1:=0;
-          if tmp2<0 then tmp2:=0;
-          check:=check + Opcard_SetPdxLSSP(opcard_no, 2, tmp1, tmp2, trunc(gates[3].height/100*128+0));
-            //label90.Caption:=FloatToStr(check);//+' '+FloatToStr(tmp1/tmp);//+' '+FloatToStr(us_mess[2].amp)+' '+FloatToStr(us_mess[2].amp/128*100);
-
-    // check:=TrigEnable(1);
-     // if check <>0 then US_Connected:= false;
-
-    //   check:=Instr_RestetFIFO();
-       if check <> 0 then US_Connected:= false;
-
-       if SpTBXRadioButton2.Checked and (calibration_list_count>1) then
-         Label13.Visible :=true
-       else
-         Label13.Visible :=false;
-
-
-      if dac_enabled then begin
-        US_Operation:=0;
-        if SpTBXComboBox6.ItemIndex = 1 then  begin
-             dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
-             dac_att:=SpTBXSpinEdit10.Value/2;
-
-              sdac:='';
-              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
-               r_val:=US_gain*256/45*1/exp( -1*(dac_str+dac_range*1/optel_frame)*dac_att );
-               //r_val:=US_gain*256/45;
-               if r_val>255 then r_val:=255;
-               for j:=1 to 52 do begin
-                    sdac:=sdac + chr(trunc(r_val));
-               end;
-               for j:=1 to optel_frame-1 do  begin
-                   r_val:=US_gain*1/exp( -1*(dac_str+dac_range*j/optel_frame)*dac_att )*256/45;
-                    if r_val>255 then r_val:=255;
-                    sdac:=sdac + chr(trunc(r_val));
-               end;
-              end;
-        end;
-
-        if SpTBXComboBox6.ItemIndex = 2 then
-        if dac_list_count >1 then begin
-     //   if dac_refresh then
-              dac_refresh :=false;
-              dac_range:=edit7.value/us_mm;
-              dac_str:=US_Delay*US_SV/1000;
-
-              sdac:='';
-              sdac1:='';
-               r_val1 := DAC_X(1);
-               r_val:=dac_str+1*dac_range/optel_frame;
-//               r_val:=( dac_db + (us_gain-dac_db) + (r_val1-DAC_X(1)))*256/45;
-               r_val:=2*(DAC_X(1)+32);
-
-               if r_val>255 then r_val:=255;
-               for j:=1 to 52 do begin
-                    sdac1:=sdac1 + chr(trunc(r_val));
-               end;
-               for j:=1 to optel_frame-1 do  begin
-                   r_val2:=dac_str+j*dac_range/optel_frame;
-//                   r_val:=( dac_db + (us_gain-dac_db) + 0.3*(r_val1-DAC_X(r_val2)) )*256/47.5;
-                   r_val:=2*( DAC_X(r_val2) + 32 );
-                   if r_val>255 then r_val:=255;
-                   sdac1:=sdac1 + chr(trunc(r_val));
-               end;
-
-              for i:= 1 to trunc(262088/(52 + optel_frame) ) do begin
-                  sdac:=sdac+sdac1;
-              end;
-        end;
-
-        //check:=SetGainMode(1);      //opcard
-        check:=check + Opcard_SetGainMode(opcard_no, 1)
-      //  check:=SetDAC(0);
-//        pdac:=PChar(sdac);
-
-       // check:=DoDAC(PChar(sdac),262144);   //opcard
-//        check:=DoDAC(PChar(sdac),(52 + optel_frame) * optel_pack);
-      end;
-     // check:=TrigEnable(1);    //opcard
-      check:=check + Opcard_SetTriggerEnable(opcard_no, optel_trigger_enable);
-      check:=check + Opcard_SetResetFifo(opcard_no);
-
-     // frame_cnt10:=0;
-      US_Operation:=0;
-    end;
-
-
-
-    if US_Operation=0 then begin
-          //check := Get_Power_Info(1);      //opcard
-
-          check  := 0;
-          if  check  = 0 then begin
-              //check := Check_Frame_Ready(); //opcard
-
-              inc(free_time);
-	            if (check = 0) then begin
-                check := 0;
-                //frame_cnt1 := GetFrame_Cnt();   //opcard
-                check := check + Opcard_GetFifoCnt(opcard_no, @frame_buffer);
-
-                if frame_buffer >= (52 + optel_frame) then begin
-                  dec(free_time);
-                  inc(us_time_count);
-                  optel_pack := trunc(frame_buffer/(52 + optel_frame));
-                  label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(us_time_count)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
-//                  label90.caption := IntToStr(frame_cnt1) +' '+IntToStr(optel_pack);
-
-
-                  //FreeMem(data_optel);
-                  //FreeMem(data_dac);
-                  if frame_buffer_old < frame_buffer then begin
-                    GetMem(data_optel,frame_buffer);
-                    GetMem(data_dac,frame_buffer);
-                    frame_buffer_old := frame_buffer;
-                   // label90.caption := IntToStr(frame_buffer_old) +' '+IntToStr(frame_buffer);
-
-                  end;
-                  check := check + Opcard_ReadData(opcard_no, data_optel, (52 + optel_frame)*optel_pack);
-
-       case trunc(us_samplingfreq) of
-          0:tmp_sq:=100;
-          1:tmp_sq:=50;
-          2:tmp_sq:=25;
-          3:tmp_sq:=10
-       end;
-
-
-				have_new_enc:=true;
-				for k:=0 to optel_pack-1 do begin
-				
-                  inc(data_optel, 11);
-
-                  tmp1:=data_optel^; //8 + 3 =11   input
-                  inc(data_optel);
-
-                  tmp11^:=data_optel^; //9 + 3 =12
-                  inc(data_optel);
-                  tmp21^:=data_optel^; //10 + 3 =13
-                  inc(data_optel);
-                  tmp31^:=data_optel^; //11 + 3 =14
-                  inc(data_optel);
-                  tmp41^:=data_optel^; //12 + 3 =15
-                  inc(data_optel);
-                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_x:=r_val ;
-                  //enc_cur_x := enc_cur_x +0.1;
-
-
-                  tmp11^:=data_optel^; //13 + 3 =16
-                  inc(data_optel);
-                  tmp21^:=data_optel^; //14 + 3 =17
-                  inc(data_optel);
-                  tmp31^:=data_optel^; //15 + 3 =18
-                  inc(data_optel);
-                  tmp41^:=data_optel^; //16 + 3 =19
-                  inc(data_optel);
-                  r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_y:=r_val ;
-
-                  tmp1:=data_optel^; //17 + 3 =20            ///alaram
-                  inc(data_optel);
-                  tmp2:=data_optel^; //18 + 3 =21
-                  inc(data_optel);
-
-                  us_mess[1].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_11:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_21 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp1:=tmp1;
-
-
-                  us_mess[2].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_12:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_22 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp2:=tmp1;
-
-
-				          us_mess[3].alarm :=0;
-                  tmp1:=data_optel^; //19 + 3 =22
-                  inc(data_optel);
-                  tmp2:=data_optel^; //20 + 3 =23
-                  inc(data_optel);
-                  tmp3:=data_optel^; //21 + 3 =24
-                  inc(data_optel);
-                  mess_avg_13:=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //22 + 3 =22
-                  inc(data_optel);
-
-                  tmp1:=data_optel^; //24 + 3 =27
-                  inc(data_optel);
-                  tmp2:=data_optel^; //25 + 3 =28
-                  inc(data_optel);
-                  tmp3:=data_optel^; //26 + 3 =29
-                  inc(data_optel);
-                  mess_avg_23 :=tmp1+256*tmp2+256*256*tmp3;
-
-                  tmp1:=data_optel^; //27 + 3 =30
-                  inc(data_optel);
-                  mess_avg_amp3:=tmp1;
-
-                  inc(data_optel, 6);
-
-                  for i:=0 to (optel_frame-1) do begin
-                      US_arr1[i]:=(data_optel^);
-                      inc(data_optel);
-                  end;
-
-
-                  r_val:=  (optel_frame_old/ 400);
-                  if us_ascan_hf = 0 then
-                    begin
-                      for i:=1 to 400 do begin
-                          tmp2:=0;
-                          tmp4:=0;
-                          for j:=trunc((i-1)*r_val) to trunc(i*r_val) do
-                          begin
-                               tmp3 := US_arr1[j];
-                               if tmp3>tmp2 then tmp2 := tmp3;
-                               if tmp3<=tmp4 then tmp4 := tmp3;
-                          end;
-                          if (tmp2) > abs(tmp4) then
-                                draw_ascn_new[i]:=200-trunc(tmp2/256*200)
-                            else
-                                draw_ascn_new[i]:=200-trunc(tmp4/256*200)  ;
-                      end;
-                    end
-                  else
-                      begin
-                      for i:=1 to 400 do begin
-                          tmp2:=0;
-                          for j:=trunc((i-1)*r_val) to trunc(i*r_val) do
-                          begin
-                               tmp3 := US_arr1[j];
-                               if tmp3>tmp2 then tmp2 := tmp3;
-                          end;
-                          draw_ascn_new[i]:=200-trunc(tmp2/128*200);
-                      end;
-                    end ;
-
-
-				// tmp := tmp_sq;//us_mm*optel_frame/us_width;
-{
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 0, tmp1);    //tof
-				  mess_avg_11:= tmp1;
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 1, tmp1);
-				  mess_avg_12:= tmp1;
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 2, tmp1);
-				  mess_avg_13:= tmp1;
-         }
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 0, tmp1);    //tof1
-			 	  mess_avg_21:= tmp1;
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 1, tmp1);
-				  mess_avg_22:= tmp1;
-				 check := check + Opcard_GetPdxMaxPosition(opcard_no, 2, tmp1);
-			 	  mess_avg_23:= tmp1;
-       {
-				 check := check + Opcard_GetPdxMaxValue(opcard_no, 0, @tmp5);
-				 // umess_avg_amp1:= ord(tmp5);
-				 check := check + Opcard_GetPdxMaxValue(opcard_no, 1, @tmp5);
-				// umess_avg_amp2:= ord(tmp5);
-				 check := check + Opcard_GetPdxMaxValue(opcard_no, 2, @tmp5);
-				//  umess_avg_amp3:=ord(tmp5);
-      }
-
-        //tmp1:=trunc((us_mess[1].tof-us_delay)/(us_width)*400);
-
-                    //avergae
-                    for i:=1 to 400 do begin
-                        draw_ascn[i]:=trunc(draw_ascn[i]*(1-avr_const)+draw_ascn_new[i]*avr_const);
-                    end;
-
-
-        mess_avg_11:=0;
-        for i:= trunc((gates[1].start-us_delay)*tmp_sq/r_val) to trunc((gates[1].start+gates[1].width-us_delay)*tmp_sq/r_val) do
-//        for i:= trunc((gates[1].start-us_delay)*tmp_sq/r_val) to trunc( mess_avg_21/r_val) do
-            if (100-(draw_ascn[i])/2) > (gates[1].height) then begin
-               mess_avg_11:= i* r_val;
-               break;
-            end;
-
-        mess_avg_12:=0;
-        for i:= trunc((gates[2].start-us_delay)*tmp_sq/r_val) to trunc((gates[2].start+gates[2].width-us_delay)*tmp_sq/r_val) do
-//        for i:= trunc((gates[1].start-us_delay)*tmp_sq/r_val) to trunc( mess_avg_21/r_val) do
-            if (100-(draw_ascn[i])/2) > (gates[2].height) then begin
-               mess_avg_12:= i* r_val;
-               break;
-            end;
-
-        mess_avg_13:=0;
-        for i:= trunc((gates[3].start-us_delay)*tmp_sq/r_val) to trunc((gates[3].start+gates[3].width-us_delay)*tmp_sq/r_val) do
-//        for i:= trunc((gates[1].start-us_delay)*tmp_sq/r_val) to trunc( mess_avg_21/r_val) do
-            if (100-(draw_ascn[i])/2) > (gates[3].height) then begin
-               mess_avg_13:= i* r_val;
-               break;
-            end;
-
-
-            
-                  mess_avg_amp1:=(mess_avg_amp1/128*100-0);
-                  mess_avg_amp2:=(mess_avg_amp2/128*100-0);
-                  mess_avg_amp3:=(mess_avg_amp3/128*100-0);
-
-                  mess_avg_amp1_old := mess_avg_amp1_old*(1-avr_const)+mess_avg_amp1*avr_const;
-                  mess_avg_amp2_old := mess_avg_amp2_old*(1-avr_const)+mess_avg_amp2*avr_const;
-                  mess_avg_amp3_old := mess_avg_amp3_old*(1-avr_const)+mess_avg_amp3*avr_const;
-                  us_mess[1].amp := trunc(mess_avg_amp1_old);
-                  us_mess[2].amp := trunc(mess_avg_amp2_old);
-                  us_mess[3].amp := trunc(mess_avg_amp3_old);
-
-                  mess_avg_11 := mess_avg_11/tmp_sq+us_delay;
-                  mess_avg_12 := mess_avg_12/tmp_sq+us_delay;
-                  mess_avg_13 := mess_avg_13/tmp_sq+us_delay;
-                  mess_avg_21 := mess_avg_21/tmp_sq+us_delay;
-                  mess_avg_22 := mess_avg_22/tmp_sq+us_delay;
-                  mess_avg_23 := mess_avg_23/tmp_sq+us_delay;
-
-                  mess_avg_11_old := mess_avg_11_old*(1-avr_const)+mess_avg_11*avr_const;
-                  mess_avg_12_old := mess_avg_12_old*(1-avr_const)+mess_avg_12*avr_const;
-                  mess_avg_13_old := mess_avg_13_old*(1-avr_const)+mess_avg_13*avr_const;
-                  us_mess[1].tof := mess_avg_11_old ;
-                  us_mess[2].tof := mess_avg_12_old ;
-                  us_mess[3].tof := mess_avg_13_old ;
-
-                  mess_avg_21_old := mess_avg_21_old*(1-avr_const)+mess_avg_21*avr_const;
-                  mess_avg_22_old := mess_avg_22_old*(1-avr_const)+mess_avg_22*avr_const;
-                  mess_avg_23_old := mess_avg_23_old*(1-avr_const)+mess_avg_23*avr_const;
-                  us_mess[1].tof1 := mess_avg_21_old ;
-                  us_mess[2].tof1 := mess_avg_22_old ;
-                  us_mess[3].tof1 := mess_avg_23_old ;
-
-                  if us_mess[1].amp > gates[1].height then us_mess[1].alarm := 1;
-                  if us_mess[2].amp > gates[2].height then us_mess[2].alarm := 1;
-                  if us_mess[3].amp > gates[3].height then us_mess[3].alarm := 1;
-
-
-                  //only for test
-                  if alarm_test then begin
-                 if  SpTBXCheckBox17.Checked then
-                    if SpTBXCheckBox6.Checked then begin
-                       if us_mess[1].alarm=1 then begin
-                           inc(calarm1);
-                           gpo0_c:= alarm_timer;
-                       end;
-                       if us_mess[1].alarm <> calarm1_old then begin
-                              inc(calarm1_sq);
-                              calarm1_old:=us_mess[1].alarm;
-                       end;
-                    end else begin
-                       if us_mess[1].alarm=0 then begin
-                          inc(calarm1);
-                         gpo0_c:= alarm_timer;
-                       end;
-                           if us_mess[1].alarm <> calarm1_old then begin
-                              inc(calarm1_sq);
-                              calarm1_old:=us_mess[1].alarm;
-                           end;
-                    end;
-
-                    if  SpTBXCheckBox18.Checked then
-                    if SpTBXCheckBox7.Checked then begin
-                       if us_mess[2].alarm=1 then begin
-                           inc(calarm2);
-                           gpo1_c:= alarm_timer;
-                       end;
-                           if us_mess[2].alarm <> calarm2_old then begin
-                              inc(calarm2_sq);
-                              calarm2_old:=us_mess[2].alarm;
-                           end;
-                    end else begin
-                       if us_mess[2].alarm=0 then begin
-                          inc(calarm2);
-                          gpo1_c:= alarm_timer;
-                       end;
-                           if us_mess[2].alarm <> calarm2_old then begin
-                              inc(calarm2_sq);
-                              calarm2_old:=us_mess[2].alarm;
-                           end;
-                    end;
-
-                    if  SpTBXCheckBox19.Checked then
-                    if SpTBXCheckBox8.Checked then begin
-                       if us_mess[3].alarm=1 then begin
-                           inc(calarm3);
-                           gpo2_c:= alarm_timer;
-                       end;
-                           if us_mess[3].alarm <> calarm3_old then begin
-                              inc(calarm3_sq);
-                              calarm3_old:=us_mess[3].alarm;
-                           end;
-                    end else begin
-                       if us_mess[3].alarm=0 then begin
-                          inc(calarm3);
-                      gpo2_c:= alarm_timer;
-                       end;
-                           if us_mess[3].alarm <> calarm3_old then begin
-                              inc(calarm3_sq);
-                              calarm3_old:=us_mess[3].alarm;
-                           end;
-                    end;
-
-
-                  end;
-                  //only for test
-
- ////////////////////////averag
-
-                  if SpTBXCheckBox13.Checked then
-                  for i:=1 to 3 do begin
-                      r_val:=us_mess[i].tof1;
-                      us_mess[i].tof1:=us_mess[i].tof;
-                      us_mess[i].tof:=r_val;
-                  end;
-
-      //set echo start
-
-
-
-
-
-                 // scann_counter_old :=scann_counter;
-					if start_scann then begin  //////////////////////////////////////  scann
-									  inc(scann_counter);
-					end;
-
-                  scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
-                  scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
-                  scann_arr[scann_counter].US_Mess[3] :=us_mess[3];
-
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
-                   //enc_cur_x:=encod_t;
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
-                   //enc_cur_y:=encod_t;
-
-                  if encoder_index>0 then
-                  begin
-                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
-                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
-
-                       enc_cur_x:=enc_cur_x*encoder[encoder_index].enc_x_rez;
-                       enc_cur_y:=enc_cur_y*encoder[encoder_index].enc_y_rez;
-                       enc_cur_x:=enc_cur_x-enc_cur_x_offset;
-                       enc_cur_y:=enc_cur_y-enc_cur_y_offset;
-
-                       if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
-                       if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
-                  end;
-
-                  //form15.Label20.Caption :='Pos: '+FloatToStrF((enc_cur_x),ffFixed,6,2)+'mm x '+FloatToStrF((enc_cur_y),ffFixed,6,2)+'mm';
-
-                  if scaner_type=2 then begin
-                     scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+j*(xy_coor.x-xy_coor_old.x)/optel_pack;
-                     scann_arr[scann_counter].xy_coor.y := xy_coor_old.y+j*(xy_coor.y-xy_coor_old.y)/optel_pack;
-                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
-                  end else begin
-//                    scann_arr[scann_counter].xy_coor := xy_coor;
-                      scann_arr[scann_counter].xy_coor.x := enc_cur_x;
-                      scann_arr[scann_counter].xy_coor.y := enc_cur_y;
-                  end;
-
-                  scann_arr[scann_counter].have_ascan:= true ;
-                  if scann_arr[scann_counter].have_ascan then begin
-                     for i:=1 to 400 do
-                         if not debug_not_us_key then
-                            scann_arr[scann_counter].US_arr1[i] := draw_ascn[i]
-                         else
-                             scann_arr[scann_counter].US_arr1[i] := i;
-                  end;
-            end;
-      //end ;///////////////////////scann
-				xy_coor_old:=xy_coor;
-				dec(data_optel, ( optel_frame+52)*optel_pack);
-				//check:=check + Opcard_SetResetFifo(opcard_no);
-  end;     //////////////////////////////////////////////////////////////////////////
-
-           //       dec( data_optel, optel_frame + 52);
-   inc(display_counter);
-
-   if display_counter > 4 then display_counter:=0;
-////////////a-scan display///////////////////
-   if (display_counter mod 1) = 0 then begin         //// start here        //was 2
-//   if (form1.Visible ) then begin
-//   if (form1.Visible or form15.Visible) then begin
-
-    if not b_form15_on then begin
-      if  GroupBox7.Left < 1190 then begin
-        image4.Visible:=true;
-        image1.Visible:=false;
-
-       // img100:=TBitMap.Create;
-      //  img100.Width:=image4.Width;
-      //  img100.Height :=image4.Height ;
-
-        img100 := image4 ;
-       havebit100:=false;
-      end else begin
-        image1.Visible:=true;
-        image4.Visible:=false;
-//        img100:=TBitMap.Create;
-//        img100.Width:=image1.Width;
-//        img100.Height :=image1.Height ;
-        img100 := image1;
-       havebit100:=false;
-      end;
-    end;
-
-    if b_form15_on then begin
-//        img100:=TBitMap.Create;
-//        img100.Width:=form17.Image1.Width;
-//        img100.Height :=form17.Image1.Height ;
-
-       img100:=form17.Image1;
-       havebit100:=false;
-    end;
-    if b_form11_on then begin
-//        img100:=TBitMap.Create;
-//        img100.Width:=form17.Image1.Width;
-//        img100.Height :=form17.Image1.Height ;
-
-       img100:=form17.Image1;
-       havebit100:=false;
-    end;
-
-    havebit100:=false;
-    if havebit100 then begin
-      bmp100.Canvas.CopyRect(bmp100.Canvas.ClipRect,img100.Canvas,bmp100.Canvas.ClipRect);
-//      BitBlt(image1.Canvas.bmp100,0,0,image1.Width,image1.Height,bmp100.Canvas.Handle,0,0,SRCCOPY);
-    end;
-
-
-    if not havebit100 then
-    if us_freeze = 0 then begin
-      img100.Canvas.Pen.Color:=clLime ;
-      img100.Canvas.Pen.Width:=1;
-      img100.Canvas.Brush.Style:=bsSolid	 ;
-      img100.Canvas.Brush.Color :=clBlack;
-      img100.Canvas.Rectangle(0,0,img100.Width,img100.Height-0 );
-      img100.Canvas.Pen.Color:=clLime;
-      img100.Canvas.Pen.Width:=1;
-      img100.Canvas.MoveTo(0,img100.Height - 10 -0);
-      img100.Canvas.LineTo(img100.Width,img100.Height - 10 - 0);
-      for i:=1 to 51 do begin
-        img100.Canvas.MoveTo(trunc(img100.Width/50*(i-1)),img100.Height - 10 -0);
-        img100.Canvas.LineTo(trunc(img100.Width/50*(i-1)),img100.Height - 5 - 0);
-      end ;
-
-      for i:=1 to 11 do begin
-        img100.Canvas.MoveTo(trunc(img100.Width/10*(i-1)),0);
-        img100.Canvas.LineTo(trunc(img100.Width/10*(i-1)),10);
-        img100.Canvas.MoveTo(trunc(img100.Width/10*(i-1)),img100.Height -10 -0);
-        img100.Canvas.LineTo(trunc(img100.Width/10*(i-1)),img100.Height -0);
-      end ;
-
-      for i:=1 to 11 do begin
-        img100.Canvas.MoveTo(0,trunc(img100.height/10*(i-1)));
-        img100.Canvas.LineTo(5,trunc(img100.height/10*(i-1)));
-        img100.Canvas.MoveTo(img100.Width - 5,trunc(img100.height/10*(i-1)));
-        img100.Canvas.LineTo(img100.Width,trunc(img100.height/10*(i-1)));
-      end ;
-
-      for i:=1 to 10 do
-         for j:=1 to 10 do begin
-          img100.Canvas.MoveTo(trunc(img100.Width/10*(i)-2),trunc((img100.height-10)/10*(j)));
-          img100.Canvas.LineTo(trunc(img100.Width/10*(i)+3),trunc((img100.height-10)/10*(j)));
-          img100.Canvas.MoveTo(trunc(img100.Width/10*(i)),trunc((img100.height-10)/10*(j)-2));
-          img100.Canvas.LineTo(trunc(img100.Width/10*(i)),trunc((img100.height-10)/10*(j)+3));
-      end;
-
-      img100.Canvas.Pen.Width:=2;
-      img100.Canvas.Pen.Color:= clBlue;
-      img100.Canvas.MoveTo(img100.Width-110,img100.Height-2);
-      img100.Canvas.LineTo(img100.Width-110+30,img100.Height-2);
-      img100.Canvas.Pen.Color:= clRed;
-      img100.Canvas.MoveTo(img100.Width-70,img100.Height-2);
-      img100.Canvas.LineTo(img100.Width-70+30,img100.Height-2);
-      img100.Canvas.Pen.Color:= clYellow;
-      img100.Canvas.MoveTo(img100.Width-30,img100.Height-2);
-      img100.Canvas.LineTo(img100.Width-30+30,img100.Height-2);
-      img100.Canvas.Pen.Width:=1;
-
-      bmp100.Width := img100.Width;
-      bmp100.Height := img100.Height;
-
-//      img100.Canvas.CopyRect(img100.Canvas.ClipRect,bmp100.Canvas,img100.Canvas.ClipRect);
-
-//      havebit100:=true;
-    end;
-
-
-     img100.Canvas.Pen.Color:=clLime;
-     if (us_freeze=0) or (us_freeze=2) then begin
-
-      if us_ascan_hf=1 then begin
-         img100.Canvas.MoveTo(0,0);
-         for i:=1 to 400 do
-          if draw_ascn[i]>((100-us_reject)*2)then
-             img100.Canvas.LineTo(trunc(i*img100.Width/400),img100.Height-10)
-            else
-             img100.Canvas.LineTo(trunc(i*img100.Width/400),trunc((draw_ascn[i])*img100.Height/200)-10); ///ascan
-
-
-          if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
-             dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
-             dac_att:=SpTBXSpinEdit10.Value/2;
-             dac_1:=us_gain*exp( -1*(0+dac_range*0/100)*dac_att );
-
-             if SpTBXCheckBox4.Checked then begin
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height-10)/dac_1));
-               img100.Canvas.Pen.Color:=clBlue;
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height-10)/dac_1));
-             end;
-             if SpTBXCheckBox9.Checked then begin
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height-10)/dac_1));
-               img100.Canvas.Pen.Color:=clWhite;
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height-10)/dac_1));
-             end;
-             if SpTBXCheckBox24.Checked then begin
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height-10)/dac_1));
-               img100.Canvas.Pen.Color:=clFuchsia;
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height-10)/dac_1));
-             end;
-
-             i:=0;
-             img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - us_gain*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height-10)/dac_1));
-             img100.Canvas.Pen.Color:=clRed;
-             for i:=1 to 100 do
-                img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height-10 - us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height-10)/dac_1));
-
-          end;                      //DAC TH.
-
-          if SpTBXComboBox6.ItemIndex = 2 then      //DAC EXP.
-            if dac_list_count>1 then   begin
-              //dac_range:=edit7.value*1.75;
-
-              dac_range:=edit7.value/us_mm;
-
-              dac_str:=US_Delay*dac_sv/1000;
-
-              if SpTBXCheckBox4.Checked then begin
-                img100.Canvas.Pen.Color:=clBlue;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-              end;
-              if SpTBXCheckBox9.Checked then begin
-                img100.Canvas.Pen.Color:=clWhite;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-              end;
-              if SpTBXCheckBox24.Checked then begin
-                img100.Canvas.Pen.Color:=clFuchsia;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-              end;
-
-              img100.Canvas.Pen.Color:=clRed;
-              img100.Canvas.MoveTo(trunc(0),trunc(img100.Height-10-dac_list[1].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-              for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height-10- dac_list[i].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-              end;
-              img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height-10-dac_list[dac_list_count].b/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height-0)/100));
-
-     //      dac_list[i].b:=tr_db*us_gain/100/power(10,(us_gain-dac_db)/20);
-           // dac_list[i].b:=dac_db*log10(tr_db)/2;
-          end;              //DAC EXP.
-
-      end else begin
-         img100.Canvas.MoveTo(0,0);
-         for i:=1 to 400 do
-            img100.Canvas.LineTo(trunc(i*img100.Width/400),trunc((draw_ascn[i])*img100.Height/200-img100.Height/2-10));
-
-          if SpTBXComboBox6.ItemIndex = 1 then  begin      //DAC TH.
-
-             dac_range:=edit7.value/us_mm;
-             dac_str:=US_Delay*US_SV/1000;
-             dac_att:=SpTBXSpinEdit10.Value/2;
-             dac_1:=us_gain*exp( -1*(0+dac_range*0/100)*dac_att );
-
-             if SpTBXCheckBox4.Checked then begin
-               img100.Canvas.Pen.Color:=clBlue;
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-10 - (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 - (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar1.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-             end;
-             if SpTBXCheckBox9.Checked then begin
-               img100.Canvas.Pen.Color:=clWhite;
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-10 - (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 - (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar2.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-             end;
-             if SpTBXCheckBox24.Checked then begin
-               img100.Canvas.Pen.Color:=clFuchsia;
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-10 - (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 - (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               i:=0;
-               img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-               for i:=1 to 100 do
-                  img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + (SpTBXTrackBar3.Position+us_gain)*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-             end;
-
-             i:=0;
-             img100.Canvas.Pen.Color:=clRed;
-             img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-10 - us_gain*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-             for i:=1 to 100 do
-                img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 - us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-
-             i:=0;
-             img100.Canvas.MoveTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + us_gain*exp( -1*(dac_str+dac_range*1/100)*dac_att )*(img100.Height/2-10)/dac_1));
-             for i:=1 to 100 do
-                img100.Canvas.LineTo(trunc(i*img100.Width/100),trunc(img100.Height/2-0 + us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )*(img100.Height/2-10)/dac_1));
-
-          end;                     //DAC TH.
-
-          if SpTBXComboBox6.ItemIndex = 2 then       //DAC EXP.
-            if dac_list_count>1 then   begin
-              dac_range:=edit7.value/us_mm;
-              dac_str:=US_Delay*US_SV/1000;
-
-              if SpTBXCheckBox4.Checked then begin
-                img100.Canvas.Pen.Color:=clBlue;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar1.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-              if SpTBXCheckBox9.Checked then begin
-                img100.Canvas.Pen.Color:=clWhite;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar2.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-              if SpTBXCheckBox24.Checked then begin
-                img100.Canvas.Pen.Color:=clFuchsia;
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-                img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                for i:=1 to dac_list_count do begin
-                    img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-                end;
-                img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b+SpTBXTrackBar3.Position)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-
-              img100.Canvas.Pen.Color:=clRed;
-              img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10-(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10-(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-              img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10-(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-              img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-              img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-          end;   //DAC EXP.
-
-
-          if SpTBXComboBox6.ItemIndex = 3 then begin      //DGS
-            if SpTBXRadioButton9.Checked then begin      //fbh
-                fbhDia := SpTBXSpinEdit29.value;
-
-              img100.Canvas.MoveTo(trunc(0),trunc(img100.Height/2-10+(dac_list[1].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              for i:=1 to dac_list_count do begin
-                  img100.Canvas.LineTo(trunc((TRCal((dac_list[i].a-us_probe_delay)*us_sv/1000)-dac_str)*img100.Width/dac_range),trunc(img100.Height/2-10+(dac_list[i].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-              end;
-              img100.Canvas.LineTo(trunc(img100.Width),trunc(img100.Height/2-10+(dac_list[dac_list_count].b)/(us_gain/100/power(10,(us_gain-dac_db)/20))*(img100.Height/2-0)/100));
-
-            end else begin                               //sdh
-
-            end;
-
-          end;    //DGS
-
-
-      end;
-
-
-
-     end;
-
-    {
-
-      img100.Canvas.Pen.Color:=clLime;
-      if (us_freeze=0) or (us_freeze=2) then begin
-        if us_ascan_hf=1 then begin
-          img100.Canvas.MoveTo(0,0);
-          for i:=1 to img100.Width do
-            if trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/128*200)*100/200)>((100-us_reject)*1)then
-              img100.Canvas.LineTo(i,img100.Height-10)
-            else
-              img100.Canvas.LineTo(i,trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/128*200)*img100.Height/200)-10);
-        end else begin
-          img100.Canvas.MoveTo(0,0);
-          for i:=1 to img100.Width do
-            img100.Canvas.LineTo(i,trunc((200-US_arr1[trunc(i*optel_frame/img100.Width)]/256*200)*img100.Height/200)-10);
-//          for i:=1 to trunc(optel_frame/1) do
-//            img100.Canvas.LineTo(trunc(i*img100.Width/optel_frame*1),trunc((200-US_arr1[i*1]/256*200)*img100.Height/200)-10);
-        end
-      end;
-
-     }
-      //measuremnts points
-
-if us_freeze = 0 then begin
-case trunc(us_samplingfreq) of
-          0:tmp:=100;
-          1:tmp:=50;
-          2:tmp:=25;
-          3:tmp:=10;                              // tmp := 2*1000/us_sv*optel_frame/us_width;
-end;
-img100.Canvas.Pen.Width:=4;
-
-if  SpTBXCheckBox13.Checked then begin
-    img100.Canvas.Pen.Color:=clred;
-    if SpTBXCheckBox17.Checked then begin
-      tmp1:=trunc((us_mess[1].tof-us_delay)/(us_width)*400);
-
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-((us_mess[1].amp))/100*100)
-      else
-        tmp2:=trunc(200-((us_mess[1].amp))/100*200);
-
-      tmp1:=trunc(tmp1*img100.Width/400)+3;
-      tmp2:=trunc(tmp2*img100.Height/200)-10;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-
-    if SpTBXCheckBox18.Checked then begin
-      tmp1:=trunc((us_mess[2].tof-us_delay)/(us_width)*400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-((us_mess[2].amp))/100*100)
-      else
-        tmp2:=trunc(200-((us_mess[2].amp))/100*200);
-      tmp1:=trunc(tmp1*img100.Width/400)+3;
-      tmp2:=trunc(tmp2*img100.Height/200)-10;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-
-    if SpTBXCheckBox19.Checked then begin
-      tmp1:=trunc((us_mess[3].tof-us_delay)/(us_width)*400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-((us_mess[3].amp))/100*100)
-      else
-        tmp2:=trunc(200-((us_mess[3].amp))/100*200);
-      tmp1:=trunc(tmp1*img100.Width/400)+3;
-      tmp2:=trunc(tmp2*img100.Height/200)-10;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-
-end else begin
-    if SpTBXCheckBox17.Checked then begin
-      img100.Canvas.Pen.Color:=clYellow;
-      tmp1:=trunc((us_mess[1].tof-us_delay)/(us_width)*400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-(gates[1].height)/100*100)
-      else
-        tmp2:=trunc(200-(gates[1].height)/100*200);
-      tmp1:=trunc(tmp1*img100.Width/400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(tmp2*img100.Height/200)-2
-      else
-        tmp2:=trunc(tmp2*img100.Height/200)-4;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-    if SpTBXCheckBox18.Checked then begin
-      img100.Canvas.Pen.Color:=clYellow;
-      tmp1:=trunc((us_mess[2].tof-us_delay)/(us_width)*400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-(gates[2].height)/100*100)
-      else
-        tmp2:=trunc(200-(gates[2].height)/100*200);
-      tmp1:=trunc(tmp1*img100.Width/400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(tmp2*img100.Height/200)-2
-      else
-        tmp2:=trunc(tmp2*img100.Height/200)-4;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-    if SpTBXCheckBox19.Checked then begin
-      img100.Canvas.Pen.Color:=clYellow;
-      tmp1:=trunc((us_mess[3].tof-us_delay)/(us_width)*400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(100-(gates[3].height)/100*100)
-      else
-        tmp2:=trunc(200-(gates[3].height)/100*200);
-      tmp1:=trunc(tmp1*img100.Width/400);
-      if us_ascan_hf = 0 then
-        tmp2:=trunc(tmp2*img100.Height/200)-2
-      else
-        tmp2:=trunc(tmp2*img100.Height/200)-4;
-      img100.Canvas.MoveTo(tmp1-4,tmp2-4);
-      img100.Canvas.lineTo(tmp1+4,tmp2+4);
-      img100.Canvas.MoveTo(tmp1-4,tmp2+4);
-      img100.Canvas.lineTo(tmp1+4,tmp2-4);
-    end;
-  end;
-img100.Canvas.Pen.Width:=1;
-
-
-
-////////////a-scan display///////////////////
-
-////////////draw gates///////////////////
-
-//if radiobutton26.Checked  then US_width:=(strtofloat(Edit7.Text)/1)/1.0;
-//if radiobutton25.Checked  then US_width:=(strtofloat(Edit7.Text)/1)/us_sv*1000.0/1.0;
-
-//if radiobutton25.Checked  then US_width:=(strtofloat(Edit7.Text)/1)*us_sv/1000.0/1.0;
-
-  US_In3:=US_width;
-
-  label30.Visible := SpTBXCheckBox17.Checked;
-  label31.Visible := SpTBXCheckBox18.Checked;
-  label32.Visible := SpTBXCheckBox19.Checked;
-
- // shape1.Visible := false;
-  //shape2.Visible := false;
- // shape3.Visible := false;
-
-  img100.Canvas.Pen.Width:=2;
-
-if SpTBXCheckBox17.Checked  then begin
-  x_start:=(gates[1].start-us_delay);
-  x_stop:=(gates[1].start+gates[1].width-us_delay);
-  a1x:=trunc(x_start/US_width*img100.Width);
-  a2x:=trunc(x_stop/US_width*img100.Width);
-
-  img100.Canvas.Pen.Color:=clBlue;
-  if SpTBXCheckBox5.Checked or (us_ascan_hf=0) then begin
-    img100.Canvas.MoveTo(a1x,trunc((img100.Height-10)/2-(gates[1].height/100)*(img100.Height-10)/2));
-    img100.Canvas.LineTo(a2x,trunc((img100.Height-10)/2-(gates[1].height/100)*(img100.Height-10)/2));
-  end else begin
-    img100.Canvas.MoveTo(a1x,trunc((img100.Height-10)-(gates[1].height/100)*(img100.Height-10)));
-    img100.Canvas.LineTo(a2x,trunc((img100.Height-10)-(gates[1].height/100)*(img100.Height-10)));
-  end;
-end;
-if SpTBXCheckBox18.Checked  then begin
-  x_start:=(gates[2].start-us_delay)/1.0;
-  x_stop:=(gates[2].start+gates[2].width-us_delay)/1.0;
-  img100.Canvas.Pen.Color:=clRed;//clOlive;
-  if SpTBXCheckBox5.Checked or (us_ascan_hf=0) then begin
-    img100.Canvas.MoveTo(trunc(x_start/(US_In3/img100.Width)),trunc((img100.Height-10)/2-(gates[2].height/100)*(img100.Height-10)/2));
-    img100.Canvas.LineTo(trunc(x_stop/(US_In3/img100.Width)),trunc((img100.Height-10)/2-(gates[2].height/100)*(img100.Height-10)/2));
-  end else begin
-    img100.Canvas.MoveTo(trunc(x_start/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[2].height/100)*(img100.Height-10)));
-    img100.Canvas.LineTo(trunc(x_stop/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[2].height/100)*(img100.Height-10)));
-  end;
-end;
-if SpTBXCheckBox19.Checked  then begin
-  x_start:=(gates[3].start-us_delay)/1.0;
-  x_stop:=(gates[3].start+gates[3].width-us_delay)/1.0;
-  img100.Canvas.Pen.Color:=clYellow;//clGreen;
-  if SpTBXCheckBox5.Checked or (us_ascan_hf=0) then begin
-    img100.Canvas.MoveTo(trunc(x_start/(US_In3/img100.Width)),trunc((img100.Height-10)/2-(gates[3].height/100)*(img100.Height-10)/2));
-    img100.Canvas.LineTo(trunc(x_stop/(US_In3/img100.Width)),trunc((img100.Height-10)/2-(gates[3].height/100)*(img100.Height-10)/2));
-  end else begin
-    img100.Canvas.MoveTo(trunc(x_start/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[3].height/100)*(img100.Height-10)));
-    img100.Canvas.LineTo(trunc(x_stop/(US_In3/img100.Width)),trunc((img100.Height-10)-(gates[3].height/100)*(img100.Height-10)));
-  end;
-end;
-
-     ////////////////////////////////end gates
-end;  //if freeze = 0
-
-//end;
-    {
-
-    if not b_form15_on then begin
-      if  GroupBox7.Left < 1190 then begin
-        image4.Canvas.Draw(0,0,img100);
-      end else begin
-        image1.Canvas.Draw(0,0,img100);
-      end;
-    end;
-
-    if b_form15_on then begin
-        form17.Image1.Canvas.Draw(0,0,img100);
-    end;
-    if b_form11_on then begin
-        form17.Image1.Canvas.Draw(0,0,img100);
-    end;
-    img100.Free;
-     }
-
-end; //end here
-////////////draw gates///////////////////
-
-////////////mesuremnet display///////////////////
-   if (display_counter mod 4) = 0 then begin         //// start here
-
-  if SpTBXCheckBox6.Checked then begin
-    label30.font.Color:=clGreen;
-    if us_mess[1].alarm=1 then label30.font.Color :=clRed;
-  end else begin
-    label30.font.Color :=clRed;
-    if us_mess[1].alarm=1 then label30.font.Color :=clGreen;
-  end;
-
-  if SpTBXCheckBox7.Checked then begin
-    label31.font.Color :=clGreen;
-    if us_mess[2].alarm=1 then label31.font.Color :=clRed;
-  end else begin
-    label31.font.Color :=clRed;
-    if us_mess[2].alarm=1 then label31.font.Color :=clGreen;
-  end;
-
-  if SpTBXCheckBox8.Checked then begin
-    label32.font.Color :=clGreen;
-    if us_mess[3].alarm=1 then label32.font.Color :=clRed;
-  end else begin
-    label32.font.Color :=clRed;
-    if us_mess[3].alarm=1 then label32.font.Color :=clGreen;
-  end;
-
-
-
-
-  if SpTBXCheckBox6.Checked then begin
-    gpo0 := 0;
-    if us_mess[1].alarm=1 then begin gpo0 := 1;  gpo0_c:= alarm_timer;
-    end;
-  end else begin
-  //   gpo0 := 1;
-
-    if us_mess[1].alarm=0 then begin gpo0 := 1; gpo0_c:= alarm_timer;// gpo0_c:= 0;
-    end;
-  end;
-
-  if SpTBXCheckBox7.Checked then begin
-    gpo1 := 0;
-    if us_mess[2].alarm=1 then begin gpo1 := 1;  gpo1_c:= alarm_timer;
-    end;
-  end else begin
-   //  gpo1 := 1;
-
-    if us_mess[2].alarm=0 then  begin gpo1 := 0;gpo1_c:= alarm_timer;// gpo1_c:= 0;
-    end;
-  end;
-
-  if SpTBXCheckBox8.Checked then begin
-    gpo2 := 0;
-    if us_mess[3].alarm=1 then begin gpo2 := 1;  gpo2_c:= alarm_timer;
-     end;
-  end else begin
-    // gpo2 := 1;
-
-    if us_mess[3].alarm=0 then begin gpo2 := 1;gpo2_c:= alarm_timer;// gpo2_c:= 0;
-    end;
-  end;
-
-  if not SpTBXCheckBox17.Checked then gpo0 := 0;
-  if not SpTBXCheckBox18.Checked then gpo1 := 0;
-  if not SpTBXCheckBox19.Checked then gpo2 := 0;
-  gpo3 := gpo1;
-
-  //gpo0:=0;
- // if not timer4.Enabled then timer4.enabled:=true;
- // check:=check + Opcard_SetGpoSettings(opcard_no, gpo0, gpo1, gpo2, gpo3);
-
- // us_mess[1].alarm:=0;
- // us_mess[2].alarm:=0;
- // us_mess[3].alarm:=0;
-
-
-  sound_play:=0;
-
-  if SpTBXCheckBox17.Checked then
-  if SpTBXCheckBox21.Checked then
-    if label30.font.Color = clRed then
-      sound_play:=sound_play+1;
-
-
-  if SpTBXCheckBox18.Checked then
-  if SpTBXCheckBox22.Checked then
-    if label31.font.Color = clRed then
-      sound_play:=sound_play+2;
-
-
-  if SpTBXCheckBox19.Checked then
-  if SpTBXCheckBox23.Checked then
-    if label32.font.Color = clRed then
-      sound_play:=sound_play+4;
-
-
-
- // label14.Caption := IntToStr(i);
-
-  {
-  1 gate a
-  2 Gate b
-  3 gate a+b
-  4 gate c
-  5 gae a+c
-  6 Gate b+c
-  7 gate a+b+c
-  }
-
-
-
-
-  if radiobutton25.Checked then begin
-      if radiobutton9.Checked then j:=1;
-      if radiobutton10.Checked then j:=2;
-      if radiobutton11.Checked then j:=3;
-
-      r_val:=US_Mess[j].tof;
-
-      if r_val> 0then
-        if r_val<trmin then begin
-            trmin :=r_val;
-            Label2.Caption := FloatToStrF(((trmin-us_probe_delay)*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-//        if radiobutton25.Checked then Label2.Caption := FloatToStrF(((trmin/1/2-us_probe_delay)/1*us_sv/1000*sin((90-us_angle)*pi/180)),ffFixed,6,2)+' [mm]';
-//        if radiobutton26.Checked then label2.Caption :=FloatToStrF(us_mess[1].tof/1*sin((90-us_angle)*pi/180),ffFixed,6,2)+' [us]';
-        end;
-  end;
-
-  r_val:=US_Mess[1].amp;
-  if r_val > tr_db then begin
-      label64.Caption :=FloatToStrF(r_val,ffFixed,6,2)+ '[%]';
-      tr_db:=r_val;
-      tr_x:=US_Mess[1].tof;
-  end;
-
-
-
-
-  {
-0     Time of Flight                   T(A) [us]
-1     Material Travel Distance s(A) [mm]
-2     Projection Distance        a(A) [mm]
-3     Depth                              t(A) [mm]
-4     ?T                            T(B)-T(A) [us]
-5     ?s                            s(B)-s(A) [mm]
-6     ?a                           a(B)-a(A) [mm]
-7     ?t                              t(B)-t(A) [mm]
-8     Amplitude                         H(A) [%]
-9     Amplitude dB                   V(A) [dB]
-10    ?V                           V(B)-V(A) [dB]
-?VC(A) dB to DAC                  [dB]
-NONE
-}
-
-
- try
-
-
-
- us_x:=SpTBXSpinEdit17.value;
-
-   label12.Caption:='';
-   label33.Caption:='';
-
-
-   my_label:=label12;
-   my_label.Caption :='';
-
-   r_val100:=US_Mess[1].tof;
-   r_val200:=US_Mess[2].tof;
-   r_val300:=US_Mess[3].tof;
-   a_val100:=US_Mess[1].amp;
-   a_val200:=US_Mess[2].amp;
-   a_val300:=US_Mess[3].amp;
-
-//us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )
-
-
-   if SpTBXComboBox6.ItemIndex = 1 then begin
-     db_val100 := -US_gain*exp( -1*(TRCal((r_val100-us_probe_delay)*us_sv/1000))*dac_att ) + a_val100*us_gain/100/power(10,(us_gain-us_gain)/20);
-     db_val200 := -US_gain*exp( -1*(TRCal((r_val200-us_probe_delay)*us_sv/1000))*dac_att ) + a_val200*us_gain/100/power(10,(us_gain-us_gain)/20);
-     db_val300 := -US_gain*exp( -1*(TRCal((r_val300-us_probe_delay)*us_sv/1000))*dac_att ) + a_val300*us_gain/100/power(10,(us_gain-us_gain)/20);
-  end;
-   if SpTBXComboBox6.ItemIndex = 2 then begin
-     db_val100 := a_val100*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val100-us_probe_delay)*us_sv/1000));
-     db_val200 := a_val200*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val200-us_probe_delay)*us_sv/1000));
-     db_val300 := a_val300*us_gain/100/power(10,(us_gain-dac_db)/20)-DAC_X(TRCal((r_val300-us_probe_delay)*us_sv/1000));
-  end;
-
-     //      dac_list[i].b:=tr_db*us_gain/100/power(10,(us_gain-dac_db)/20);
-           // dac_list[i].b:=dac_db*log10(tr_db)/2;
-
-
-
-   if r_val100<=0 then  r_val100 := us_probe_delay;
-   if r_val200<=0 then  r_val200 := us_probe_delay;
-   if r_val300<=0 then  r_val300 := us_probe_delay;
-
-
- for i := 0 to StringGrid4.RowCount-1 do begin
-   case StrToInt(StringGrid4.Cells[0,i]) of
-    100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    104: my_label.Caption :=my_label.Caption + 'T(B)-T(A)=' + FloatToStrF(TRCal(r_val200-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    108: if a_val100 >100 then
-              my_label.Caption :=my_label.Caption + 'H(A)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(A)=' + FloatToStrF(a_val100,ffFixed,6,0)+ ' [%]  ';
-    109: my_label.Caption :=my_label.Caption + 'V(A)=' + FloatToStrF(20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    110: my_label.Caption :=my_label.Caption + 'V[B]-V(A)=' + FloatToStrF(20*log10(a_val200/gates[2].height)-20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(db_val100 ,ffFixed,6,2)+ ' [dB]  ';
-//    111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(20*log10(gates[1].height/db_val100) ,ffFixed,6,2)+ ' [dB]  ';
-    200: my_label.Caption :=my_label.Caption + 'T(B)=' + FloatToStrF(TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    204: my_label.Caption :=my_label.Caption + 'T(C)-T(B)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    208: if a_val200 >100 then
-              my_label.Caption :=my_label.Caption + 'H(B)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(B)=' + FloatToStrF(a_val200,ffFixed,6,0)+ ' [%]  ';
-    209: my_label.Caption :=my_label.Caption + 'V(B)=' + FloatToStrF(20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
-    210: my_label.Caption :=my_label.Caption + 'V[C]-V(B)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
-    211: my_label.Caption :=my_label.Caption + 'DVC(B)=' + FloatToStrF(db_val200 ,ffFixed,6,2)+ ' [dB]  ';
-    300: my_label.Caption :=my_label.Caption + 'T(C)=' + FloatToStrF(TRCal(r_val300-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    304: my_label.Caption :=my_label.Caption + 'T(C)-T(A)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    308: if a_val300 >100 then
-              my_label.Caption :=my_label.Caption + 'H(C)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(C)=' + FloatToStrF(a_val300,ffFixed,6,0)+ ' [%]  ';
-    309: my_label.Caption :=my_label.Caption + 'V(C)=' + FloatToStrF(20*log10(a_val300/gates[3].height) ,ffFixed,6,2)+ ' [dB]  ';
-    310: my_label.Caption :=my_label.Caption + 'V[C]-V(A)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    311: my_label.Caption :=my_label.Caption + 'DVC(C)=' + FloatToStrF(db_val300 ,ffFixed,6,2)+ ' [dB]  ';
-   end;
-  end;
-
-   my_label:=label33;
-   my_label.Caption :='';
-
- for i := 0 to StringGrid5.RowCount-1 do begin
-   case StrToInt(StringGrid5.Cells[0,i]) of
-    100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    103: my_label.Caption :=my_label.Caption + 't(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    104: my_label.Caption :=my_label.Caption + 'T(B)-T(A)=' + FloatToStrF(TRCal(r_val200-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    105: my_label.Caption :=my_label.Caption + 's(B)-s(A)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    106: my_label.Caption :=my_label.Caption + 'a(B)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    107: my_label.Caption :=my_label.Caption + 't(B)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    108: if a_val100 >100 then
-              my_label.Caption :=my_label.Caption + 'H(A)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(A)=' + FloatToStrF(a_val100,ffFixed,6,0)+ ' [%]  ';
-    109: my_label.Caption :=my_label.Caption + 'V(A)=' + FloatToStrF(20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    110: my_label.Caption :=my_label.Caption + 'V[B]-V(A)=' + FloatToStrF(20*log10(a_val200/gates[2].height)-20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    111: my_label.Caption :=my_label.Caption + 'DVC(A)=' + FloatToStrF(db_val100 ,ffFixed,6,2)+ ' [dB]  ';
-    200: my_label.Caption :=my_label.Caption + 'T(B)=' + FloatToStrF(TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    201: my_label.Caption :=my_label.Caption + 's(B)='+ FloatToStrF(TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    202: my_label.Caption :=my_label.Caption + 'a(B)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    203: my_label.Caption :=my_label.Caption + 't(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    204: my_label.Caption :=my_label.Caption + 'T(C)-T(B)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val200-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    205: my_label.Caption :=my_label.Caption + 's(C)-s(B)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    206: my_label.Caption :=my_label.Caption + 'a(C)-a(B)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    207: my_label.Caption :=my_label.Caption + 't(C)-t(B)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val200-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    208: if a_val200 >100 then
-              my_label.Caption :=my_label.Caption + 'H(B)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(B)=' + FloatToStrF(a_val200,ffFixed,6,0)+ ' [%]  ';
-    209: my_label.Caption :=my_label.Caption + 'V(B)=' + FloatToStrF(20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
-    210: my_label.Caption :=my_label.Caption + 'V[C]-V(B)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val200/gates[2].height) ,ffFixed,6,2)+ ' [dB]  ';
-    211: my_label.Caption :=my_label.Caption + 'DVC(B)=' + FloatToStrF(db_val200 ,ffFixed,6,2)+ ' [dB]  ';
-    300: my_label.Caption :=my_label.Caption + 'T(C)=' + FloatToStrF(TRCal(r_val300-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    301: my_label.Caption :=my_label.Caption + 's(C)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    302: my_label.Caption :=my_label.Caption + 'a(C)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    303: my_label.Caption :=my_label.Caption + 't(C)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    304: my_label.Caption :=my_label.Caption + 'T(C)-T(A)=' + FloatToStrF(TRCal(r_val300-us_probe_delay)-TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
-    305: my_label.Caption :=my_label.Caption + 's(C)-s(A)='+ FloatToStrF(TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    306: my_label.Caption :=my_label.Caption + 'a(C)-a(A)='+ FloatToStrF(sin((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    307: my_label.Caption :=my_label.Caption + 't(C)-t(A)='+ FloatToStrF(cos((us_angle)*pi/180)*TRCal((r_val300-us_probe_delay)*0.5*us_sv/1000)-cos((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*0.5*us_sv/1000),ffFixed,6,2)+ ' [mm]  ';
-    308: if a_val300 >100 then
-              my_label.Caption :=my_label.Caption + 'H(C)>' + FloatToStrF(100,ffFixed,6,0)+ ' [%]  '
-           else
-              my_label.Caption :=my_label.Caption + 'H(C)=' + FloatToStrF(a_val300,ffFixed,6,0)+ ' [%]  ';
-    309: my_label.Caption :=my_label.Caption + 'V(C)=' + FloatToStrF(20*log10(a_val300/gates[3].height) ,ffFixed,6,2)+ ' [dB]  ';
-    310: my_label.Caption :=my_label.Caption + 'V[C]-V(A)=' + FloatToStrF(20*log10(a_val300/gates[3].height)-20*log10(a_val100/gates[1].height) ,ffFixed,6,2)+ ' [dB]  ';
-    311: my_label.Caption :=my_label.Caption + 'DVC(C)=' + FloatToStrF(db_val300 ,ffFixed,6,2)+ ' [dB]  ';
-   end;
-  end;
- except
-         on E : Exception do
-      ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-
- end;
-
- end; ///here
-
-
-
-////////////mesuremnet display///////////
-
-
-   if (display_counter mod 4) = 0 then begin         //// start here
-
-//cscan////////////////////////////////////////////////////////
-      if start_copy_img1_2 then begin
-        start_copy_img1_1:=false;
-        start_copy_img1_2:=false;
-        form14.Hide;
-        form12.Hide;
-        form1.SendToBack;
-
-
-        form15.Show;
-        form15.FormStyle:=fsStayOnTop;
-        form15.BringToFront;
-        form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
-        b_form15_on := true;
-
-        form17.show;
-        form17.FormStyle:=fsStayOnTop;
-        form17.BringToFront;
-        form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
-      end;
-
-      if start_copy_img1_4 then begin
-        start_copy_img1_3:=false;
-        start_copy_img1_4:=false;
-        form14.Hide;
-        form12.Hide;
-        form1.SendToBack;
-
-
-        form11.Show;
-        form11.FormStyle:=fsStayOnTop;
-        form11.BringToFront;
-        //form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
-        b_form11_on := true;
-
-        form17.show;
-        form17.FormStyle:=fsStayOnTop;
-        form17.BringToFront;
-        //form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
-      end;
-
-  if form15.Visible and (form15.CheckBox2.Checked ) then begin
-
-              form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
-
-              j:=0;
-              if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
-              if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
-              if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
-              if j>0 then begin
-                if j = 1 then Form15.label2.Font.Color := clBlue;
-                if j = 2 then Form15.label2.Font.Color := clRed;//clOlive;
-                if j = 3 then Form15.label2.Font.Color := clYellow;//clGreen;
-                if SpTBXCheckBox11.Checked  then begin
-                     r_val:=(US_Mess[j].amp);
-                     if r_val>100 then
-                        Form15.label2.Caption :='Val : >100'
-                    else
-                        Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2);
-                end;
-
-                if  SpTBXCheckBox10.Checked then begin
-                  r_val:=US_Mess[j].tof;
-                  if radiobutton26.Checked  then Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-                  if radiobutton25.Checked  then
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000)  ,ffFixed,6,2)+' [mm]'
-                    else
-                        Form15.label2.Caption :='Val : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
-                end ;
-              end else begin
-                      Form15.label2.Font.Color := clBlack;
-                      Form15.label2.Caption :='Val : N/C'
-              end;
-
-         if j>0 then
-         for l:=(scann_counter_old+1) to (scann_counter) do begin
-          //form15.label1.Caption:=IntToStr(scann_counter-scann_counter_old-1);
-
-              ////////////////start///////////////////////
-              if SpTBXCheckBox10.Checked then
-                r_val:=scann_arr[l].US_Mess[j].tof
-              else
-                r_val:=scann_arr[l].US_Mess[j].amp;
-
-              if r_val<0 then r_val:=0;
-              r_val1:=r_val;
-              x1:=scann_arr[l].xy_coor.x;
-              y1:=scann_arr[l].xy_coor.y;
-              point_rezx:=form15.image1.Width/(X_axis_len/x_axis_rez);
-              point_rezy:=form15.image1.height/(y_axis_len/y_axis_rez);
-
-              if live_scan_grid then begin
-                x11:=(x1/x_axis_rez);
-                y11:=(y1/y_axis_rez);
-                if x11<0 then x11:=0;
-                if y11<0 then y11:=0;
-                if x11>round(X_axis_len/x_axis_rez) then x11:=round(X_axis_len/x_axis_rez);
-                if y11>round(y_axis_len/y_axis_rez) then y11:=round(y_axis_len/y_axis_rez);
-
-                if r_val>0 then begin
-
-                  case form15.SpTBXComboBox3.ItemIndex of
-                    0:begin
-                        live_scan[round(x11),round(y11)]:=scann_arr[l];
-                    end;
-                    1:begin
-                      if live_scan[round(x11),round(y11)].US_Mess[j].tof = 0 then begin
-                          live_scan[round(x11),round(y11)]:=scann_arr[l];
-                      end;
-                      if live_scan[round(x11),round(y11)].US_Mess[j].tof > r_val then begin
-                        live_scan[round(x11),round(y11)]:=scann_arr[l];
-                      end;
-                    end;
-                    2:begin
-                      if live_scan[round(x11),round(y11)].US_Mess[j].tof < r_val then begin
-                        live_scan[round(x11),round(y11)]:=scann_arr[l];
-                      end;
-                    end;
-                  end;
-                end;
-
-                r_val:=form6.GetColor(live_scan[round(x11),round(y11)].US_Mess[j].tof );
-
-                x1:=round(x11)*x_axis_rez;
-                y1:=round(y11)*y_axis_rez;
-
-                x1:=x1*form15.Image1.Width/X_axis_len;
-                y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
-                if form15.SpTBXRadioButton1.Checked then x1:=x1+0;
-                if form15.SpTBXRadioButton2.Checked then x1:=x1+form15.Image1.Width/2;
-                if form15.SpTBXRadioButton3.Checked then x1:=x1+form15.Image1.Width;
-
-                if form15.SpTBXRadioButton4.Checked then y1:=y1-form15.Image1.Height;
-                if form15.SpTBXRadioButton5.Checked then y1:=y1-form15.Image1.Height/2;
-                if form15.SpTBXRadioButton6.Checked then y1:=y1-0;
-
-                form15.image1.Canvas.Pen.Color:=trunc(r_val);
-                form15.image1.Canvas.Brush.Color:=trunc(r_val);
-                ttt:=point_rezx;
-                ttt1:=point_rezy;
-                if form15.CheckBox4.checked then
-                if  point_rezx >= point_rezy then begin
-                  ttt:=point_rezx;
-                  ttt1:=point_rezx;
-                end else begin
-                  ttt:=point_rezy;
-                  ttt1:=point_rezy;
-                end;
-
-                if form15.SpTBXRadioButton7.Checked then
-                  form15.image1.canvas.rectangle(trunc(x1),trunc(y1),round(x1+ttt),round(y1+ttt1));
-                if form15.SpTBXRadioButton8.Checked then
-                  form15.image1.canvas.Ellipse(trunc(x1),trunc(y1),round(x1+ttt*1.414),round(y1+ttt1*1.414)); //1.207= (sqrt(2)-1)/2
-
-              end else begin
-                r_val:=form6.GetColor(r_val);
-                if not (r_val>0) then r_val:=clWhite;
-
-                x1:=x1*form15.Image1.Width/X_axis_len;
-                y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
-                if form15.SpTBXRadioButton1.Checked then x1:=x1+0;
-                if form15.SpTBXRadioButton2.Checked then x1:=x1+form15.Image1.Width/2;
-                if form15.SpTBXRadioButton3.Checked then x1:=x1+form15.Image1.Width;
-
-                if form15.SpTBXRadioButton4.Checked then y1:=y1-form15.Image1.Height;
-                if form15.SpTBXRadioButton5.Checked then y1:=y1-form15.Image1.Height/2;
-                if form15.SpTBXRadioButton6.Checked then y1:=y1-0;
-
-                form15.image1.Canvas.Pen.Color:=trunc(r_val);
-                form15.image1.Canvas.Brush.Color:=trunc(r_val);
-
-                ttt:=point_rezx;
-                ttt1:=point_rezy;
-                if form15.CheckBox4.checked then
-                if  point_rezx >= point_rezy then begin
-                  ttt:=point_rezx;
-                  ttt1:=point_rezx;
-                end else begin
-                  ttt:=point_rezy;
-                  ttt1:=point_rezy;
-                end;
-
-                if form15.SpTBXRadioButton7.Checked then
-                  form15.image1.canvas.rectangle(trunc(x1),trunc(y1),round(x1+ttt),round(y1+ttt1));
-                if form15.SpTBXRadioButton8.Checked then
-                  form15.image1.canvas.Ellipse(trunc(x1),trunc(y1),round(x1+ttt*1.414),round(y1+ttt1*1.414)); //1.207= (sqrt(2)-1)/2
-            end;
-         end;
-            //if not start_scann then scann_counter:=0;
-            /////////////////////end//////////////////////////
-
-
-
-            form15.bmp1.Canvas.CopyRect(form15.bmp1.Canvas.ClipRect,form15.Image1.Canvas,form15.Image1.Canvas.ClipRect);
-
-            if start_copy_img1_1 then begin
-                start_copy_img1_1:=false;
-                start_copy_img1_2:=false;
-
-                form15.bmp1.Canvas.CopyRect(form15.bmp1.Canvas.ClipRect,form15.Image1.Canvas,form15.Image1.Canvas.ClipRect);
-                form15.SendToBack;
-                b_form15_on:=false;
-
-                form1.SpTBXButton92.Visible:=false;
-                form1.SpTBXButton105.Visible:=true;
-
-                form1.BringToFront;
-                form1.SpTBXButton75Click(nil);
-            end;
-
-
-
-            penmode:=form15.image1.canvas.Pen.Mode;
-
-            form15.image1.canvas.Pen.Color:=clWhite;
-            form15.image1.canvas.Pen.Mode:=pmXor;
-            form15.image1.canvas.MoveTo(trunc(x1-5+point_rezx/2),trunc(y1+point_rezy/2));
-            form15.image1.canvas.LineTo(trunc(x1+5+point_rezx/2),trunc(y1+point_rezy/2));
-            form15.image1.canvas.MoveTo(trunc(x1+point_rezx/2),trunc(y1-5+point_rezy/2));
-            form15.image1.canvas.LineTo(trunc(x1+point_rezx/2),trunc(y1+5+point_rezy/2));
-
-            form15.Image1.Canvas.Font.Color:=clWhite;
-            form15.Image1.Canvas.Brush.Color:=clBlack;
-
-            if SpTBXCheckBox11.Checked then begin
-                form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
-            end;
-            if SpTBXCheckBox10.Checked  then begin
-              if form1.radiobutton26.Checked  then begin
-                form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
-              end;
-              if radiobutton25.Checked  then begin
-                    if TRCal((r_val1-us_probe_delay)*us_sv/1000) >=0 then
-                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),FloatToStrF(TRCal((r_val1-us_probe_delay)*us_sv/1000) ,ffFixed,6,2))
-                    else
-                      form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),'±');
-
-              end;
-            end ;
-
-
-            form15.image1.canvas.Pen.Mode:=penmode;
-
-            x1old:=x1;
-            y1old:=y1;
-
-
-
-
-  end;
-
-//cscan////////////////////////////////////////////////////////
-//time scann
-if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemIndex = 1) then begin    //tofd
-//if form11.CheckBox2.Checked and form11.Visible and (SpTBXComboBox7.ItemIndex=2) then begin
-            if rest_scr then begin
-                d_time_scann_counter:=0;
-                time_scann_counter:=0;
-                time_scann_counter_old:=0 ;
-                form14.offset_flag:=true;
-                rest_scr:=false;
-                old_axis_page:=0;
-            end;
-
-            if form11.CheckBox3.Checked then begin
-             for l:=(scann_counter_old+1) to (scann_counter) do begin
-               if first_axis=0 then begin
-                  axis_page:=trunc((scann_arr[l].xy_coor.x)/X_axis_len);
-                  time_scann_counter:=trunc(((scann_arr[l].xy_coor.x)-X_axis_len*axis_page)*(Form11.image1.Width/X_axis_len));
-                  d_time_scann_counter:=x_axis_rez*(Form11.image1.Width/X_axis_len);
-               end else begin
-                  axis_page:=trunc((scann_arr[l].xy_coor.Y)/y_axis_len);
-                  time_scann_counter:=trunc(((scann_arr[l].xy_coor.Y)-y_axis_len*axis_page)*(Form11.image1.Width/y_axis_len));
-                  d_time_scann_counter:=y_axis_rez*(Form11.image1.Width/y_axis_len);
-               end;
-
-               d_time_scann_counter:=time_scann_counter_old-time_scann_counter-1;
-               time_scann_counter_old:=time_scann_counter;
-               if axis_page>old_axis_page  then begin
-                  d_time_scann_counter:=0;
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  form11.DrawAxes ;
-               end;
-               if axis_page<old_axis_page then begin
-                   d_time_scann_counter:=0;
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  form11.DrawAxes ;
-               end;
-               old_axis_page:=axis_page;
-               for k:=1 to Form11.image10.Height  do begin
-                r_val:=scann_arr[l].US_arr1[trunc(k*400/Form11.image10.Height)] ;
-                if us_ascan_hf=0 then begin
-                  r_val:=r_val-100;
-                  if r_val>=0 then begin
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image20.Canvas.Pixels[10,10],trunc(r_val));
-                  end else begin
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image18.Canvas.Pixels[10,10],trunc(-r_val));
-                  end;
-                end else begin
-                      r_val:=r_val/2;
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image20.Canvas.Pixels[10,10],trunc(r_val));
-                end;
-                Form11.image10.Canvas.Pen.Color:=l_val;
-                Form11.image10.Canvas.MoveTo(trunc(time_scann_counter),k);
-                Form11.image10.Canvas.LineTo(round(time_scann_counter+d_time_scann_counter+1),k);
-               end;
-             end;
-             //if not start_scann then scann_counter:=0;
-            end else begin
-                inc(time_scann_counter);
-                if time_scann_counter>Form11.image10.Width  then begin
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  time_scann_counter:=0;
-              end;
-              for k:=1 to Form11.image10.Height  do begin
-                r_val:=draw_ascn[trunc(k*400/Form11.image10.Height)] ;
-                if us_ascan_hf=0 then begin
-                  r_val:=r_val-100;
-                  if r_val>=0 then begin
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image20.Canvas.Pixels[10,10],trunc(r_val));
-                  end else begin
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image18.Canvas.Pixels[10,10],trunc(-r_val));
-                  end;
-                end else begin
-                      r_val:=r_val/2;
-                      l_val:=ColorBetween(form12.image19.Canvas.Pixels[10,10],form12.image20.Canvas.Pixels[10,10],trunc(r_val));
-                end;
-                Form11.image10.Canvas.Pixels[time_scann_counter,k]:=l_val;
-              end;
-            end;
-
-
-            if start_copy_img1_3 then begin
-                  form17.Hide;
-
-                start_copy_img1_3:=false;
-                start_copy_img1_4:=false;
-
-                //form15.bmp1.Canvas.CopyRect(form15.bmp1.Canvas.ClipRect,form15.Image1.Canvas,form15.Image1.Canvas.ClipRect);
-                form11.SendToBack;
-                form11.Hide;
-                b_form11_on:=false;
-
-                form1.SpTBXButton92.Visible:=false;
-                form1.SpTBXButton105.Visible:=true;
-
-                form1.BringToFront;
-                form1.SpTBXButton75Click(nil);
-            end;
-
-
-end;
-if form11.CheckBox2.Checked and form11.Visible and (form8.SpTBXListBox2.ItemIndex = 0) then begin      //line
-//if form11.CheckBox2.Checked and form11.Visible and(SpTBXComboBox7.ItemIndex=1) then begin
-
-            if rest_scr then begin
-                d_time_scann_counter:=0;
-                time_scann_counter:=0;
-                form14.offset_flag:=true;
-                rest_scr:=false;
-            end;
-
-            if form11.CheckBox3.Checked then begin
-             for l:=(scann_counter_old+1) to (scann_counter) do begin
-
-               if first_axis=0 then begin
-                  axis_page:=trunc((scann_arr[l].xy_coor.x)/X_axis_len);
-                  time_scann_counter:=trunc(((scann_arr[l].xy_coor.x)-X_axis_len*axis_page)*(Form11.image1.Width/X_axis_len));
-                  d_time_scann_counter:=x_axis_rez*(Form11.image1.Width/X_axis_len);
-               end else begin
-                  axis_page:=trunc((scann_arr[l].xy_coor.Y)/y_axis_len);
-                  time_scann_counter:=trunc(((scann_arr[l].xy_coor.Y)-y_axis_len*axis_page)*(Form11.image1.Width/y_axis_len));
-                  d_time_scann_counter:=y_axis_rez*(Form11.image1.Width/y_axis_len);
-               end;
-
-               if axis_page>old_axis_page  then begin
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  form11.DrawAxes ;
-               end;
-               if axis_page<old_axis_page then begin
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  form11.DrawAxes ;
-               end;
-               old_axis_page:=axis_page;
-
-              j:=0;
-              if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
-              if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
-              if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
-              if j>0 then begin
-                if j = 1 then Form11.label37.Font.Color := clBlue;
-                if j = 2 then Form11.label37.Font.Color := clRed;//clOlive;
-                if j = 3 then Form11.label37.Font.Color := clYellow;//clGreen;
-
-              if SpTBXCheckBox11.Checked  then begin
-                   r_val:=(US_Mess[j].amp);
-                   if r_val>100 then
-                      Form11.label37.Caption :='Val : >100'
-                   else
-                      Form11.label37.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2);
-              end;
-
-              if  SpTBXCheckBox10.Checked then begin
-                r_val:=US_Mess[j].tof;
-                if radiobutton26.Checked  then Form11.label37.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-                if radiobutton25.Checked  then begin
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000),ffFixed,6,2)+' [mm]'
-                    else
-                      Form11.label37.Caption :='Val : '+FloatToStrF(0,ffFixed,6,2)+' [mm]';
-                end;
-              end ;
-              end else begin
-                      Form11.label37.Font.Color := clBlack;
-                      Form11.label37.Caption :='Val : N/C'
-              end;
-
-              for i:=1 to 16 do begin
-                if ( r_val>=(pallete[i].value) ) then begin
-                  Form11.image10.Canvas.Brush.Color:=pallete[i].color;
-                  Form11.image10.Canvas.Pen.Color:=pallete[i].color ;
-                  Form11.image10.Canvas.Rectangle(trunc(time_scann_counter),trunc(Form11.image10.Height-(i-1)*Form11.image10.Height/16),round(time_scann_counter+d_time_scann_counter+1),trunc(Form11.image10.Height-(i)*Form11.image10.Height/16));
-                end else begin
-                   break;
-                end;
-              end;
-             end;
-            // if not start_scann then scann_counter:=0;
-            end else begin
-                inc(time_scann_counter);
-                if time_scann_counter>Form11.image10.Width  then begin
-                  Form11.image10.Canvas.Pen.Color:=clBlack;
-                  Form11.image10.Canvas.Pen.Width:=1;
-                  Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
-                  Form11.image10.Canvas.Brush.Color :=clBlack;
-                  Form11.image10.Canvas.Rectangle(0,0,Form11.image10.Width,Form11.image10.Height );
-                  time_scann_counter:=0;
-              end;
-              if radiobutton9.Checked then j:=1;
-              if radiobutton10.Checked then j:=2;
-              if radiobutton11.Checked then j:=3;
-
-              if SpTBXCheckBox11.Checked  then begin
-                    r_val:=US_Mess[j].amp;
-                    Form11.label37.Caption :=FloatToStrF(r_val ,ffFixed,6,2);
-              end;
-
-               if  SpTBXCheckBox10.Checked then begin
-                r_val:=US_Mess[j].tof;
-                if radiobutton26.Checked  then begin
-                    Form11.label37.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-                end;
-                if radiobutton25.Checked  then begin
-                    if TRCal((r_val-us_probe_delay)*us_sv/1000) > 0 then
-                      Form11.label37.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*us_sv/1000),ffFixed,6,2)+' [mm]'
-                    else
-                      Form11.label37.Caption :='Val : '+FloatToStrF(0,ffFixed,6,2)+' [mm]';
-                end;
-              end ;
-
-              for i:=1 to 16 do begin
-                if ( r_val>=(pallete[i].value) ) then begin
-                  Form11.image10.Canvas.Pen.Color:=pallete[i].color ;
-                  Form11.image10.Canvas.MoveTo(trunc(time_scann_counter),trunc(Form11.image10.Height-(i-1)*Form11.image10.Height/16));
-                  Form11.image10.Canvas.LineTo(trunc(time_scann_counter),trunc(Form11.image10.Height-(i)*Form11.image10.Height/16) );
-                end else begin
-                   break;
-                end;
-              end;
-            end;
-
-            if start_copy_img1_3 then begin
-                  form17.Hide;
-
-                start_copy_img1_3:=false;
-                start_copy_img1_4:=false;
-
-                //form15.bmp1.Canvas.CopyRect(form15.bmp1.Canvas.ClipRect,form15.Image1.Canvas,form15.Image1.Canvas.ClipRect);
-                form11.SendToBack;
-                form11.Hide;
-                b_form11_on:=false;
-
-                form1.SpTBXButton92.Visible:=false;
-                form1.SpTBXButton105.Visible:=true;
-
-                form1.BringToFront;
-                form1.SpTBXButton75Click(nil);
-            end;
-
-end;
-
-              end;
-
-
-
-          end;
-    end else begin
-   //   us_connected:= false;
-    end;
-
-   if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
-   if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
-
-   end ;///here
-
-Dispose(tmp11);
-Dispose(tmp21);
-Dispose(tmp31);
-Dispose(tmp41);
-
-
-
-
-  except
-    on E : Exception do  begin
-      //us_connected:= false;
-      ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-    end;                    end;
-end;
 
 procedure TForm1.USAScan;
 
@@ -6601,14 +3985,12 @@ SpTBXCheckBox33.Visible:=false;
 SpTBXCheckBox34.Visible:=false;
 
   edit10.value:=(gates[1].height);
-//       x=(r_val100-us_probe_delay)*0.5*us_sv/1000
-//           x*1000/us_sv/0.5+
 
 
 
   if radiobutton25.Checked then begin
-    edit8.value:=((gates[1].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[1].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[1].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[1].width*us_calc);
   end else begin
     edit8.value:=(gates[1].start-us_probe_delay);
     edit9.value:=(gates[1].width);
@@ -6638,8 +4020,8 @@ SpTBXCheckBox34.Visible:=false;
 
   edit10.value:=(gates[2].height);
   if radiobutton25.Checked then begin
-    edit8.value:=((gates[2].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[2].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[2].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[2].width*us_calc);
   end else begin
     edit8.value:=(gates[2].start-us_probe_delay);
     edit9.value:=(gates[2].width);
@@ -6668,8 +4050,8 @@ SpTBXCheckBox34.Visible:=true;
 
   edit10.value:=(gates[3].height);
   if radiobutton25.Checked then begin
-    edit8.value:=((gates[3].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[3].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[3].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[3].width*us_calc);
   end else begin
     edit8.value:=(gates[3].start-us_probe_delay);
     edit9.value:=(gates[3].width);
@@ -6773,8 +4155,8 @@ begin
           end;
           if radiobutton25.Checked  then begin
             Edit7.value :=(US_Width*1*1.0)/us_sv*1000.0;
-              edit8.value:=((gates[1].start-us_probe_delay)*us_sv/1000/mm_us);
-              edit9.value:=(gates[1].width*us_sv/1000/mm_us);
+              edit8.value:=((gates[1].start-us_probe_delay)*us_calc);
+              edit9.value:=(gates[1].width*us_calc);
           end;
 
           SpTBXSpinEdit1.Value :=us_prf*1000;
@@ -7262,20 +4644,20 @@ begin
   SetRangeMM;
 
   if radiobutton9.Checked then begin
-    edit8.value:=((gates[1].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[1].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[1].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[1].width*us_calc);
     edit10.value:=(gates[1].height);
   end;
 
   if radiobutton10.Checked then begin
-    edit8.value:=((gates[2].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[2].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[2].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[2].width*us_calc);
     edit10.value:=(gates[2].height);
   end;
 
   if radiobutton11.Checked then begin
-    edit8.value:=((gates[3].start-us_probe_delay)*us_sv/1000/mm_us);
-    edit9.value:=(gates[3].width*us_sv/1000/mm_us);
+    edit8.value:=((gates[3].start-us_probe_delay)*us_calc);
+    edit9.value:=(gates[3].width*us_calc);
     edit10.value:=(gates[2].height);
   end;
 
@@ -9253,8 +6635,8 @@ begin
               Gates[1].height:=(((img100.Height -10)/1)-start_drw_gate_str_oy)/((img100.Height -10)/1)*100;
         end;
         if radiobutton25.Checked then begin
-            edit8.value:=((gates[1].start-us_probe_delay)*us_sv/1000/mm_us);
-            edit9.value:=(gates[1].width*us_sv/1000/mm_us);
+            edit8.value:=((gates[1].start-us_probe_delay)*us_calc);
+            edit9.value:=(gates[1].width*us_calc);
         end else begin
             edit8.value:=(gates[1].start);
             edit9.value:=(gates[1].width);
@@ -9277,8 +6659,8 @@ begin
               Gates[2].height:=(((img100.Height -10)/1)-start_drw_gate_str_oy)/((img100.Height -10)/1)*100;
         end;
         if radiobutton25.Checked then begin
-            edit8.value:=((gates[2].start-us_probe_delay)*us_sv/1000/mm_us);
-            edit9.value:=(gates[2].width*us_sv/1000/mm_us);
+            edit8.value:=((gates[2].start-us_probe_delay)*us_calc);
+            edit9.value:=(gates[2].width*us_calc);
         end else begin
             edit8.value:=(gates[2].start);
             edit9.value:=(gates[2].width);
@@ -9301,8 +6683,8 @@ begin
               Gates[3].height:=(((img100.Height -10)/1)-start_drw_gate_str_oy)/((img100.Height -10)/1)*100;
         end;
         if radiobutton25.Checked then begin
-            edit8.value:=((gates[3].start-us_probe_delay)*us_sv/1000/mm_us);
-            edit9.value:=(gates[3].width*us_sv/1000/mm_us);
+            edit8.value:=((gates[3].start-us_probe_delay)*us_calc);
+            edit9.value:=(gates[3].width*us_calc);
         end else begin
             edit8.value:=(gates[3].start);
             edit9.value:=(gates[3].width);
@@ -9918,7 +7300,7 @@ begin
 
 
      calibration_list[calibration_list_count].a:=tmp;
-     calibration_list[calibration_list_count].b:=(r_val-us_probe_delay)*us_sv/1000;
+     calibration_list[calibration_list_count].b:=(r_val-us_probe_delay)*us_calc;
 
      stringgrid1.RowCount :=calibration_list_count+1;
      for i:=1 to calibration_list_count do begin
@@ -13736,10 +11118,16 @@ if  SpTBXCheckBox32.checked then begin
     SpTBXCheckBox2.Checked:=false;
     SpTBXCheckBox2.enabled:=false;
     us_echo_start := 1;
+
     us_mess_tof_live:=us_mess[1].tof;
     us_mess_tof1_live:=us_mess[1].tof1;
     Label99.Caption:='Echo Start A';
     Label99.Visible:=true;
+
+    gate1start:= Gates[1].start;
+    gate2start:= Gates[2].start;
+    gate3start:= Gates[3].start;
+
 end else begin
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
@@ -13749,6 +11137,10 @@ end else begin
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
    edit6.value := us_delay_old;
    us_delay:= us_delay_old;
+       Gates[1].start:=    gate1start;
+    Gates[2].start:=    gate2start;
+    Gates[3].start:=    gate3start;
+
    label88.caption:= edit6.Text;
 end;
 US_Operation:=7
@@ -13772,6 +11164,9 @@ if  SpTBXCheckBox33.checked then begin
     SpTBXCheckBox2.enabled:=false;
         us_mess_tof_live:=us_mess[2].tof;
     us_mess_tof1_live:=us_mess[2].tof1;
+    gate1start:= Gates[1].start;
+    gate2start:= Gates[2].start;
+    gate3start:= Gates[3].start;
 
     us_echo_start := 2;
     Label99.Caption:='Echo Start B';
@@ -13785,6 +11180,10 @@ end else begin
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
    edit6.value := us_delay_old;
    us_delay:= us_delay_old;
+       Gates[1].start:=    gate1start;
+    Gates[2].start:=    gate2start;
+    Gates[3].start:=    gate3start;
+
    label88.caption:= edit6.Text;
 end;
 
@@ -13806,8 +11205,12 @@ if  SpTBXCheckBox34.checked then begin
     us_delay_probe_f:=SpTBXCheckBox2.Checked;
     SpTBXCheckBox2.Checked:=false;
     SpTBXCheckBox2.enabled:=false;
-        us_mess_tof_live:=us_mess[3].tof;
+    us_mess_tof_live:=us_mess[3].tof;
     us_mess_tof1_live:=us_mess[3].tof1;
+
+    gate1start:= Gates[1].start;
+    gate2start:= Gates[2].start;
+    gate3start:= Gates[3].start;
 
     us_echo_start := 3;
     Label99.Caption:='Echo Start C';
@@ -13821,6 +11224,11 @@ end else begin
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
    edit6.value := us_delay_old;
    us_delay:= us_delay_old;
+
+    Gates[1].start:=    gate1start;
+    Gates[2].start:=    gate2start;
+    Gates[3].start:=    gate3start;
+
    label88.caption:= edit6.Text;
 end;
     US_Operation:=7
