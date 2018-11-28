@@ -1580,6 +1580,11 @@ try
                       2:tmp1:=(trunc(25*US_Delay));
                       3:tmp1:=(trunc(10*US_Delay));
                  end;
+
+                 echo_start_enc_x:= echo_start_enc_x_tmp;
+                 echo_start_enc_y:= echo_start_enc_y_tmp;
+
+
                result :=Opcard_SetDelay(opcard_no, tmp1);
             end;
 
@@ -2325,6 +2330,12 @@ try
                       US_arr1[i]:=(data_optel^);
                       inc(data_optel);
                   end;
+
+                  echo_start_enc_x_tmp :=  enc_cur_x;
+                  echo_start_enc_y_tmp :=  enc_cur_y;
+
+                  enc_cur_x:= enc_cur_x + echo_start_enc_x;
+                  enc_cur_y:= enc_cur_x + echo_start_enc_y;
 
                   Fill_draw_ascn_new;
                   Do_Average;
@@ -3380,6 +3391,7 @@ r_val, r_val1:double;
 point_rezx,x1,y1,x11,y11, ttt, ttt1:real;
 point_rezy:real;
 penmode:TPenMode;
+b1:boolean;
 begin
 //cscan////////////////////////////////////////////////////////
 
@@ -3387,14 +3399,23 @@ begin
 
               form15.Image1.Canvas.CopyRect(form15.Image1.ClientRect,form15.bmp1.Canvas,form15.bmp1.Canvas.ClipRect);
 
+              b1:=true;
+              if SpTBXCheckBox32.checked then b1:=false;
+              if SpTBXCheckBox33.checked then b1:=false;
+              if SpTBXCheckBox34.checked then b1:=false;
+
+
+            if b1 then begin  //NO ECHO START
               j:=0;
               if radiobutton9.Checked  and SpTBXCheckBox17.Checked then j:=1;
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
+
               if j>0 then begin
                 if j = 1 then Form15.label2.Font.Color := clBlue;
                 if j = 2 then Form15.label2.Font.Color := clRed;//clOlive;
                 if j = 3 then Form15.label2.Font.Color := clYellow;//clGreen;
+
                 if SpTBXCheckBox11.Checked  then begin
                      r_val:=(US_Mess[j].amp);
                      if r_val>100 then
@@ -3416,6 +3437,63 @@ begin
                       Form15.label2.Font.Color := clBlack;
                       Form15.label2.Caption :='Val : N/C'
               end;
+            end else begin //ECHO START
+               if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit T(A) [us]'
+                  j:=1;
+                  r_val:=US_Mess[j].tof;
+                  Form15.label2.Caption :='T(A) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
+               end;
+
+               if form12.ComboBox1.ItemIndex = 1 then begin  //'Schallweg s(A) [mm]'
+                  j:=1;
+                  r_val:=US_Mess[j].tof;
+                  if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
+                        Form15.label2.Caption :='s(A) : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
+                  else
+                        Form15.label2.Caption :='s(A) : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
+               end;
+
+               if form12.ComboBox1.ItemIndex = 2 then begin  //'Laufzeit T(B) [us]'
+                  j:=2;
+                  r_val:=US_Mess[j].tof;
+                  Form15.label2.Caption :='T(B) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
+               end;
+
+               if form12.ComboBox1.ItemIndex = 3 then begin  //'Schallweg s(B) [mm]'
+                  j:=2;
+                  r_val:=US_Mess[j].tof;
+                  if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
+                        Form15.label2.Caption :='s(B) : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
+                  else
+                        Form15.label2.Caption :='s(B) : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
+               end;
+
+               if form12.ComboBox1.ItemIndex = 4 then begin  //'DT = T(B)-T(A) [us]'
+                  j:=1;
+                  r_val :=US_Mess[1].tof;
+                  r_val1:=US_Mess[2].tof;
+                  r_val := r_val1- r_val;
+                  Form15.label2.Caption :='DT : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
+               end;
+
+               if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
+                  j:=1;
+                  r_val :=TRCal((US_Mess[1].tof-us_probe_delay)*us_calc);
+                  r_val :=TRCal((US_Mess[2].tof-us_probe_delay)*us_calc);
+                  r_val := r_val1- r_val;
+
+                  if r_val > 0 then
+                        Form15.label2.Caption :='Ds : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
+                  else
+                        Form15.label2.Caption :='Ds : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
+               end;
+
+                if j = 1 then Form15.label2.Font.Color := clBlue;
+                if j = 2 then Form15.label2.Font.Color := clRed;//clOlive;
+
+            end;
+
+
 
          point_rezx:=form15.image1.Width/(X_axis_len/x_axis_rez);
          point_rezy:=form15.image1.height/(y_axis_len/y_axis_rez);
@@ -3423,10 +3501,36 @@ begin
           //form15.label1.Caption:=IntToStr(scann_counter-scann_counter_old-1);
 
               ////////////////start///////////////////////
-              if SpTBXCheckBox10.Checked then
-                r_val:=scann_arr[l].US_Mess[j].tof
-              else
-                r_val:=scann_arr[l].US_Mess[j].amp;
+
+              if b1 then begin
+                 if SpTBXCheckBox10.Checked then
+                    r_val:=scann_arr[l].US_Mess[j].tof
+                 else
+                     r_val:=scann_arr[l].US_Mess[j].amp;
+              end else begin
+                  if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit T(A) [us]'
+                     r_val:=scann_arr[l].US_Mess[1].tof;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 1 then begin  //'Laufzeit s(A) [mm]'
+                     r_val:=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+                  end;
+                  if form12.ComboBox1.ItemIndex = 2 then begin  //'Laufzeit T(B) [us]'
+                     r_val:=scann_arr[l].US_Mess[2].tof;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit s(B) [mm]'
+                     r_val:=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+                  end;
+                  if form12.ComboBox1.ItemIndex = 4 then begin  //'DT = T(B)-T(A) [us]'
+                     r_val :=scann_arr[l].US_Mess[1].tof;
+                     r_val1:=scann_arr[l].US_Mess[2].tof;
+                     r_val := r_val1- r_val;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
+                     r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+                     r_val :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+                     r_val := r_val1- r_val;
+                  end;
+              end;
 
               if r_val<0 then r_val:=0;
               r_val1:=r_val;
@@ -11107,6 +11211,9 @@ begin
 SpTBXCheckBox33.checked:=false;
 SpTBXCheckBox34.checked:=false;
 us_echo_start := 0;
+echo_start_enc_x:=0;
+echo_start_enc_y:=0;
+
 
 if  SpTBXCheckBox32.checked then begin
    us_delay_old:= edit6.value;
@@ -11127,8 +11234,9 @@ if  SpTBXCheckBox32.checked then begin
     gate1start:= Gates[1].start;
     gate2start:= Gates[2].start;
     gate3start:= Gates[3].start;
-
+    form12.GroupBox7.Visible:=true;
 end else begin
+    form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;
@@ -11152,6 +11260,9 @@ begin
 SpTBXCheckBox32.checked:=false;
 SpTBXCheckBox34.checked:=false;
 us_echo_start := 0;
+echo_start_enc_x:=0;
+echo_start_enc_y:=0;
+
 
 if  SpTBXCheckBox33.checked then begin
    us_delay_old:= edit6.value;
@@ -11171,7 +11282,9 @@ if  SpTBXCheckBox33.checked then begin
     us_echo_start := 2;
     Label99.Caption:='Echo Start B';
     Label99.Visible:=true;
+    form12.GroupBox7.Visible:=true;
 end else begin
+    form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;
@@ -11195,6 +11308,8 @@ begin
 SpTBXCheckBox33.checked:=false;
 SpTBXCheckBox32.checked:=false;
 us_echo_start := 0;
+echo_start_enc_x:=0;
+echo_start_enc_y:=0;
 
 if  SpTBXCheckBox34.checked then begin
    us_delay_old:= edit6.value;
@@ -11215,7 +11330,9 @@ if  SpTBXCheckBox34.checked then begin
     us_echo_start := 3;
     Label99.Caption:='Echo Start C';
     Label99.Visible:=true;
+    form12.GroupBox7.Visible:=true;
 end else begin
+    form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;

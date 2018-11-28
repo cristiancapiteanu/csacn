@@ -517,6 +517,9 @@ frame_buffer_old:integer;
         echo_dif:real;
         gate1start,gate2start, gate3start:real;
 
+        echo_start_enc_x, echo_start_enc_x_tmp:real;
+        echo_start_enc_y, echo_start_enc_y_tmp:real;
+
 implementation
 
 uses unit1,unit7,unit6,unit9,unit3,unit8;

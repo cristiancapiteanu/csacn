@@ -69,6 +69,9 @@ type
     GroupBox6: TGroupBox;
     LMDButton1: TLMDButton;
     SpTBXCheckBox2: TSpTBXCheckBox;
+    GroupBox7: TGroupBox;
+    RadioButton1: TRadioButton;
+    ComboBox1: TComboBox;
     procedure RadioButton23Click(Sender: TObject);
     procedure RadioButton24Click(Sender: TObject);
     procedure SpTBXTrackBar1Change(Sender: TObject);
@@ -1201,6 +1204,14 @@ b_form15_on :=false;
       SpTBXCheckBox1.Checked :=false;
       SpTBXCheckBox1.Checked :=true;
 
+      ComboBox1.Items.Clear;
+      ComboBox1.Items.Add('Laufzeit T(A) [us]');
+      ComboBox1.Items.Add('Schallweg s(A) [mm]');
+      ComboBox1.Items.Add('Laufzeit T(B) [us]');
+      ComboBox1.Items.Add('Schallweg s(B) [mm]');
+      ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
+      ComboBox1.Items.Add('Ds = s(B)-s(A) [mm]');
+      ComboBox1.ItemIndex:=0;
 
 end;
 

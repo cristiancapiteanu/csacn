@@ -1,6 +1,6 @@
 object Form12: TForm12
-  Left = 1048
-  Top = 121
+  Left = 653
+  Top = 108
   HorzScrollBar.Visible = False
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
@@ -803,6 +803,39 @@ object Form12: TForm12
       ButtonStyle = ubsOffice
       Color = clMenu
       ParentColor = False
+    end
+  end
+  object GroupBox7: TGroupBox
+    Left = 328
+    Top = 288
+    Width = 320
+    Height = 129
+    Caption = 'Messung'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 14
+    Visible = False
+    object RadioButton1: TRadioButton
+      Left = 104
+      Top = 168
+      Width = 49
+      Height = 17
+      Caption = 'Line'
+      TabOrder = 0
+      Visible = False
+    end
+    object ComboBox1: TComboBox
+      Left = 16
+      Top = 56
+      Width = 297
+      Height = 43
+      ItemHeight = 35
+      TabOrder = 1
+      Text = 'ComboBox1'
     end
   end
   object ColorDialog1: TColorDialog
