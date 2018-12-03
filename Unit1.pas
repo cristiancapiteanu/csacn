@@ -1299,6 +1299,11 @@ begin
      us_starting:=false;
      optel_loaded:=US_Connected;
 
+
+     form1.SpTBXCheckBox32.Checked:=false;
+     form1.SpTBXCheckBox33.Checked:=false;
+     form1.SpTBXCheckBox34.Checked:=false;
+
   except
     on E : Exception do begin
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
@@ -1535,43 +1540,38 @@ var
 tmp1:integer;
 tmp2:real;
 begin
- /////////////////////////////////////echo start
 try
-
             us_echo_start_live:=0;
             tmp2:=0;
-            if form1.SpTBXCheckBox13.Checked then begin
-                tmp2:=us_mess_tof1_live;
-            end else begin
-                tmp2:=us_mess_tof_live;
-            end;
 
             if form1.SpTBXCheckBox13.Checked then begin
-               if us_echo_start = 1 then if us_mess[1].alarm =1  then us_echo_start_live:= us_mess[1].tof1; // gates[1].start;//us_mess[1].tof1;
-               if us_echo_start = 2 then if us_mess[2].alarm =1  then us_echo_start_live:= us_mess[2].tof1;
-               if us_echo_start = 3 then if us_mess[3].alarm =1  then us_echo_start_live:= us_mess[3].tof1;
+               tmp2:=us_mess_tof1_live;
+               if us_mess[trunc(us_echo_start)].alarm = 1  then begin
+                      us_echo_start_live:= us_mess[trunc(us_echo_start)].tof1;
+               end else begin
+                      us_delay_old:= us_delay_old_100;
+                      if us_delay_probe_f100 then us_delay_probe_f100:=false;
+               end;
             end else begin
-                if us_echo_start = 1 then if us_mess[1].alarm =1  then us_echo_start_live:= us_mess[1].tof;//gates[1].start;//us_mess[1].tof;
-                if us_echo_start = 2 then if us_mess[2].alarm =1  then us_echo_start_live:= us_mess[2].tof;
-                if us_echo_start = 3 then if us_mess[3].alarm =1  then us_echo_start_live:= us_mess[3].tof;
+                tmp2:=us_mess_tof_live;
+               if us_mess[trunc(us_echo_start)].alarm = 1  then begin
+                      us_echo_start_live:= us_mess[trunc(us_echo_start)].tof;
+               end else begin
+                      us_delay_old:= us_delay_old_100;
+                      if us_delay_probe_f100 then us_delay_probe_f100:=false;
+               end;
             end;
 
             if us_echo_start_live > 0 then begin
 
-        //       US_Delay:= (us_echo_start_live-0.1);
-        //       edit6.value:=(us_echo_start_live-0.1);
-
-//               US_Delay:=us_delay_old - (us_echo_start_live-tmp2);
-//               form1.edit6.value:=us_delay_old - (us_echo_start_live-tmp2);
-
-               US_Delay:=us_echo_start_live-(tmp2-us_delay_old);//-tmp2);
+               US_Delay:=us_echo_start_live-(tmp2-us_delay_old);
                form1.edit6.value:=US_Delay;
-
 
                Gates[1].start:= gate1start - (tmp2-us_echo_start_live);
                Gates[2].start:= gate2start - (tmp2-us_echo_start_live);
                Gates[3].start:= gate3start - (tmp2-us_echo_start_live);
 
+               us_delay_probe_f100:=true;
 
                tmp1:=0;
                case trunc(us_samplingfreq) of
@@ -1579,16 +1579,33 @@ try
                       1:tmp1:=(trunc(50*US_Delay));
                       2:tmp1:=(trunc(25*US_Delay));
                       3:tmp1:=(trunc(10*US_Delay));
-                 end;
+               end;
 
-                 echo_start_enc_x:= echo_start_enc_x_tmp;
-                 echo_start_enc_y:= echo_start_enc_y_tmp;
-
-
-               result :=Opcard_SetDelay(opcard_no, tmp1);
+               result := Opcard_SetDelay(opcard_no, tmp1);
             end;
 
-  //////////////////////////////////////////echo start
+
+            if not us_delay_probe_f100 then begin
+
+               US_Delay:=us_delay_old;
+               form1.edit6.value:=US_Delay;
+
+               Gates[1].start:= gate1start;
+               Gates[2].start:= gate2start;
+               Gates[3].start:= gate3start;
+
+               tmp1:=0;
+               case trunc(us_samplingfreq) of
+                      0:tmp1:=(trunc(100*US_Delay));
+                      1:tmp1:=(trunc(50*US_Delay));
+                      2:tmp1:=(trunc(25*US_Delay));
+                      3:tmp1:=(trunc(10*US_Delay));
+               end;
+
+               result := Opcard_SetDelay(opcard_no, tmp1);
+               us_delay_probe_f100:=true;
+            end;
+
     except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
@@ -2186,6 +2203,7 @@ tmp1,tmp2,tmp3,tmp4:integer;
 r_val1,r_val2,r_val,a_val,a_val1:double;
 
 begin
+
 try
   check := 0;
   //frame_cnt1 := GetFrame_Cnt();   //opcard
@@ -2233,7 +2251,9 @@ try
                   tmp41^:=data_optel^; //12 + 3 =15
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_x:=r_val ;
+                  if scaner_type <> 2 then begin
+                     enc_cur_x := r_val;
+                  end;
                   //enc_cur_x := enc_cur_x +0.1;
 
                   tmp11^:=data_optel^; //13 + 3 =16
@@ -2245,7 +2265,9 @@ try
                   tmp41^:=data_optel^; //16 + 3 =19
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then enc_cur_y:=r_val ;
+                  if scaner_type <> 2 then begin
+                     enc_cur_y:=r_val;
+                  end;
 
                   tmp1:=data_optel^; //17 + 3 =20            ///alaram
                   inc(data_optel);
@@ -2330,12 +2352,6 @@ try
                       US_arr1[i]:=(data_optel^);
                       inc(data_optel);
                   end;
-
-                  echo_start_enc_x_tmp :=  enc_cur_x;
-                  echo_start_enc_y_tmp :=  enc_cur_y;
-
-                  enc_cur_x:= enc_cur_x + echo_start_enc_x;
-                  enc_cur_y:= enc_cur_x + echo_start_enc_y;
 
                   Fill_draw_ascn_new;
                   Do_Average;
@@ -3479,11 +3495,11 @@ begin
                if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
                   j:=1;
                   r_val :=TRCal((US_Mess[1].tof-us_probe_delay)*us_calc);
-                  r_val :=TRCal((US_Mess[2].tof-us_probe_delay)*us_calc);
+                  r_val1 :=TRCal((US_Mess[2].tof-us_probe_delay)*us_calc);
                   r_val := r_val1- r_val;
 
                   if r_val > 0 then
-                        Form15.label2.Caption :='Ds : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
+                        Form15.label2.Caption :='Ds : '+FloatToStrF(r_val  ,ffFixed,6,2)+' [mm]'
                   else
                         Form15.label2.Caption :='Ds : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                end;
@@ -3513,12 +3529,14 @@ begin
                   end;
                   if form12.ComboBox1.ItemIndex = 1 then begin  //'Laufzeit s(A) [mm]'
                      r_val:=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+                     r_val:=scann_arr[l].US_Mess[1].tof;
                   end;
                   if form12.ComboBox1.ItemIndex = 2 then begin  //'Laufzeit T(B) [us]'
                      r_val:=scann_arr[l].US_Mess[2].tof;
                   end;
                   if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit s(B) [mm]'
                      r_val:=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+                     r_val:=scann_arr[l].US_Mess[2].tof;
                   end;
                   if form12.ComboBox1.ItemIndex = 4 then begin  //'DT = T(B)-T(A) [us]'
                      r_val :=scann_arr[l].US_Mess[1].tof;
@@ -3526,8 +3544,10 @@ begin
                      r_val := r_val1- r_val;
                   end;
                   if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
-                     r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
-                     r_val :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+//                     r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+//                     r_val1 :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+                     r_val :=scann_arr[l].US_Mess[1].tof;
+                     r_val1:=scann_arr[l].US_Mess[2].tof;
                      r_val := r_val1- r_val;
                   end;
               end;
@@ -4030,10 +4050,12 @@ begin
     check := check + SetOptelOutputs;
     DoUSOperation6;
     DoUSOperation7;
-    check := check + DoEchoStart;
     check := check + DoUS4(check);
     //if check <>0 then exit;  //TODO
     DoUS0;
+
+    if (   us_echo_start > 0)  then
+             check := check + DoEchoStart;
   except
     on E : Exception do  begin
       //us_connected:= false;
@@ -4713,8 +4735,15 @@ end;
 
 procedure TForm1.Edit6Change(Sender: TObject);
 begin
-    US_Operation:=4;
-    US_Delay:=edit6.Value;
+
+   if (    us_echo_start > 0)  then begin
+//   if (    us_echo_start > 0) or (not us_delay_probe_f100) then begin
+
+   end else begin
+       US_Operation:=4;
+       US_Delay:=edit6.Value;
+   end;
+
 end;
 
 procedure TForm1.Edit7Change(Sender: TObject);
@@ -11211,13 +11240,9 @@ begin
 SpTBXCheckBox33.checked:=false;
 SpTBXCheckBox34.checked:=false;
 us_echo_start := 0;
-echo_start_enc_x:=0;
-echo_start_enc_y:=0;
-
 
 if  SpTBXCheckBox32.checked then begin
-   us_delay_old:= edit6.value;
-   label88.caption:= edit6.Text;
+    label88.caption:= edit6.Text;
     SpTBXButton11.enabled:=false;
     SpTBXButton5.enabled:=false;
     SpTBXButton26.enabled:=false;
@@ -11226,16 +11251,26 @@ if  SpTBXCheckBox32.checked then begin
     SpTBXCheckBox2.enabled:=false;
     us_echo_start := 1;
 
+    us_delay_old:= edit6.value;
+       us_delay_old_100:= us_delay_old;
+
     us_mess_tof_live:=us_mess[1].tof;
     us_mess_tof1_live:=us_mess[1].tof1;
-    Label99.Caption:='Echo Start A';
-    Label99.Visible:=true;
-
     gate1start:= Gates[1].start;
     gate2start:= Gates[2].start;
     gate3start:= Gates[3].start;
+
+    Label99.Caption:='Echo Start A';
+    Label99.Visible:=true;
+
     form12.GroupBox7.Visible:=true;
+        us_delay_probe_f100:=true;
+
 end else begin
+    us_echo_start := 0;
+
+    us_delay_probe_f100:=false;
+
     form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
@@ -11243,9 +11278,10 @@ end else begin
     SpTBXButton26.enabled:=true;
     SpTBXCheckBox2.enabled:=true;
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
-   edit6.value := us_delay_old;
-   us_delay:= us_delay_old;
-       Gates[1].start:=    gate1start;
+    edit6.value := us_delay_old_100;
+    us_delay:= us_delay_old_100;
+
+    Gates[1].start:=    gate1start;
     Gates[2].start:=    gate2start;
     Gates[3].start:=    gate3start;
 
@@ -11260,12 +11296,12 @@ begin
 SpTBXCheckBox32.checked:=false;
 SpTBXCheckBox34.checked:=false;
 us_echo_start := 0;
-echo_start_enc_x:=0;
-echo_start_enc_y:=0;
 
 
 if  SpTBXCheckBox33.checked then begin
    us_delay_old:= edit6.value;
+      us_delay_old_100:= us_delay_old;
+
    label88.caption:= edit6.Text;
     SpTBXButton11.enabled:=false;
     SpTBXButton5.enabled:=false;
@@ -11283,7 +11319,13 @@ if  SpTBXCheckBox33.checked then begin
     Label99.Caption:='Echo Start B';
     Label99.Visible:=true;
     form12.GroupBox7.Visible:=true;
+        us_delay_probe_f100:=true;
+
 end else begin
+    us_echo_start := 0;
+
+    us_delay_probe_f100:=false;
+
     form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
@@ -11291,8 +11333,8 @@ end else begin
     SpTBXButton26.enabled:=true;
     SpTBXCheckBox2.enabled:=true;
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
-   edit6.value := us_delay_old;
-   us_delay:= us_delay_old;
+   edit6.value := us_delay_old_100;
+   us_delay:= us_delay_old_100;
        Gates[1].start:=    gate1start;
     Gates[2].start:=    gate2start;
     Gates[3].start:=    gate3start;
@@ -11308,12 +11350,12 @@ begin
 SpTBXCheckBox33.checked:=false;
 SpTBXCheckBox32.checked:=false;
 us_echo_start := 0;
-echo_start_enc_x:=0;
-echo_start_enc_y:=0;
 
 if  SpTBXCheckBox34.checked then begin
-   us_delay_old:= edit6.value;
-   label88.caption:= edit6.Text;
+
+    us_delay_old:= edit6.value;
+    us_delay_old_100:= us_delay_old;
+    label88.caption:= edit6.Text;
     SpTBXButton11.enabled:=false;
     SpTBXButton5.enabled:=false;
     SpTBXButton26.enabled:=false;
@@ -11331,16 +11373,23 @@ if  SpTBXCheckBox34.checked then begin
     Label99.Caption:='Echo Start C';
     Label99.Visible:=true;
     form12.GroupBox7.Visible:=true;
+    us_delay_probe_f100:=true;
+
 end else begin
+    us_echo_start := 0;
+    us_delay_probe_f100:=false;
+
     form12.GroupBox7.Visible:=false;
     Label99.Visible:=false;
+
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;
     SpTBXButton26.enabled:=true;
     SpTBXCheckBox2.enabled:=true;
+
     SpTBXCheckBox2.Checked:=us_delay_probe_f;
-   edit6.value := us_delay_old;
-   us_delay:= us_delay_old;
+    edit6.value := us_delay_old_100;
+    us_delay:= us_delay_old_100;
 
     Gates[1].start:=    gate1start;
     Gates[2].start:=    gate2start;

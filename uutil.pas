@@ -275,7 +275,8 @@ var
          us_mess_tof_live:real;
          us_echo_start_live:real;
          us_delay_old:real;
-         us_delay_probe_f:boolean;
+         us_delay_old_100:real;
+         us_delay_probe_f, us_delay_probe_f100:boolean;
          alarm_test:boolean;
 
   fbhDia:real;
@@ -519,6 +520,7 @@ frame_buffer_old:integer;
 
         echo_start_enc_x, echo_start_enc_x_tmp:real;
         echo_start_enc_y, echo_start_enc_y_tmp:real;
+        us_echo_start1_old, us_echo_start2_old, us_echo_start3_old: boolean;
 
 implementation
 
