@@ -58,7 +58,7 @@ i,j:integer;
 min,max:real;
 begin
   //if  CheckBox3.Checked then begin
-  if form8.SpTBXListBox2.ItemIndex = 0 then begin
+  if (form8.SpTBXListBox2.ItemIndex = 0)or(form8.SpTBXListBox2.ItemIndex = 1)  then begin
        image2.Visible:=true;
         min:=TRCal(((2*pallete[1].value-pallete[2].value)-us_probe_delay)*us_calc);
         max:=TRCal(((2*pallete[16].value-pallete[15].value)-us_probe_delay)*us_calc) ;
@@ -187,18 +187,18 @@ begin
   //b_form11_on:=true;
      // Form17.Timer1.Enabled:=true;
   DrawAxes  ;
-     Screen.Cursor := crArrow;
+  Screen.Cursor := crArrow;
 end;
 
 procedure TForm11.CheckBox3Click(Sender: TObject);
 begin
+      DrawAxes;
     if CheckBox3.Checked then begin
       image1.Visible:=true;
       image10.Left:=176;
       image10.Width:=962;
       image10.Height:=650;
       image2.Visible:=true;
-      DrawAxes;
     end else begin
       image1.Visible:=false;
       image10.Height:=680;

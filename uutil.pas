@@ -522,6 +522,8 @@ frame_buffer_old:integer;
         echo_start_enc_y, echo_start_enc_y_tmp:real;
         us_echo_start1_old, us_echo_start2_old, us_echo_start3_old: boolean;
 
+        enc_cur_x_100:real;
+
 implementation
 
 uses unit1,unit7,unit6,unit9,unit3,unit8;

@@ -2252,7 +2252,9 @@ try
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if scaner_type <> 2 then begin
-                     enc_cur_x := r_val;
+                     enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
+                     enc_cur_x := enc_cur_x_100;//r_val;
+//                     enc_cur_x := r_val;
                   end;
                   //enc_cur_x := enc_cur_x +0.1;
 
@@ -3735,12 +3737,13 @@ try
             if rest_scr then begin
                 d_time_scann_counter:=0;
                 time_scann_counter:=0;
-                time_scann_counter_old:=0 ;
+                //time_scann_counter_old:=0 ;
                 form14.offset_flag:=true;
                 rest_scr:=false;
-                old_axis_page:=0;
+               // old_axis_page:=0;
             end;
 
+           // application.ProcessMessages;
             if form11.CheckBox3.Checked then begin
              for l:=(scann_counter_old+1) to (scann_counter) do begin
                if first_axis=0 then begin
@@ -3753,10 +3756,10 @@ try
                   d_time_scann_counter:=y_axis_rez*(Form11.image1.Width/y_axis_len);
                end;
 
-               d_time_scann_counter:=time_scann_counter_old-time_scann_counter-1;
-               time_scann_counter_old:=time_scann_counter;
+         //      d_time_scann_counter:=time_scann_counter_old-time_scann_counter-1;
+         //      time_scann_counter_old:=time_scann_counter;
                if axis_page>old_axis_page  then begin
-                  d_time_scann_counter:=0;
+          //        d_time_scann_counter:=0;
                   Form11.image10.Canvas.Pen.Color:=clBlack;
                   Form11.image10.Canvas.Pen.Width:=1;
                   Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
@@ -3765,7 +3768,7 @@ try
                   form11.DrawAxes ;
                end;
                if axis_page<old_axis_page then begin
-                   d_time_scann_counter:=0;
+         //         d_time_scann_counter:=0;
                   Form11.image10.Canvas.Pen.Color:=clBlack;
                   Form11.image10.Canvas.Pen.Width:=1;
                   Form11.image10.Canvas.Brush.Style:=bsSolid	 ;
@@ -3774,6 +3777,7 @@ try
                   form11.DrawAxes ;
                end;
                old_axis_page:=axis_page;
+               
                for k:=1 to Form11.image10.Height  do begin
                 r_val:=scann_arr[l].US_arr1[trunc(k*400/Form11.image10.Height)] ;
                 if us_ascan_hf=0 then begin
@@ -3851,6 +3855,22 @@ begin
             end;
 
             if form11.CheckBox3.Checked then begin
+
+              j:=0;
+              if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
+              if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
+              if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
+              if j>0 then begin
+                if j = 1 then Form11.label37.Font.Color := clBlue;
+                if j = 2 then Form11.label37.Font.Color := clRed;//clOlive;
+                if j = 3 then Form11.label37.Font.Color := clYellow;//clGreen;
+              end else begin
+                      Form11.label37.Font.Color := clBlack;
+                      Form11.label37.Caption :='Val : N/C'
+              end;
+
+
+
              for l:=(scann_counter_old+1) to (scann_counter) do begin
 
                if first_axis=0 then begin
@@ -3862,6 +3882,7 @@ begin
                   time_scann_counter:=trunc(((scann_arr[l].xy_coor.Y)-y_axis_len*axis_page)*(Form11.image1.Width/y_axis_len));
                   d_time_scann_counter:=y_axis_rez*(Form11.image1.Width/y_axis_len);
                end;
+
 
                if axis_page>old_axis_page  then begin
                   Form11.image10.Canvas.Pen.Color:=clBlack;
@@ -3881,14 +3902,6 @@ begin
                end;
                old_axis_page:=axis_page;
 
-              j:=0;
-              if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
-              if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
-              if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
-              if j>0 then begin
-                if j = 1 then Form11.label37.Font.Color := clBlue;
-                if j = 2 then Form11.label37.Font.Color := clRed;//clOlive;
-                if j = 3 then Form11.label37.Font.Color := clYellow;//clGreen;
 
               if SpTBXCheckBox11.Checked  then begin
                    r_val:=(US_Mess[j].amp);
@@ -3908,10 +3921,6 @@ begin
                       Form11.label37.Caption :='Val : '+FloatToStrF(0,ffFixed,6,2)+' [mm]';
                 end;
               end ;
-              end else begin
-                      Form11.label37.Font.Color := clBlack;
-                      Form11.label37.Caption :='Val : N/C'
-              end;
 
               for i:=1 to 16 do begin
                 if ( r_val>=(pallete[i].value) ) then begin
