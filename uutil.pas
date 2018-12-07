@@ -22,7 +22,7 @@ const
     
     optel_true = 0;
     optel_false = 1;
-    us_mm = 1;
+    us_mm = 2;//1;
     mm_us = 2;
 
 

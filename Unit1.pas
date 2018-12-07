@@ -469,6 +469,8 @@ type
     SpTBXButton96: TSpTBXButton;
     SpTBXButton97: TSpTBXButton;
     SpTBXButton98: TSpTBXButton;
+    SpTBXButton173: TSpTBXButton;
+    SpTBXButton174: TSpTBXButton;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -800,6 +802,8 @@ type
     procedure StringGrid2DblClick(Sender: TObject);
     procedure StringGrid3DblClick(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
+    procedure SpTBXButton173Click(Sender: TObject);
+    procedure SpTBXButton174Click(Sender: TObject);
 
 
   private
@@ -1113,7 +1117,10 @@ try
 
       result:=check;
   except
-    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+    on E : Exception do begin
+      ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+      result:= 1;
+    end;
   end;
 
 end;
@@ -1286,12 +1293,13 @@ begin
      encoder_index := -1;
      result:=0;
      us_starting:=true;
-     US_Connected:= true;
+     US_Connected:= false;
 
      LoadINIFile('defaultsafe.uss','defaultsafe.spn');
      LoadINIFile(us_set_file_name,'default.spn');
 
      if SetOptelCard > 0 then exit;
+     US_Connected:= true;
 
     // timer2.Enabled:=true;
 
@@ -2252,9 +2260,9 @@ try
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if scaner_type <> 2 then begin
-                     enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
-                     enc_cur_x := enc_cur_x_100;//r_val;
-//                     enc_cur_x := r_val;
+//                     enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
+//                     enc_cur_x := enc_cur_x_100;//r_val;
+                     enc_cur_x := r_val;
                   end;
                   //enc_cur_x := enc_cur_x +0.1;
 
@@ -8642,7 +8650,9 @@ end;
 procedure TForm1.SpTBXButton72Click(Sender: TObject);
 begin
 
-     timer2.Enabled:= false;
+  timer2.Enabled:= false;
+
+  form8.SpTBXListBox2.ItemIndex := 1;
 
   postpros:=true;
   start_scann:=false;
@@ -8665,6 +8675,7 @@ begin
     form12.GroupBox2.Visible :=false;
     form12.GroupBox3.Visible :=false;
   end;
+
   if (form8.SpTBXListBox2.ItemIndex = 1) then begin
     form12.GroupBox4.Visible :=false;
     form12.GroupBox13.Visible :=false;
@@ -9796,7 +9807,7 @@ begin
 
      stringgrid6.RowCount :=dac_list_count+0;
      for i:=1 to dac_list_count do begin
-      stringgrid6.Cells[0,i]:=FloatToStrF(TRCal((dac_list[i].a-us_probe_delay)*dac_sv/1000)  ,ffFixed,6,2);
+      stringgrid6.Cells[0,i]:=FloatToStrF(TRCal((dac_list[i].a-us_probe_delay)*dac_sv/1000/2)  ,ffFixed,6,2);
       stringgrid6.Cells[1,i]:=FloatToStrF(dac_list[i].b   ,ffFixed,6,2);
      end;
   //   inc(dac_list_count);
@@ -9873,7 +9884,7 @@ begin
 
      stringgrid6.RowCount :=dac_list_count+1;
      for i:=1 to dac_list_count do begin
-      stringgrid6.Cells[0,i]:=FloatToStrF(TRCal((dac_list[i].a-us_probe_delay)*dac_sv/1000)  ,ffFixed,6,2);
+      stringgrid6.Cells[0,i]:=FloatToStrF(TRCal((dac_list[i].a-us_probe_delay)*dac_sv/1000/2)  ,ffFixed,6,2);
       stringgrid6.Cells[1,i]:=FloatToStrF(dac_list[i].b   ,ffFixed,6,2);
      end;
 
@@ -11478,6 +11489,87 @@ end;
 procedure TForm1.CheckBox3Click(Sender: TObject);
 begin
 inv_output:=CheckBox3.Checked;
+end;
+
+procedure TForm1.SpTBXButton173Click(Sender: TObject);
+begin
+
+  timer2.Enabled:= false;
+
+  form8.SpTBXListBox2.ItemIndex := 0 ;
+
+  postpros:=true;
+  start_scann:=false;
+  form8.SpTBXListBox2Click(Sender);
+  form6.Height:=860;
+  form6.Width:=1300;
+  form6.Visible:= true;
+  form6.Show;
+  form6.WindowState:=wsNormal;
+  form6.FormStyle:=fsStayOnTop;
+  form6.BringToFront;
+
+
+   if (form8.SpTBXListBox2.ItemIndex = 2)OR (form8.SpTBXListBox2.ItemIndex = 0) then begin
+    form12.GroupBox4.Visible :=false;
+    form12.GroupBox13.Visible :=false;
+    form12.GroupBox25.Visible :=true;
+    form12.GroupBox1.Visible :=true;
+    form12.GroupBox16.Visible :=true;
+    form12.GroupBox2.Visible :=false;
+    form12.GroupBox3.Visible :=false;
+  end;
+
+  if (form8.SpTBXListBox2.ItemIndex = 1) then begin
+    form12.GroupBox4.Visible :=false;
+    form12.GroupBox13.Visible :=false;
+    form12.GroupBox25.Visible :=false;
+    form12.GroupBox1.Visible :=false;
+    form12.GroupBox16.Visible :=false;
+    form12.GroupBox2.Visible :=true;
+    form12.GroupBox3.Visible :=false;
+  end;
+
+end;
+
+procedure TForm1.SpTBXButton174Click(Sender: TObject);
+begin
+ timer2.Enabled:= false;
+
+  form8.SpTBXListBox2.ItemIndex := 2;
+
+  postpros:=true;
+  start_scann:=false;
+  form8.SpTBXListBox2Click(Sender);
+  form6.Height:=860;
+  form6.Width:=1300;
+  form6.Visible:= true;
+  form6.Show;
+  form6.WindowState:=wsNormal;
+  form6.FormStyle:=fsStayOnTop;
+  form6.BringToFront;
+
+
+   if (form8.SpTBXListBox2.ItemIndex = 2)OR (form8.SpTBXListBox2.ItemIndex = 0) then begin
+    form12.GroupBox4.Visible :=false;
+    form12.GroupBox13.Visible :=false;
+    form12.GroupBox25.Visible :=true;
+    form12.GroupBox1.Visible :=true;
+    form12.GroupBox16.Visible :=true;
+    form12.GroupBox2.Visible :=false;
+    form12.GroupBox3.Visible :=false;
+  end;
+
+  if (form8.SpTBXListBox2.ItemIndex = 1) then begin
+    form12.GroupBox4.Visible :=false;
+    form12.GroupBox13.Visible :=false;
+    form12.GroupBox25.Visible :=false;
+    form12.GroupBox1.Visible :=false;
+    form12.GroupBox16.Visible :=false;
+    form12.GroupBox2.Visible :=true;
+    form12.GroupBox3.Visible :=false;
+  end;
+
 end;
 
 end.

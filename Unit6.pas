@@ -295,6 +295,7 @@ type
     SpTBXRadioButton4: TSpTBXRadioButton;
     SpTBXRadioButton5: TSpTBXRadioButton;
     SpTBXRadioButton6: TSpTBXRadioButton;
+    ComboBox1: TComboBox;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -514,6 +515,7 @@ type
     procedure SpTBXButton65Click(Sender: TObject);
     procedure SpTBXButton66Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
   private
     { Private declarations }
         procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
@@ -615,9 +617,9 @@ uses Unit5,unit1,unit7, Unit8,unit12, Unit13, Unit9, Unit3, Unit17, Unit14,
 
 procedure TForm6.RadioButton19Click(Sender: TObject);
 begin
+
+ {
   have_data2:=false;
-
-
   Draw_scann;
   Draw_axes;
   Draw_ASCAN;
@@ -625,6 +627,7 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
+  }
   if RadioButton20.Checked then
       if RadioButton25.Checked then
         Label78.caption:='Value [mm]'
@@ -637,8 +640,8 @@ end;
 
 procedure TForm6.RadioButton20Click(Sender: TObject);
 begin
+{
   have_data2:=false;
-
   Draw_scann;
   Draw_axes;
   Draw_ASCAN;
@@ -646,6 +649,7 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
+ }
   if RadioButton20.Checked then
       if Radiobutton25.Checked then
         Label78.caption:='Value [mm]'
@@ -658,7 +662,7 @@ end;
 
 procedure TForm6.RadioButton16Click(Sender: TObject);
 begin
-  have_data2:=false;
+{  have_data2:=false;
 
   Draw_scann;
   Draw_axes;
@@ -667,12 +671,12 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
-
+ }
 end;
 
 procedure TForm6.RadioButton17Click(Sender: TObject);
 begin
-  have_data2:=false;
+{  have_data2:=false;
 
   Draw_scann;
   Draw_axes;
@@ -681,12 +685,12 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
-
+ }
 end;
 
 procedure TForm6.RadioButton18Click(Sender: TObject);
 begin
-  have_data2:=false;
+{  have_data2:=false;
 
   Draw_scann;
   Draw_axes;
@@ -695,7 +699,7 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
-
+ }
 end;
 
 procedure TForm6.Button31Click(Sender: TObject);
@@ -1321,8 +1325,8 @@ have_data11 := false;
 
 
           if radiobutton25.Checked then begin
-              edit8.value:=((gates1[1].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[1].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[1].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[1].width*us1_calc);
 
 
               //edit8.value:=(gates1[1].start*1000/us_sv1);
@@ -1554,7 +1558,7 @@ procedure TForm6.Image2MouseDown(Sender: TObject; Button: TMouseButton;
 var
 i,j,k :integer;
 p1,col1:integer;
-r_val:real;
+r_val, r_val1:real;
 begin
   if start_scann then exit;
   if scann_counter<2 then exit;
@@ -1634,10 +1638,54 @@ begin
         defect[defect_count].x1:=mod_scan[i,j].xy_coor.x;
       defect[defect_count].y1:=mod_scan[i,j].xy_coor.y;
 
-       if form8.SpTBXListBox2.ItemIndex=0 then j:=0;  //write value
+      if form8.SpTBXListBox2.ItemIndex=0 then j:=0;  //write value
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
+        end ;
+      end;
+      if r_val >= 0 then
+        label66.Caption :=FloatToStrF(r_val ,ffFixed,6,2)
+      else
+        label66.Caption :='±';
+      defect[defect_count].h1:=r_val;
+
+{
       if radiobutton16.Checked then k:=1;
       if radiobutton17.Checked then k:=2;
       if radiobutton18.Checked then k:=3;
+
+
       if radiobutton19.Checked then begin
          r_val:=mod_scan[i,j].US_Mess[k].amp;
          if r_val >100 then
@@ -1646,24 +1694,28 @@ begin
          label66.Caption :=FloatToStrF(r_val ,ffFixed,6,2);
          defect[defect_count].h1:=r_val;
       end;
+
       if radiobutton20.Checked then begin
             r_val:=mod_scan[i,j].US_Mess[k].tof;
             if form1.radiobutton26.Checked  then begin
-                label66.Caption :=FloatToStrF(r_val ,ffFixed,6,2);
+               label66.Caption :=FloatToStrF(r_val ,ffFixed,6,2);
                defect[defect_count].h1:=r_val;
             end;
             if radiobutton25.Checked  then begin
-                label66.Caption :=FloatToStrF((r_val-us_probe_delay1)*us_sv1/1000 ,ffFixed,6,2);
-                defect[defect_count].h1:=(r_val-us_probe_delay1)*us_sv1/1000 ;
+               label66.Caption :=FloatToStrF((r_val-us_probe_delay1)*us1_calc ,ffFixed,6,2);
+               defect[defect_count].h1:=(r_val-us_probe_delay1)*us1_calc ;
             end;
       end ;
+ }
+
    end;
 end;
 
 procedure TForm6.Image2MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-//  if not up_date_graph then exit;
+//  if not up_date_graph then exit;                                      
+
   if start_scann then exit;
   if scann_counter<2 then exit;
 
@@ -2028,7 +2080,7 @@ end;
 procedure TForm6.Draw_CalcTxt;
 var
 i1,j1,i0,j0,i,j,k,l:integer;
-r_val:real;
+r_val, r_val1:real;
 point_rez:real;
 begin
   try
@@ -2045,6 +2097,50 @@ begin
         if c_scan_mouse_down then defect[defect_count].x2:=mod_scan[i,j].xy_coor.x;
         if c_scan_mouse_down then defect[defect_count].y2:=mod_scan[i,j].xy_coor.y;
 
+
+
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
+        end ;
+      end;
+      if r_val >= 0 then
+        label32.Caption :=FloatToStrF(r_val ,ffFixed,6,2)
+      else
+        label32.Caption :='±';
+      if c_scan_mouse_down then defect[defect_count].h2:=r_val;
+
+      {
         if radiobutton16.Checked then k:=1;
         if radiobutton17.Checked then k:=2;
         if radiobutton18.Checked then k:=3;
@@ -2066,15 +2162,15 @@ begin
             end else
            // if radiobutton25.Checked  then
             begin
-                if TRCal((r_val-us_probe_delay1)*2*us_sv1/1000) >=0 then
-                  label32.Caption :=FloatToStrF(TRCal((r_val-us_probe_delay1)*us_sv1/1000) ,ffFixed,6,2)
+                if TRCal((r_val-us_probe_delay1)*us1_calc) >=0 then
+                  label32.Caption :=FloatToStrF(TRCal((r_val-us_probe_delay1)*us1_calc) ,ffFixed,6,2)
                 else
                   label32.Caption :='±';
 
-                if c_scan_mouse_down then defect[defect_count].h2:=(r_val-us_probe_delay1)*us_sv1/1000;
+                if c_scan_mouse_down then defect[defect_count].h2:=(r_val-us_probe_delay1)*us1_calc;
             end;
         end ;
-
+       }
         if c_scan_mouse_down then begin
             c_scan_mouse_x_old:=x_old;
             c_scan_mouse_y_old:=y_old;
@@ -2134,7 +2230,7 @@ end;
 procedure TForm6.Draw_SideView;
 var
 i,j,k,l:integer;
-r_val:real;
+r_val, r_val1:real;
 point_rez:real;
 begin
   try
@@ -2163,9 +2259,9 @@ begin
 
 
 
-        if radiobutton16.Checked then k:=1;
-        if radiobutton17.Checked then k:=2;
-        if radiobutton18.Checked then k:=3;
+     //   if radiobutton16.Checked then k:=1;
+     //   if radiobutton17.Checked then k:=2;
+     //   if radiobutton18.Checked then k:=3;
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
@@ -2173,8 +2269,50 @@ begin
         point_rez:=(imgwidth/(X_axis_len/x_axis_rez));
         if image3.Visible then
         for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
-          if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
-          if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+          //if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
+         // if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+      //      r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+        end ;
+        4 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+           // r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+            r_val := r_val1- r_val;
+        end ;
+      end;
+
+
+
           if SpTBXRadioButton4.Checked then begin               //solid
             for l:=2 to 16 do begin
                 if ( r_val>(pallete[l-1].value) ) then begin
@@ -2182,7 +2320,7 @@ begin
                    image3.Canvas.Pen.Color:=clBlue ;
                    if SpTBXCheckBox13.Checked then
                       image3.Canvas.Rectangle(trunc(image3.Width -(i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),
-                                           trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
+                                              trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
                    else
                       image3.Canvas.Rectangle(trunc((i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),trunc((d_rap*x_axis_rez*(i+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) );
                 end else begin
@@ -2231,8 +2369,49 @@ begin
         point_rez:=(imgwidth/(X_axis_len/x_axis_rez));
         if image6.Visible then
         for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
-          if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
-          if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+//          if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
+//          if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+      //      r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+        end ;
+        4 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+           // r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+            r_val := r_val1- r_val;
+        end ;
+      end;
+
+
           if SpTBXRadioButton4.Checked then begin             //solid
             for l:=2 to 16 do begin
                 if ( r_val>(pallete[l-1].value) ) then begin
@@ -2416,7 +2595,7 @@ begin
                 r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(y_offset_ox+r_val/(z_zoom_ox/100) );
 
                 r_val:=r_val-tof_d_prbdel;
-                r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
+                r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
                 if r_val>0 then r_val:=sqrt(r_val);
                 if r_val<0 then r_val:=0;
                 //if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
@@ -2438,7 +2617,7 @@ begin
                 r_val:=ox_mark_line_y[0] +i*(ox_mark_line_y[1]-ox_mark_line_y[0])/5;
                 r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(y_offset_ox+r_val/(z_zoom_ox/100) );
                 r_val:=r_val-tof_d_prbdel;
-                r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
+                r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
                 if r_val >0 then r_val:=sqrt(r_val);
                 //if r_val<0 then r_val:=0;
                 if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
@@ -2782,7 +2961,7 @@ var
 i,j,k,l,m,i1,j1:integer;
 d:real;
 x1,y1,x2,y2,r_temp:real;
-r_val,r_val3,r_val4:real;
+r_val, r_val1,r_val3,r_val4:real;
 r_val5,r_val6,r_val7:integer;
 point_rezx,point_rezy,point_rez:real;
 //mod_scan:array of array  of TScann_arr;
@@ -2812,9 +2991,12 @@ begin
           if y1>round(y_axis_len/y_axis_rez) then y1:=round(y_axis_len/y_axis_rez);
 
 
+
+
           if radiobutton16.Checked then k:=1;
           if radiobutton17.Checked then k:=2;
           if radiobutton18.Checked then k:=3;
+
           if radiobutton19.Checked then begin
              if scann_arr[i].US_Mess[k].amp >0 then
                 case SpTBXComboBox4.ItemIndex of
@@ -3071,9 +3253,9 @@ begin
 
           image2.Canvas.Pen.Width:=1;
 
-      if radiobutton16.Checked then k:=1;
-      if radiobutton17.Checked then k:=2;
-      if radiobutton18.Checked then k:=3;
+   //   if radiobutton16.Checked then k:=1;   //cscan
+   //   if radiobutton17.Checked then k:=2;
+   //   if radiobutton18.Checked then k:=3;
 
 
       d:=form12.SpTBXTrackBar1.Position/50 ;
@@ -3099,8 +3281,53 @@ begin
             if form8.SpTBXListBox2.ItemIndex=1 then r_val3:=j;
             if form8.SpTBXListBox2.ItemIndex=2 then r_val3:=j;
 
-            if radiobutton19.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].amp;
-            if radiobutton20.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].tof;
+      //      if radiobutton19.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].amp;
+      //      if radiobutton20.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].tof;
+
+
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+     //       r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+            r_val := r_val1- r_val;
+        end ;
+      end;
+
+
+
+
 
             r_val:=GetColor(r_val);
 
@@ -3239,6 +3466,17 @@ z_zoom_oy:=100;
 imgwidth:=300;
       label28.Caption:='';
       label32.Caption:='';
+
+
+
+      ComboBox1.Items.Clear;
+      ComboBox1.Items.Add('Laufzeit T(A) [us]');
+      ComboBox1.Items.Add('Schallweg s(A) [mm]');
+      ComboBox1.Items.Add('Laufzeit T(B) [us]');
+      ComboBox1.Items.Add('Schallweg s(B) [mm]');
+      ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
+      ComboBox1.Items.Add('Ds = s(B)-s(A) [mm]');
+      ComboBox1.ItemIndex:=0;
 
 
 
@@ -3483,8 +3721,8 @@ begin
 
 
   if radiobutton25.Checked then begin
-              edit8.value:=((gates1[1].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[1].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[1].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[1].width*us1_calc);
 //    edit8.value:=(gates1[1].start*1000/us_sv1);
 //    edit9.value:=(gates1[1].width*1000/us_sv1);
   end else begin
@@ -3499,8 +3737,8 @@ procedure TForm6.SpTBXRadioButton2Click(Sender: TObject);
 begin
   edit10.value:=(gates1[2].height);
   if radiobutton25.Checked then begin
-              edit8.value:=((gates1[2].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[2].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[2].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[2].width*us1_calc);
 //    edit8.value:=(gates1[2].start*1000/us_sv1);
 //    edit9.value:=(gates1[2].width*1000/us_sv1);
   end else begin
@@ -3515,8 +3753,8 @@ procedure TForm6.SpTBXRadioButton3Click(Sender: TObject);
 begin
   edit10.value:=(gates1[3].height);
   if radiobutton25.Checked then begin
-              edit8.value:=((gates1[3].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[3].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[3].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[3].width*us1_calc);
 //    edit8.value:=(gates1[3].start*1000/us_sv1);
 //    edit9.value:=(gates1[3].width*1000/us_sv1);
   end else begin
@@ -3795,7 +4033,7 @@ try
   if not image1.Visible then exit;
   if start_scann then exit;
   if scann_counter<2 then exit;
-  if up_date_graph then exit;
+ // if up_date_graph then exit;
   if mouse_move_precessing_ox then exit;
 
   mouse_move_precessing_ox:=true;
@@ -3926,7 +4164,7 @@ try
   r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*((-y_offset_ox+y)*(z_zoom_ox/100) );
   r_val:=r_val-tof_d_prbdel;
 
-  r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
+  r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm));
   if r_val>0 then r_val:=sqrt(r_val);
 
   if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
@@ -3949,7 +4187,7 @@ try
   label11.Caption:='Y1:='+FloatToStrF( r_val,ffFixed,6,2)+' [us]';
   r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(ox_mark_line_y[2]);
   r_val:=r_val-tof_d_prbdel;
-  r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
+  r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
   if r_val>0 then r_val:=sqrt(r_val);
   if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
   defect[defect_count].h1:=r_val;
@@ -3967,7 +4205,7 @@ try
   label7.Caption:='Y2:='+FloatToStrF( r_val ,ffFixed,6,2)+' [us]';
   r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(ox_mark_line_y[3]);
   r_val:=r_val-tof_d_prbdel;
-  r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
+  r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
   if r_val >0 then r_val:=sqrt(r_val);
   if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
   defect[defect_count].h2:=r_val;
@@ -3986,12 +4224,12 @@ try
 
   r_val:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(ox_mark_line_y[2]);
   r_val:=r_val-tof_d_prbdel;
-  r_val:=((r_val*us_sv1/1000/us_mm)*(r_val*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
+  r_val:=((r_val*us1_calc)*(r_val*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
   if r_val >0 then r_val:=sqrt(r_val);
   if r_val>us_thick_a1 then r_val:=2*us_thick_a1-r_val;
   r_val1:=us_delay1-((US_Width1*0.0125)/image1.Height*y_offset_ox)*z_zoom_ox/100 +((US_Width1*0.0125)*z_zoom_ox/100)/image1.Height*(ox_mark_line_y[3]);
   r_val1:=r_val1-tof_d_prbdel;
-  r_val1:=((r_val1*us_sv1/1000/us_mm)*(r_val1*us_sv1/1000/us_mm)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
+  r_val1:=((r_val1*us1_calc)*(r_val1*us1_calc)-(us_separation1 /us_mm)*(us_separation1 /us_mm) );
   if r_val1>0 then r_val1:=sqrt(r_val1);
   if r_val1>us_thick_a1 then r_val1:=2*us_thick_a1-r_val1;
   r_val3:=r_val1-r_val;
@@ -5078,8 +5316,8 @@ begin
 
       if SpTBXRadioButton1.Checked then begin
           if radiobutton25.Checked then begin
-              edit8.value:=((gates1[1].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[1].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[1].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[1].width*us1_calc);
 //            edit8.value:=(gates1[1].start*1000/us_sv1);
 //            edit9.value:=(gates1[1].width*1000/us_sv1);
           end else
@@ -5087,8 +5325,8 @@ begin
       end;
       if SpTBXRadioButton2.Checked then begin
           if radiobutton25.Checked then begin
-              edit8.value:=((gates1[2].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[2].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[2].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[2].width*us1_calc);
 //            edit8.value:=(gates1[2].start*1000/us_sv1);
 //            edit9.value:=(gates1[2].width*1000/us_sv1);
            end else
@@ -5096,8 +5334,8 @@ begin
       end;
       if SpTBXRadioButton3.Checked then begin
           if radiobutton25.Checked then begin
-              edit8.value:=((gates1[3].start-us_probe_delay1)*us_sv1/1000/us_mm);
-              edit9.value:=(gates1[3].width*us_sv1/1000/us_mm);
+              edit8.value:=((gates1[3].start-us_probe_delay1)*us1_calc);
+              edit9.value:=(gates1[3].width*us1_calc);
 //              edit8.value:=(gates1[3].start*1000/us_sv1);
 //              edit9.value:=(gates1[3].width*1000/us_sv1);
           end else
@@ -5184,9 +5422,13 @@ begin
         form12.close;
       end;
 }
+    form12.GroupBox6.Visible :=false;
+    form12.GroupBox7.Visible :=false;
+
 
 if form8.SpTBXListBox2.ItemIndex =2 then begin
     form12.GroupBox4.Visible :=true;
+    form12.GroupBox6.Visible :=true;
     form12.GroupBox13.Visible :=true;
  end;
 if form8.SpTBXListBox2.ItemIndex =0 then begin
@@ -5213,21 +5455,22 @@ end;
 
 procedure TForm6.SpTBXButton13Click(Sender: TObject);
 begin
-  have_data2:=false;
+      have_data2:=false;
       if not form13.Visible then begin
         if form12.Visible then form12.Close;
         form13.Show;
         form13.BringToFront;
         form13.SpTBXCheckBox3.Checked :=true;
-        //form6.Width:=896;
-       // GroupBox10.visible:=false;
+        form6.Width:=896;
+        GroupBox10.visible:=false;
         //form13.SpTBXCheckBox9.Checked:=false;
       end else
       begin
-       // form6.Width:=1280;
+        form6.Width:=1280;
         form13.SpTBXCheckBox3.Checked :=false;
         form13.close;
-       // GroupBox10.visible:=true;
+        GroupBox10.visible:=true;
+        form6.NTGraph3D1.ClearGraph;
       end;
 end;
 
@@ -5664,7 +5907,7 @@ end;
 procedure TForm6.Button1Click(Sender: TObject);
 begin
   if GroupBox8.Height=16 then
-      GroupBox8.Height:=264
+      GroupBox8.Height:=270
   else
       GroupBox8.Height:=16;
 
@@ -7452,6 +7695,50 @@ end;
 procedure TForm6.FormShow(Sender: TObject);
 begin
 Screen.Cursor := crArrow;
+end;
+
+procedure TForm6.ComboBox1Change(Sender: TObject);
+begin
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+        end ;
+        1 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+        end ;
+        2 :begin
+            RadioButton20.Checked:= true;
+            RadioButton17.Checked:= true;
+        end ;
+        3 :begin
+            RadioButton20.Checked:= true;
+            RadioButton17.Checked:= true;
+        end ;
+        4 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+        end ;
+        5 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+        end ;
+      end;
+
+
+
+  have_data2:=false;
+
+  Draw_scann;
+  Draw_axes;
+  Draw_ASCAN;
+  Draw_CalcTxt;
+  Draw_SideView;
+  Draw_TOFD_OX;
+  Draw_TOFD_OY;
+
+
 end;
 
 end.

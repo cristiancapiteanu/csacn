@@ -1,11 +1,11 @@
 object Form13: TForm13
-  Left = 385
-  Top = 166
+  Left = 387
+  Top = 167
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = '3D View'
-  ClientHeight = 173
-  ClientWidth = 219
+  ClientHeight = 172
+  ClientWidth = 220
   Color = clBtnHighlight
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

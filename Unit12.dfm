@@ -1,11 +1,11 @@
 object Form12: TForm12
-  Left = 653
-  Top = 108
+  Left = 982
+  Top = 0
   HorzScrollBar.Visible = False
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'Pallete'
-  ClientHeight = 809
+  ClientHeight = 811
   ClientWidth = 662
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET

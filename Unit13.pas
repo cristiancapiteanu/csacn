@@ -47,7 +47,7 @@ uses Unit12, Unit6;
 procedure TForm13.Button7Click(Sender: TObject);
 var
 i,j,k,l:integer;
-r_val,l_val:real;
+r_val,r_val1,l_val:real;
 begin
 try
   if (not SpTBXCheckBox4.Checked) and (not SpTBXCheckBox5.Checked) and (not SpTBXCheckBox6.Checked)then exit;
@@ -65,10 +65,51 @@ if SpTBXCheckBox4.Checked then begin
       if form6.radiobutton18.Checked then k:=3;
       SpTBXProgressBar2.Max:=round(X_axis_len/x_axis_rez)*round(y_axis_len/y_axis_rez);
       SpTBXProgressBar2.Position:=0;
+
       for i:=0 to round(X_axis_len/x_axis_rez)-1 do
           for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
-                if form6.radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
-                if form6.radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+           //     if form6.radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
+           //     if form6.radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        1 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+        end ;
+        3 :begin
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+            r_val := r_val1- r_val;
+        end ;
+      end;
+
                 SpTBXProgressBar2.Position:=SpTBXProgressBar2.Position+1;
                 form6.NTGraph3D1.AddElement;
                 form6.NTGraph3D1.ElementPointColor[l]:=trunc(form6.GetColor(r_val));

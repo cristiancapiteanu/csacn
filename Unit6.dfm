@@ -1,11 +1,11 @@
 object Form6: TForm6
-  Left = 80
+  Left = 373
   Top = 19
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 43
-  ClientWidth = 128
+  ClientHeight = 700
+  ClientWidth = 1265
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -39,7 +39,7 @@ object Form6: TForm6
     Left = 896
     Top = 0
     Width = 369
-    Height = 761
+    Height = 769
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 0
@@ -47,7 +47,7 @@ object Form6: TForm6
       Left = 1
       Top = 137
       Width = 367
-      Height = 16
+      Height = 270
       Align = alTop
       Caption = '      View A-Scan'
       TabOrder = 0
@@ -87,8 +87,8 @@ object Form6: TForm6
       object GroupBox15: TGroupBox
         Left = 8
         Top = 216
-        Width = 105
-        Height = 41
+        Width = 353
+        Height = 49
         Caption = 'Value'
         Ctl3D = True
         Font.Charset = DEFAULT_CHARSET
@@ -101,7 +101,7 @@ object Form6: TForm6
         TabOrder = 0
         object RadioButton20: TSpTBXRadioButton
           Left = 56
-          Top = 18
+          Top = 50
           Width = 38
           Height = 15
           Caption = 'TOF'
@@ -112,17 +112,27 @@ object Form6: TForm6
         end
         object RadioButton19: TSpTBXRadioButton
           Left = 9
-          Top = 18
+          Top = 50
           Width = 39
           Height = 15
           Caption = 'Amp'
           TabOrder = 1
           OnClick = RadioButton19Click
         end
+        object ComboBox1: TComboBox
+          Left = 8
+          Top = 20
+          Width = 145
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 2
+          Text = 'ComboBox1'
+          OnChange = ComboBox1Change
+        end
       end
       object GroupBox14: TGroupBox
-        Left = 116
-        Top = 216
+        Left = 12
+        Top = 272
         Width = 245
         Height = 41
         Caption = 'Gates'
@@ -193,9 +203,9 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 493
+      Top = 455
       Width = 367
-      Height = 298
+      Height = 16
       Align = alTop
       Caption = '     TOF-D'
       Color = clWhite
@@ -1279,7 +1289,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 477
+      Top = 439
       Width = 367
       Height = 16
       Align = alTop
@@ -2956,9 +2966,9 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 791
+      Top = 471
       Width = 367
-      Height = 105
+      Height = 16
       Align = alTop
       Caption = '    TOF-D Calibration Wizard'
       TabOrder = 4
@@ -3036,7 +3046,7 @@ object Form6: TForm6
     end
     object GroupBox12: TGroupBox
       Left = 1
-      Top = 153
+      Top = 407
       Width = 367
       Height = 16
       Align = alTop
@@ -4197,9 +4207,9 @@ object Form6: TForm6
     end
     object GroupBox27: TGroupBox
       Left = 1
-      Top = 169
+      Top = 423
       Width = 367
-      Height = 308
+      Height = 16
       Align = alTop
       Caption = '     C-SCAN'
       TabOrder = 6
@@ -5653,7 +5663,7 @@ object Form6: TForm6
     end
     object RadioButton25: TSpTBXCheckBox
       Left = 7
-      Top = 624
+      Top = 160
       Width = 42
       Height = 15
       Caption = '[mm]'
@@ -5680,8 +5690,8 @@ object Form6: TForm6
     end
   end
   object SpTBXButton66: TLMDButton
-    Left = 1138
-    Top = 762
+    Left = 994
+    Top = 778
     Width = 122
     Height = 40
     Caption = 'Back'

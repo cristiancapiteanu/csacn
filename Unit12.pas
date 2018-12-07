@@ -929,7 +929,7 @@ end;
 procedure TForm12.Draw_Pallete;
 var
 i,j:integer;
-r_val:real;
+r_val, r_val1:real;
 r_tmp:real;
 
 begin
@@ -945,20 +945,92 @@ begin
       if (CheckBox4.Checked)and(scann_counter>0) Then begin
 
       //calc avg
+      {
         if form6.radiobutton16.Checked then j:=1;
         if form6.radiobutton17.Checked then j:=2;
         if form6.radiobutton18.Checked then j:=3;
         if form6.radiobutton19.Checked then r_val:=scann_arr[1].US_Mess[j].amp;
         if form6.radiobutton20.Checked then r_val:=scann_arr[1].US_Mess[j].tof;
+       }
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            j:=1;
+            r_val:=scann_arr[1].US_Mess[j].tof;
+        end ;
+        1 :begin
+            j:=1;
+            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            j:=2;
+            r_val:=scann_arr[1].US_Mess[j].tof;
+        end ;
+        3 :begin
+            j:=2;
+            r_val:=scann_arr[1].US_Mess[j].tof;
+           // r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            r_val:=scann_arr[1].US_Mess[1].tof;
+            r_val1:=scann_arr[1].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            r_val:=scann_arr[1].US_Mess[1].tof;
+          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=scann_arr[1].US_Mess[2].tof;
+          //  r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
+        end ;
+      end;
+
        r_val_avg:=0;
-       r_val_min:=r_val;
+       r_val_min:=r_val;;
        r_val_max:=r_val;
 
         for I:=1 to scann_counter do begin
         //identify value
 
-         if form6.radiobutton19.Checked then r_val:=scann_arr[i].US_Mess[j].amp;
+       {  if form6.radiobutton19.Checked then r_val:=scann_arr[i].US_Mess[j].amp;
          if form6.radiobutton20.Checked then r_val:=scann_arr[i].US_Mess[j].tof;
+        }
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            j:=1;
+            r_val:=scann_arr[i].US_Mess[j].tof;
+        end ;
+        1 :begin
+            j:=1;
+            r_val:=scann_arr[i].US_Mess[j].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        2 :begin
+            j:=2;
+            r_val:=scann_arr[i].US_Mess[j].tof;
+        end ;
+        3 :begin
+            j:=2;
+            r_val:=scann_arr[i].US_Mess[j].tof;
+       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        end ;
+        4 :begin
+            r_val:=scann_arr[i].US_Mess[1].tof;
+            r_val1:=scann_arr[i].US_Mess[2].tof;
+            r_val := r_val1- r_val;
+        end ;
+        5 :begin
+            r_val:=scann_arr[i].US_Mess[1].tof;
+     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=scann_arr[i].US_Mess[2].tof;
+       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
+        end ;
+      end;
 
          r_val_avg:=r_val_avg+r_val;
          if r_val<r_val_min then r_val_min:= r_val;
@@ -966,6 +1038,40 @@ begin
 
        end;
         r_val_avg:=r_val_avg/scann_counter;
+
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            if r_val_min < Gates1[1].start then r_val_min:=Gates1[1].start;
+            if r_val_max > (Gates1[1].start + Gates1[1].width)  then r_val_max:=(Gates1[1].start + Gates1[1].width);
+        end ;
+        1 :begin
+            if r_val_min < Gates1[1].start then r_val_min:=Gates1[1].start;
+            if r_val_max > (Gates1[1].start + Gates1[1].width)  then r_val_max:=(Gates1[1].start + Gates1[1].width);
+        end ;
+        2 :begin
+            if r_val_min < Gates1[2].start then r_val_min:=Gates1[2].start;
+            if r_val_max > (Gates1[2].start + Gates1[2].width)  then r_val_max:=(Gates1[2].start + Gates1[2].width);
+        end ;
+        3 :begin
+            if r_val_min < Gates1[2].start then r_val_min:=Gates1[2].start;
+            if r_val_max > (Gates1[2].start + Gates1[2].width)  then r_val_max:=(Gates1[2].start + Gates1[2].width);
+        end ;
+        4 :begin
+        //    if r_val_min < (Gates1[2].start - Gates1[1].start - Gates1[1].width) then
+              r_val_min:=(Gates1[2].start - Gates1[1].start - Gates1[1].width);
+        //    if r_val_max > (Gates1[2].start - Gates1[1].start + Gates1[2].width) then
+              r_val_max:=(Gates1[2].start - Gates1[1].start + Gates1[2].width);
+        end ;
+        5 :begin
+          //  if r_val_min < (Gates1[2].start - Gates1[1].start - Gates1[1].width) then
+              r_val_min:=(Gates1[2].start - Gates1[1].start - Gates1[1].width);
+          //  if r_val_max > (Gates1[2].start - Gates1[1].start + Gates1[2].width) then
+              r_val_max:=(Gates1[2].start - Gates1[1].start + Gates1[2].width);
+        end ;
+      end;
+
+         if r_val_min<0 then r_val_min :=0;
 
         if radiobutton21.Checked then begin
           for i :=1 to 16 do begin
@@ -1392,6 +1498,10 @@ begin
 //  form6.have_data1:=false;
 //  form6.have_data10:=false;
 //  form6.have_data11:=true;
+
+  if active_form=1 then begin
+  end else begin
+  end;
     for i:= 1 to 16 do begin
         r1:=form1.edit8.Value+(i-1)*form1.edit9.Value/15;
         r2:=InvTRCal(r1);
