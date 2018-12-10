@@ -210,6 +210,7 @@ TFile_enc= array of TFile_enc1;
       xy_coor:Txy_coor;
       have_ascan:boolean;
       US_Width:real;
+      us_delay:real;
       US_arr1:array[1..400] of byte;
   end;
 

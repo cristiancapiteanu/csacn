@@ -2193,6 +2193,7 @@ i:integer;
 begin
  try
     scann_arr[scann_counter].have_ascan:= true ;
+    scann_arr[scann_counter].us_delay:= US_Delay ;
     for i:=1 to 400 do
       scann_arr[scann_counter].US_arr1[i] := draw_ascn[i] ;
  except
