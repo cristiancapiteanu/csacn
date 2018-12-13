@@ -1142,7 +1142,8 @@ procedure TForm6.Button12Click(Sender: TObject);
 var
 i:integer;
 lFile: TFileStream;
-    file_data:TScan_File;
+file_data:TScan_File;
+scanFile: File of TScann_arr;
 
 
 s_tmp:string;
@@ -1168,9 +1169,19 @@ have_data11 := false;
 		      lFile.Free;
           //checkbox2.Checked:=false;
           scann_counter:=file_data.scann_counter;
-          //SetLength(scann_arr ,scann_counter+2);
-          for i:=0 to scann_counter-1 do
-            scann_arr[i]:=file_data.scann_arr[i];
+          //SetLength(scann_arr, scann_counter+2);
+
+          AssignFile(scanFile,form1.OpenDialog1.FileName+ '_raw');
+          Reset(scanFile);
+          try
+             for i:=0 to scann_counter-1 do
+                 Read(scanFile, scann_arr[i]);
+          finally
+                 CloseFile(scanFile);
+          end;
+
+        //  for i:=0 to scann_counter-1 do
+        //    scann_arr[i]:=file_data.scann_arr[i];
 
           Gates:=file_data.File_us.Gates;
           US_Gain:=file_data.File_us.US_Gain;
@@ -1401,10 +1412,12 @@ procedure TForm6.Button16Click(Sender: TObject);
 var
 i:integer;
 lFile: TFileStream;
+scanFile: File of TScann_arr;
     file_data:TScan_File;
+    file_scan: TScann_arr;
 s,s1:string;
 begin
-ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+//ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
   try
       if form8.SpTBXListBox2.ItemIndex=0 then form1.SaveDialog1.Filter :='B-Scan (*.lsc)|*.lsc';
       if form8.SpTBXListBox2.ItemIndex=1 then form1.SaveDialog1.Filter :='TOF-D (*.tofd)|*.tofd';
@@ -1412,10 +1425,10 @@ ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 
 	    if form1.SaveDialog1.Execute then begin
           file_data.scann_counter :=scann_counter;
-          SetLength(file_data.scann_arr ,scann_counter);
+     //     SetLength(file_data.scann_arr ,scann_counter);
 
-          for i:=0 to scann_counter-1 do
-            file_data.scann_arr[i]:=scann_arr[i];
+    //      for i:=0 to scann_counter-1 do
+     //       file_data.scann_arr[i]:=scann_arr[i];
 
           if groupbox2.Visible then
             US_Gain1:=SpTBXSpinEdit4.Value
@@ -1498,11 +1511,31 @@ ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
                   lFile := TFileStream.Create(s+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
+
+                  AssignFile(scanFile,s+s1+'_raw');
+                  Rewrite(scanFile);
+                  try
+                   for i:=0 to scann_counter-1 do
+                      write(scanFile, scann_arr[i]);
+                  finally
+                         CloseFile(scanFile);
+                  end;
+
               end else begin end;
           end else begin
                   lFile := TFileStream.Create(s+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
+                  
+                  AssignFile(scanFile,s+s1+'_raw');
+                  Rewrite(scanFile);
+                  try
+                   for i:=0 to scann_counter-1 do
+                      write(scanFile, scann_arr[i]);
+                  finally
+                         CloseFile(scanFile);
+                  end;
+
           end;
 
       end;

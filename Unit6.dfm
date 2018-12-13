@@ -4,7 +4,7 @@ object Form6: TForm6
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 700
+  ClientHeight = 826
   ClientWidth = 1265
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET

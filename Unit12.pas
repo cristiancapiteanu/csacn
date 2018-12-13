@@ -1302,7 +1302,8 @@ b_form15_on :=false;
       image7.Canvas.Brush.Style:=bsSolid	 ;
       image7.Canvas.Brush.Color :=clWhite;//clBtnFace;//clWhite;
       image7.Canvas.Rectangle(0,0,image7.Width,image7.Height );
-      pallete_file_name:='C:\data\default.pal'  ;
+      pallete_file_name:=apppath+'default.pal'  ;
+   //   pallete_file_name:='C:\data\default.pal'  ;
 
       OpenPallete;
       Draw_Pallete;

@@ -203,15 +203,16 @@ TFile_enc= array of TFile_enc1;
     y:real;
   end;
 
-  TAS=array[1..400] of SmallInt;
+  TAS=array[1..400] of byte;
+//  TAS=array[1..400] of SmallInt;
 
   TScann_arr=record
-      US_Mess:array[1..3] of TUS_Mess;
-      xy_coor:Txy_coor;
       have_ascan:boolean;
       US_Width:real;
       us_delay:real;
-      US_arr1:array[1..400] of byte;
+      US_Mess:array[1..3] of TUS_Mess;
+      xy_coor:Txy_coor;
+      US_arr1:TAS;//array[1..400] of byte;
   end;
 
   Tdefect=record
@@ -221,24 +222,23 @@ TFile_enc= array of TFile_enc1;
     my1,my2:integer;
   end;
 
+
   TScan_File=record
       scann_counter:integer;
-      scann_arr:array of TScann_arr;
       File_ms:TFile_ms1;
       File_us:TFile_us1;
-        us_separation:real;
-        us_angle_wd:real;
-        us_thick_a1:real;
-        us_time:TDateTime;
-        us_name:string;
-        ox_color_index:integer;
-        ox_mark_line_x:array[0..10] of integer;
-        ox_mark_line_y:array[0..10] of integer;
-        defect_count:integer;
-        defect:array of Tdefect;
-        scaner_type:integer;
-
-
+      us_separation:real;
+      us_angle_wd:real;
+      us_thick_a1:real;
+      us_time:TDateTime;
+      us_name:string;
+      ox_color_index:integer;
+      ox_mark_line_x:array[0..10] of integer;
+      ox_mark_line_y:array[0..10] of integer;
+      defect_count:integer;
+      defect:array of Tdefect;
+      scaner_type:integer;
+   //   scann_arr:TScann_arr;
   end;
 
   TProbe = record

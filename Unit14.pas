@@ -259,7 +259,7 @@ Screen.Cursor := crArrow;
 
 
   SpTBXListBox1.Clear;
-  for i:=0 to encoder_count do
+  for i:=0 to encoder_count-1 do
     SpTBXListBox1.Items.Add(encoder[i].name);
 
 
@@ -1686,13 +1686,13 @@ begin
          load_file:=false;
 
 
-         Form8.SpTBXListBox2Click(Sender);
+         Form8.SpTBXListBox2Click(Sender); //CRISTIAN 12,12
          form17.Hide;
          form6.FormStyle:=fsStayOnTop;
          // form8.BringToFront;
-         form6.BringToFront;
+         form6.BringToFront;        //CRISTIAN 12,12
       //        form19.hide;
-         form6.Button16Click(sender);
+         form6.Button16Click(sender);  //CRISTIAN 12,12
        //  ShowMessage(IntToStr(scann_counter_old1)+' '+IntToStr(scann_counter));
       end;
 

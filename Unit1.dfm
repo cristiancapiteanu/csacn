@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 93
-  Top = 0
+  Left = 489
+  Top = 64
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 808
+  ClientHeight = 946
   ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -8914,7 +8914,7 @@ object Form1: TForm1
       end
     end
     object GroupBox9: TGroupBox
-      Left = 300
+      Left = 1190
       Top = 8
       Width = 377
       Height = 749
@@ -12496,7 +12496,7 @@ object Form1: TForm1
       end
     end
     object GroupBox21: TGroupBox
-      Left = 1190
+      Left = 300
       Top = 8
       Width = 377
       Height = 749

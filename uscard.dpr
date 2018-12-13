@@ -1,5 +1,7 @@
 program cscan;
 
+//{$MAXSTACKSIZE $2000000}
+
 uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},

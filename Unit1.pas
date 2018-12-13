@@ -2121,7 +2121,7 @@ try
                   end;
 // scann_counter_old :=scann_counter;
           if start_scann then   //////////////////////////////////////  scann
-									      inc(scann_counter);
+             inc(scann_counter);
 
           scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
           scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
@@ -2171,7 +2171,7 @@ try
                   end;
 
 
-                  if scaner_type=2 then begin
+                  if scaner_type = 2 then begin
                      scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
                      scann_arr[scann_counter].xy_coor.y := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
                      //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
@@ -2194,8 +2194,9 @@ begin
  try
     scann_arr[scann_counter].have_ascan:= true ;
     scann_arr[scann_counter].us_delay:= US_Delay ;
-    for i:=1 to 400 do
-      scann_arr[scann_counter].US_arr1[i] := draw_ascn[i] ;
+//    for i:=1 to 400 do
+//      scann_arr[scann_counter].US_arr1[i] := draw_ascn[i] ;
+   scann_arr[scann_counter].US_arr1 := draw_ascn ;
  except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
  end;
@@ -2221,7 +2222,7 @@ try
     dec(free_time);
     inc(us_time_count);
     optel_pack := trunc(frame_buffer/(52 + optel_frame));
-    //label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(us_time_count)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
+    label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(frame_buffer)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
     //label90.caption := IntToStr(frame_cnt1) +' '+IntToStr(optel_pack);
     if frame_buffer_old < frame_buffer then begin
       GetMem(data_optel,frame_buffer);
@@ -2246,10 +2247,16 @@ try
     new(tmp31);
     new(tmp41);
     for k:=0 to optel_pack-1 do begin
-                  inc(data_optel, 11);
+                  inc(data_optel, 10);
 
-                  tmp1:=data_optel^; //8 + 3 =11   input
+                  tmp11^:=data_optel^; //8 + 3 =11   input
                   inc(data_optel);
+
+                  tmp21^:=data_optel^; //8 + 3 =11   input
+                  inc(data_optel);
+                  r_val:=tmp11^+256*tmp21^;
+                  label89.Caption:= floattostr(r_val);
+
 
                   tmp11^:=data_optel^; //9 + 3 =12
                   inc(data_optel);
@@ -4033,9 +4040,8 @@ with form1 do begin
                 inc(free_time);
                 DoUsCARDAq;//data aquisition
                 inc(display_counter);
-                if display_counter > 4 then display_counter:=0;
 
-                if (display_counter mod 1) = 0 then Draw_ASCAN;   //
+                if (display_counter mod 2) = 0 then Draw_ASCAN;   //
                 if (display_counter mod 4) = 0 then begin
                     Draw_ASCAN_Display_Measurement;
                     Draw_ASCAN_Prep_SCANN;
@@ -4047,6 +4053,8 @@ with form1 do begin
                     Draw_ASCAN_Post_SCANN ;
                     scann_counter_old :=scann_counter;
                 end;
+
+                if display_counter > 4 then display_counter:=0;
 
                 if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
                 if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
@@ -5288,51 +5296,51 @@ begin
   edit.SpinOptions.Decimal:=0;
   if s='0.1' then begin
      edit.SpinOptions.Increment :=0.2;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='0.2' then begin
      edit.SpinOptions.Increment :=0.5;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='0.5' then begin
      edit.SpinOptions.Increment :=1;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='1' then begin
      edit.SpinOptions.Increment :=2;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='2' then begin
      edit.SpinOptions.Increment :=5;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='5' then begin
      edit.SpinOptions.Increment :=10;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='10' then begin
      edit.SpinOptions.Increment :=20;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='20' then begin
      edit.SpinOptions.Increment :=50;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='50' then begin
      edit.SpinOptions.Increment :=100;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='100' then begin
      edit.SpinOptions.Increment :=200;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='200' then begin
      edit.SpinOptions.Increment :=500;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='500' then begin
      edit.SpinOptions.Increment :=0.1;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
 
   end else begin
@@ -5340,51 +5348,51 @@ begin
   edit.SpinOptions.Decimal:=1;
   if s='0.1' then begin
      edit.SpinOptions.Increment :=0.2;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='0.2' then begin
      edit.SpinOptions.Increment :=0.5;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='0.5' then begin
      edit.SpinOptions.Increment :=1;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='1' then begin
      edit.SpinOptions.Increment :=2;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='2' then begin
      edit.SpinOptions.Increment :=5;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='5' then begin
      edit.SpinOptions.Increment :=10;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='10' then begin
      edit.SpinOptions.Increment :=20;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='20' then begin
      edit.SpinOptions.Increment :=50;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='50' then begin
      edit.SpinOptions.Increment :=100;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='100' then begin
      edit.SpinOptions.Increment :=200;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='200' then begin
      edit.SpinOptions.Increment :=500;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
   if s='500' then begin
      edit.SpinOptions.Increment :=0.1;
-     button.Caption := FloatToStr(edit.SpinOptions.Increment/us_mm);
+     button.Caption := FloatToStr(edit.SpinOptions.Increment/1);
   end;
 
   end;

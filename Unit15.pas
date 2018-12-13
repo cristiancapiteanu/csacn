@@ -114,6 +114,7 @@ i,j:integer;
 r:real;
 tmpi0,tmpi1,tmpi10,tmpr:integer;
 begin
+try
   form14.offset_flag:=true;
   bmp1.Free;
   bmp1:=TBitmap.Create;
@@ -275,6 +276,10 @@ begin
          //   b_form15_on:=true;
              //     Form17.Timer1.Enabled:=true;
      Screen.Cursor := crArrow;
+     except
+    on E : Exception do
+        ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+    end;
 
 end;
 

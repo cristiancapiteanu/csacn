@@ -372,10 +372,13 @@ begin
   if SpTBXListBox3.ItemIndex=0 then begin
    // ShowMessage('1');scann_counter
    form1.SpTBXComboBox2.Items.Clear;
+
    form1.SpTBXComboBox2.Items.Add('100 MHz');
    form1.SpTBXComboBox2.Items.Add('50 MHz');
    form1.SpTBXComboBox2.Items.Add('25 MHz');
    form1.SpTBXComboBox2.Items.Add('10 MHz');
+   form1.SpTBXComboBox2.ItemIndex :=trunc(us_samplingfreq);
+
 
    form1.SpTBXSpinEdit5.SpinOptions.MaxValue :=16;
    form1.SpTBXSpinEdit1.SpinOptions.ValueType:=spnFloat;
@@ -399,6 +402,8 @@ begin
     form1.SpTBXComboBox1.Items.Add('1 – 25 MHz');
     form1.SpTBXComboBox1.Items.Add('2 – 25 MHz');
     form1.SpTBXComboBox1.Items.Add('4 – 25 MHz');
+    form1.SpTBXComboBox1.ItemIndex:=trunc(us_filter_mode );
+
 
 
 
@@ -448,8 +453,7 @@ begin
       SpTBXComboBox4.Items.Clear;
       SpTBXComboBox4.Items.Add('HF');
       SpTBXComboBox4.Items.Add('Vollweg');
-      SpTBXComboBox4.ItemIndex:=1;
-      SpTBXComboBox2.ItemIndex:=0;
+      SpTBXComboBox4.ItemIndex :=trunc(us_ascan_hf);
       Label56.Caption := 'A/D Frequenz';
       Label49.Caption := 'Frequenzfilter';
 
