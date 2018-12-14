@@ -2119,9 +2119,6 @@ try
                       us_mess[i].tof1:=us_mess[i].tof;
                       us_mess[i].tof:=r_val;
                   end;
-// scann_counter_old :=scann_counter;
-          if start_scann then   //////////////////////////////////////  scann
-             inc(scann_counter);
 
           scann_arr[scann_counter].US_Mess[1] :=us_mess[1];
           scann_arr[scann_counter].US_Mess[2] :=us_mess[2];
@@ -2134,6 +2131,7 @@ try
 end;
 
 procedure TForm1.Do_Proc_Enc(index:integer);
+
 begin
 try
                    //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
@@ -2170,17 +2168,45 @@ try
                        if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
                   end;
 
+// scann_counter_old :=scann_counter;
+          if scaner_type = 2 then begin
+                     x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
+                     y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
+          end else begin
+                      x_temp := enc_cur_x;
+                      y_temp := enc_cur_y;
+          end;
 
-                  if scaner_type = 2 then begin
-                     scann_arr[scann_counter].xy_coor.x := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
-                     scann_arr[scann_counter].xy_coor.y := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
-                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
-                  end else begin
-//                    scann_arr[scann_counter].xy_coor := xy_coor;
-                      scann_arr[scann_counter].xy_coor.x := enc_cur_x;
-                      scann_arr[scann_counter].xy_coor.y := enc_cur_y;
+          if start_scann then   //////////////////////////////////////  scann
+          begin
+                  if ( abs(scann_arr[scann_counter].xy_coor.x - x_temp)>= abs(encoder[encoder_index].enc_x_rez) ) or
+                     ( abs(scann_arr[scann_counter].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then
+                       inc(scann_counter);
+
+                  if ( abs(scann_arr[scann_counter-1].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then begin
+                     new_line:=true;
+                     tmp_x:= scann_arr[scann_counter-1].xy_coor.x;
                   end;
 
+                  if new_line then
+                     if (scann_arr[scann_counter-1].xy_coor.x - tmp_x) < 0 then begin
+                        x_temp:= x_temp - abs(encoder[encoder_index].enc_x_rez);
+
+                       //  := 1.0 ;
+                        new_line:=false;
+                        tmp_x := 0;
+                     end;
+          end;
+
+          if scaner_type = 2 then begin
+                     scann_arr[scann_counter].xy_coor.x := x_temp;
+                     scann_arr[scann_counter].xy_coor.y := y_temp;
+                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
+          end else begin
+//                    scann_arr[scann_counter].xy_coor := xy_coor;
+                      scann_arr[scann_counter].xy_coor.x := x_temp;
+                      scann_arr[scann_counter].xy_coor.y := y_temp;
+          end;
   except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
@@ -2222,7 +2248,7 @@ try
     dec(free_time);
     inc(us_time_count);
     optel_pack := trunc(frame_buffer/(52 + optel_frame));
-    label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(frame_buffer)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
+    //label88.Caption:=IntToStr(optel_pack)+' '+IntToStr(frame_buffer)+' '+IntToStr(free_time)+' '+IntToStr(frame_buffer) +' '+IntToStr(optel_frame) ;
     //label90.caption := IntToStr(frame_cnt1) +' '+IntToStr(optel_pack);
     if frame_buffer_old < frame_buffer then begin
       GetMem(data_optel,frame_buffer);
@@ -2247,15 +2273,15 @@ try
     new(tmp31);
     new(tmp41);
     for k:=0 to optel_pack-1 do begin
-                  inc(data_optel, 10);
+                  inc(data_optel, 11);
 
                   tmp11^:=data_optel^; //8 + 3 =11   input
                   inc(data_optel);
 
-                  tmp21^:=data_optel^; //8 + 3 =11   input
-                  inc(data_optel);
-                  r_val:=tmp11^+256*tmp21^;
-                  label89.Caption:= floattostr(r_val);
+                 // tmp21^:=data_optel^; //8 + 3 =11   input
+                 // inc(data_optel);
+                  //r_val:=tmp11^+256*tmp21^;
+                  //label89.Caption:= floattostr(r_val);
 
 
                   tmp11^:=data_optel^; //9 + 3 =12
@@ -2268,8 +2294,8 @@ try
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if scaner_type <> 2 then begin
-//                     enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
-//                     enc_cur_x := enc_cur_x_100;//r_val;
+      //               enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
+    //                 enc_cur_x := enc_cur_x_100;//r_val;
                      enc_cur_x := r_val;
                   end;
                   //enc_cur_x := enc_cur_x +0.1;
@@ -2374,8 +2400,8 @@ try
                   Fill_draw_ascn_new;
                   Do_Average;
                   Do_Alarm;
-                  Do_Select_TOF;
                   Do_Proc_Enc(k);
+                  Do_Select_TOF;
                   Do_Update_scann_arr;
             end;
 
@@ -3531,6 +3557,12 @@ begin
 
          point_rezx:=form15.image1.Width/(X_axis_len/x_axis_rez);
          point_rezy:=form15.image1.height/(y_axis_len/y_axis_rez);
+
+         x1:=scann_arr[0].xy_coor.x;
+         y1:=scann_arr[0].xy_coor.y;
+              y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
+
+
          for l:=(scann_counter_old+1) to (scann_counter) do begin
           //form15.label1.Caption:=IntToStr(scann_counter-scann_counter_old-1);
 
@@ -4058,6 +4090,7 @@ with form1 do begin
 
                 if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
                 if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
+                label90.caption := IntToStr(scann_counter);
     end ;
 end;
   except

@@ -1,6 +1,6 @@
 program cscan;
 
-//{$MAXSTACKSIZE $2000000}
+{$MAXSTACKSIZE $2000000}
 
 uses
   Forms,

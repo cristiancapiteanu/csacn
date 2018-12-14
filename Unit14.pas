@@ -1608,6 +1608,9 @@ begin
           ScannerMove:=true;
           start_scann:=true;
           scann_counter:=0;
+          scann_arr[scann_counter].xy_coor.x := 0;
+          scann_arr[scann_counter].xy_coor.y := 0;
+
       end else begin
 
 
@@ -1637,6 +1640,9 @@ begin
               end;
             end;
          end;
+
+
+
 
          timer1.Enabled := true;
          start_scann:=false;

@@ -525,6 +525,17 @@ frame_buffer_old:integer;
 
         enc_cur_x_100:real;
 
+
+
+        x_temp:double;
+y_temp:double;
+new_line: boolean;
+
+tmp_x:double;
+cccc:double;
+
+
+
 implementation
 
 uses unit1,unit7,unit6,unit9,unit3,unit8;
