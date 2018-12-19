@@ -2170,25 +2170,33 @@ try
 
 // scann_counter_old :=scann_counter;
           if scaner_type = 2 then begin
-                     x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
-                     y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
+                    // x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
+                    // y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
           end else begin
                       x_temp := enc_cur_x;
                       y_temp := enc_cur_y;
           end;
 
+
+
           if start_scann then   //////////////////////////////////////  scann
           begin
-                  if ( abs(scann_arr[scann_counter].xy_coor.x - x_temp)>= abs(encoder[encoder_index].enc_x_rez) ) or
-                     ( abs(scann_arr[scann_counter].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then
+                  if ( abs(scann_arr[scann_counter].xy_coor.x - x_temp)>= abs(encoder[encoder_index].enc_x_rez/2) ) or
+                     ( abs(scann_arr[scann_counter].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez/2) ) then
                        inc(scann_counter);
 
                   if ( abs(scann_arr[scann_counter-1].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then begin
                      new_line:=true;
                      tmp_x:= scann_arr[scann_counter-1].xy_coor.x;
                   end;
-
+  {
                   if new_line then
+                     if (scann_arr[scann_counter-2].xy_coor.x - scann_arr[scann_counter-1].xy_coor.x) > 0 then begin
+                      //   scann_arr[scann_counter] := scann_arr[scann_counter-1];
+                      //   scann_arr[scann_counter].xy_coor.y := scann_arr[scann_counter].xy_coor.y - encoder[encoder_index].enc_y_rez;
+                        // inc(scann_counter);
+                     end;
+{
                      if (scann_arr[scann_counter-1].xy_coor.x - tmp_x) < 0 then begin
                         x_temp:= x_temp - abs(encoder[encoder_index].enc_x_rez);
 
@@ -2196,17 +2204,11 @@ try
                         new_line:=false;
                         tmp_x := 0;
                      end;
+ }
           end;
-
-          if scaner_type = 2 then begin
-                     scann_arr[scann_counter].xy_coor.x := x_temp;
-                     scann_arr[scann_counter].xy_coor.y := y_temp;
-                     //label10.Caption:=FloatToStr(scann_arr[scann_counter].xy_coor.x);
-          end else begin
-//                    scann_arr[scann_counter].xy_coor := xy_coor;
-                      scann_arr[scann_counter].xy_coor.x := x_temp;
-                      scann_arr[scann_counter].xy_coor.y := y_temp;
-          end;
+ 
+          scann_arr[scann_counter].xy_coor.x := x_temp;
+          scann_arr[scann_counter].xy_coor.y := y_temp;
   except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
@@ -3560,7 +3562,7 @@ begin
 
          x1:=scann_arr[0].xy_coor.x;
          y1:=scann_arr[0].xy_coor.y;
-              y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
+         y1:=form15.Image1.Height-y1*form15.Image1.Height/y_axis_len-point_rezy;
 
 
          for l:=(scann_counter_old+1) to (scann_counter) do begin

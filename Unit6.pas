@@ -719,11 +719,11 @@ begin
     X_axis_rez:= SpTBXSpinEdit6.Value ;
     y_axis_rez:= SpTBXSpinEdit7.Value ;
     US_Gain1_temp:=edit5.Value ;
+
+    //gain
     d_gain:=US_Gain1_temp-US_Gain1;
     if d_gain<>0 then begin
-        US_Gain1:=edit5.Value ;
-
-
+       US_Gain1:=edit5.Value ;
        SpTBXProgressBar1.Max :=SpTBXProgressBar1.Max+scann_counter;
        for I:=1 to scann_counter-1 do begin
               SpTBXProgressBar1.Position:=SpTBXProgressBar1.Position+1;
@@ -871,30 +871,30 @@ begin
                         if (k>=x1_start)and (k<=x1_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then begin
-                                      scann_arr[i].US_Mess[1].tof :=k/400*US_Width1+us_delay1 ; break; end;
+                                      scann_arr[i].US_Mess[1].tof :=k/400*US_Width1+scann_arr[i].us_delay ; break; end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x1_height then begin
-                                      scann_arr[i].US_Mess[1].tof :=k/400*US_Width1+us_delay1;; break; end;
+                                      scann_arr[i].US_Mess[1].tof :=k/400*US_Width1+scann_arr[i].us_delay;; break; end;
                               end;
 
                       for k:=1 to 400 do  //flank
                         if (k>=x2_start)and (k<=x2_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then  begin
-                                      scann_arr[i].US_Mess[2].tof :=k/400*US_Width1+us_delay1 ; break; end;
+                                      scann_arr[i].US_Mess[2].tof :=k/400*US_Width1+scann_arr[i].us_delay ; break; end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x2_height then begin
-                                      scann_arr[i].US_Mess[2].tof :=k/400*US_Width1+us_delay1;; break; end;
+                                      scann_arr[i].US_Mess[2].tof :=k/400*US_Width1+scann_arr[i].us_delay;; break; end;
                               end;
 
                       for k:=1 to 400 do  //flank
                         if (k>=x3_start)and (k<=x3_stop) then
                               if us_ascan_hf1=0 then  begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then  begin
-                                      scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+us_delay1; break; end;
+                                      scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+scann_arr[i].us_delay; break; end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x3_height then begin
-                                      scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+us_delay1;; break; end;
+                                      scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+scann_arr[i].us_delay;; break; end;
                               end;
                   end;
 
@@ -908,13 +908,13 @@ begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
                                      r_val1 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+us_delay1;
+                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
                                   end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x1_height then
                                   if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
                                      r_val1 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+us_delay1;
+                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
                                   end;
                               end;
                         if (k>=x2_start)and (k<=x2_stop) then
@@ -922,13 +922,13 @@ begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
                                      r_val2 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+us_delay1;
+                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
                                   end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x2_height then
                                   if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
                                      r_val2 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+us_delay1;
+                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
                                   end;
                               end;
                         if (k>=x3_start)and (k<=x3_stop) then
@@ -936,13 +936,13 @@ begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
                                      r_val3 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+us_delay1;
+                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
                                   end;
                               end else begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x3_height then
                                   if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
                                      r_val3 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+us_delay1;
+                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
                                   end;
                               end;
                       end;

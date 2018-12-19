@@ -203,7 +203,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 455
+      Top = 739
       Width = 367
       Height = 16
       Align = alTop
@@ -1289,7 +1289,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 439
+      Top = 723
       Width = 367
       Height = 16
       Align = alTop
@@ -2966,7 +2966,7 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 471
+      Top = 755
       Width = 367
       Height = 16
       Align = alTop
@@ -4209,7 +4209,7 @@ object Form6: TForm6
       Left = 1
       Top = 423
       Width = 367
-      Height = 16
+      Height = 300
       Align = alTop
       Caption = '     C-SCAN'
       TabOrder = 6
@@ -4442,7 +4442,7 @@ object Form6: TForm6
         Top = 88
         Width = 369
         Height = 217
-        ActivePage = TabSheet8
+        ActivePage = TabSheet9
         TabOrder = 1
         object TabSheet8: TTabSheet
           Caption = '1. Defects'
