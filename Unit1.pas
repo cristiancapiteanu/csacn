@@ -4092,7 +4092,7 @@ with form1 do begin
 
                 if form15.Visible then form15.SpTBXProgressBar1.Position := scann_counter;
                 if form11.Visible then form11.SpTBXProgressBar1.Position := scann_counter;
-                label90.caption := IntToStr(scann_counter);
+             //   label90.caption := IntToStr(scann_counter);
     end ;
 end;
   except
@@ -8701,7 +8701,7 @@ begin
   postpros:=true;
   start_scann:=false;
   form8.SpTBXListBox2Click(Sender);
-  form6.Height:=860;
+  form6.Height:=842;
   form6.Width:=1300;
   form6.Visible:= true;
   form6.Show;
@@ -11545,7 +11545,7 @@ begin
   postpros:=true;
   start_scann:=false;
   form8.SpTBXListBox2Click(Sender);
-  form6.Height:=860;
+  form6.Height:=842;
   form6.Width:=1300;
   form6.Visible:= true;
   form6.Show;
@@ -11585,12 +11585,12 @@ begin
   postpros:=true;
   start_scann:=false;
   form8.SpTBXListBox2Click(Sender);
-  form6.Height:=860;
-  form6.Width:=1300;
+  form6.Height:=812;
+  form6.Width:=1296;
   form6.Visible:= true;
   form6.Show;
   form6.WindowState:=wsNormal;
-  form6.FormStyle:=fsStayOnTop;
+  //form6.FormStyle:=fsStayOnTop;
   form6.BringToFront;
 
 

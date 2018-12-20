@@ -1,12 +1,12 @@
 object Form6: TForm6
-  Left = 373
-  Top = 19
+  Left = 368
+  Top = 80
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 826
-  ClientWidth = 1265
-  Color = clWhite
+  ClientHeight = 802
+  ClientWidth = 1288
+  Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -36,20 +36,28 @@ object Form6: TForm6
     ParentFont = False
   end
   object GroupBox10: TGroupBox
-    Left = 896
+    Left = 832
     Top = 0
-    Width = 369
-    Height = 769
+    Width = 460
+    Height = 761
+    Color = clTeal
     Ctl3D = False
+    ParentColor = False
     ParentCtl3D = False
     TabOrder = 0
     object GroupBox8: TGroupBox
       Left = 1
       Top = 137
-      Width = 367
-      Height = 270
+      Width = 458
+      Height = 16
       Align = alTop
       Caption = '      View A-Scan'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 0
       OnDblClick = GroupBox8DblClick
       object Image8: TImage
@@ -66,20 +74,14 @@ object Form6: TForm6
       object Label1: TLabel
         Left = 8
         Top = 200
-        Width = 31
+        Width = 37
         Height = 13
         Caption = 'Label1'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
       end
       object Label8: TLabel
-        Left = 329
+        Left = 323
         Top = 200
-        Width = 31
+        Width = 37
         Height = 13
         Alignment = taRightJustify
         Caption = 'Label8'
@@ -91,18 +93,12 @@ object Form6: TForm6
         Height = 49
         Caption = 'Value'
         Ctl3D = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
         ParentCtl3D = False
-        ParentFont = False
         TabOrder = 0
         object RadioButton20: TSpTBXRadioButton
           Left = 56
           Top = 50
-          Width = 38
+          Width = 39
           Height = 15
           Caption = 'TOF'
           TabOrder = 0
@@ -113,7 +109,7 @@ object Form6: TForm6
         object RadioButton19: TSpTBXRadioButton
           Left = 9
           Top = 50
-          Width = 39
+          Width = 44
           Height = 15
           Caption = 'Amp'
           TabOrder = 1
@@ -124,10 +120,27 @@ object Form6: TForm6
           Top = 20
           Width = 145
           Height = 21
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
           ItemHeight = 13
+          ParentFont = False
           TabOrder = 2
           Text = 'ComboBox1'
           OnChange = ComboBox1Change
+        end
+        object RadioButton25: TSpTBXCheckBox
+          Left = 159
+          Top = 24
+          Width = 50
+          Height = 15
+          Caption = '[mm]'
+          TabOrder = 3
+          OnClick = RadioButton25Click
+          Checked = True
+          State = cbChecked
         end
       end
       object GroupBox14: TGroupBox
@@ -197,24 +210,28 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '+'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 2
         OnClick = Button1Click
       end
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 739
-      Width = 367
+      Top = 201
+      Width = 458
       Height = 16
       Align = alTop
       Caption = '     TOF-D'
-      Color = clWhite
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentColor = False
+      Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       OnDblClick = GroupBox2DblClick
@@ -235,21 +252,21 @@ object Form6: TForm6
       object Label16: TLabel
         Left = 128
         Top = 90
-        Width = 36
+        Width = 42
         Height = 13
         Caption = 'X2-X1='
       end
       object Label9: TLabel
         Left = 128
         Top = 114
-        Width = 36
+        Width = 42
         Height = 13
         Caption = 'Y2-Y1='
       end
       object Label21: TLabel
         Left = 248
         Top = 90
-        Width = 38
+        Width = 44
         Height = 13
         Caption = 'H2-H1='
       end
@@ -263,7 +280,7 @@ object Form6: TForm6
       object Label23: TLabel
         Left = 248
         Top = 114
-        Width = 15
+        Width = 17
         Height = 13
         Caption = 'D='
       end
@@ -576,7 +593,7 @@ object Form6: TForm6
             object Label3: TLabel
               Left = 8
               Top = 57
-              Width = 65
+              Width = 76
               Height = 13
               Caption = 'Probe dealy='
             end
@@ -719,42 +736,42 @@ object Form6: TForm6
             object Label24: TLabel
               Left = 8
               Top = 8
-              Width = 12
+              Width = 14
               Height = 13
               Caption = 'SV'
             end
             object Label29: TLabel
               Left = 48
               Top = 8
-              Width = 25
+              Width = 33
               Height = 13
               Caption = '[m/s]'
             end
             object Label34: TLabel
               Left = 8
               Top = 56
-              Width = 21
+              Width = 25
               Height = 13
               Caption = 'Gain'
             end
             object Label35: TLabel
               Left = 48
               Top = 56
-              Width = 20
+              Width = 24
               Height = 13
               Caption = '[dB]'
             end
             object Label46: TLabel
               Left = 168
               Top = 8
-              Width = 73
+              Width = 87
               Height = 13
               Caption = 'Scan resolution'
             end
             object Label47: TLabel
               Left = 224
               Top = 8
-              Width = 24
+              Width = 32
               Height = 13
               Caption = '[mm]'
             end
@@ -1129,6 +1146,12 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '-'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 4
         OnClick = Button7Click
       end
@@ -1289,11 +1312,17 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 723
-      Width = 367
+      Top = 185
+      Width = 458
       Height = 16
       Align = alTop
       Caption = '     TOF-D Move/Zoom'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 2
       OnDblClick = GroupBox9DblClick
       object Image18: TImage
@@ -2808,6 +2837,12 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '+'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 0
         OnClick = Button9Click
       end
@@ -2886,10 +2921,19 @@ object Form6: TForm6
     object GroupBox11: TGroupBox
       Left = 1
       Top = 14
-      Width = 367
+      Width = 458
       Height = 123
       Align = alTop
+      Anchors = [akTop]
       Caption = '     Report /Load /Save'
+      Ctl3D = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentCtl3D = False
+      ParentFont = False
       TabOrder = 3
       OnDblClick = GroupBox11DblClick
       object Label33: TLabel
@@ -2903,7 +2947,7 @@ object Form6: TForm6
       end
       object Label41: TLabel
         Left = 8
-        Top = 16
+        Top = 18
         Width = 41
         Height = 17
         AutoSize = False
@@ -2925,6 +2969,12 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '-'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 0
         OnClick = Button10Click
       end
@@ -2934,43 +2984,97 @@ object Form6: TForm6
         Width = 73
         Height = 25
         Caption = '&Report'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 1
         OnClick = Button33Click
       end
       object Button12: TSpTBXButton
-        Left = 240
+        Left = 328
         Top = 88
         Width = 57
         Height = 25
         Caption = '&Load'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 2
         OnClick = Button12Click
       end
       object Button16: TSpTBXButton
-        Left = 296
+        Left = 392
         Top = 88
         Width = 57
         Height = 25
         Caption = '&Save'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 3
         OnClick = Button16Click
       end
       object SpTBXEdit1: TSpTBXEdit
-        Left = 40
+        Left = 44
         Top = 16
         Width = 289
-        Height = 19
+        Height = 22
         BorderStyle = bsNone
         TabOrder = 4
+      end
+      object SpTBXButton71: TSpTBXButton
+        Left = 84
+        Top = 88
+        Width = 73
+        Height = 25
+        Caption = '&Note'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        OnClick = SpTBXButton71Click
+      end
+      object SpTBXButton34: TSpTBXButton
+        Left = 160
+        Top = 88
+        Width = 73
+        Height = 25
+        Caption = '&Details'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        OnClick = SpTBXButton34Click
       end
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 755
-      Width = 367
+      Top = 217
+      Width = 458
       Height = 16
       Align = alTop
-      Caption = '    TOF-D Calibration Wizard'
+      Caption = '     TOF-D Calibration Wizard'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 4
       OnDblClick = GroupBox7DblClick
       object Label40: TLabel
@@ -2994,6 +3098,12 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '-'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 0
         OnClick = Button2Click
       end
@@ -3046,15 +3156,21 @@ object Form6: TForm6
     end
     object GroupBox12: TGroupBox
       Left = 1
-      Top = 407
-      Width = 367
+      Top = 153
+      Width = 458
       Height = 16
       Align = alTop
       Caption = '     C-SCAN Move/Zoom'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 5
       OnDblClick = GroupBox12DblClick
       object Image24: TImage
-        Left = 296
+        Left = 264
         Top = 68
         Width = 41
         Height = 41
@@ -3215,7 +3331,7 @@ object Form6: TForm6
         OnClick = Image24Click
       end
       object Image25: TImage
-        Left = 184
+        Left = 152
         Top = 68
         Width = 41
         Height = 41
@@ -3376,7 +3492,7 @@ object Form6: TForm6
         OnClick = Image25Click
       end
       object Image26: TImage
-        Left = 44
+        Left = 12
         Top = 68
         Width = 41
         Height = 41
@@ -3537,7 +3653,7 @@ object Form6: TForm6
         OnClick = Image26Click
       end
       object Image27: TImage
-        Left = 130
+        Left = 98
         Top = 68
         Width = 41
         Height = 41
@@ -3698,7 +3814,7 @@ object Form6: TForm6
         OnClick = Image27Click
       end
       object Image28: TImage
-        Left = 88
+        Left = 56
         Top = 112
         Width = 41
         Height = 41
@@ -3859,7 +3975,7 @@ object Form6: TForm6
         OnClick = Image28Click
       end
       object Image29: TImage
-        Left = 88
+        Left = 56
         Top = 26
         Width = 41
         Height = 41
@@ -4020,7 +4136,7 @@ object Form6: TForm6
         OnClick = Image29Click
       end
       object Image30: TImage
-        Left = 88
+        Left = 56
         Top = 68
         Width = 41
         Height = 41
@@ -4134,11 +4250,17 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '+'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 0
         OnClick = Button11Click
       end
       object SpTBXComboBox3: TSpTBXComboBox
-        Left = 232
+        Left = 200
         Top = 78
         Width = 57
         Height = 21
@@ -4160,7 +4282,7 @@ object Form6: TForm6
           '400 %')
       end
       object SpTBXTrackBar3: TSpTBXTrackBar
-        Left = 329
+        Left = 297
         Top = 36
         Width = 33
         Height = 89
@@ -4175,7 +4297,7 @@ object Form6: TForm6
         Visible = False
       end
       object SpTBXTrackBar4: TSpTBXTrackBar
-        Left = 160
+        Left = 128
         Top = 120
         Width = 153
         Height = 33
@@ -4187,99 +4309,139 @@ object Form6: TForm6
         Visible = False
       end
       object SpTBXCheckBox12: TSpTBXCheckBox
-        Left = 24
+        Left = 8
         Top = 168
-        Width = 63
+        Width = 71
         Height = 15
         Caption = 'Mirror OY'
         TabOrder = 4
         OnClick = SpTBXCheckBox12Click
       end
       object SpTBXCheckBox13: TSpTBXCheckBox
-        Left = 96
+        Left = 80
         Top = 168
-        Width = 63
+        Width = 71
         Height = 15
         Caption = 'Mirror OX'
         TabOrder = 5
         OnClick = SpTBXCheckBox13Click
       end
+      object GroupBox16: TGroupBox
+        Left = 369
+        Top = 27
+        Width = 73
+        Height = 105
+        Caption = 'Side view'
+        TabOrder = 6
+        object SpTBXRadioButton4: TSpTBXRadioButton
+          Left = 8
+          Top = 24
+          Width = 45
+          Height = 15
+          Caption = 'Solid'
+          TabOrder = 0
+          TabStop = True
+          Checked = True
+        end
+        object SpTBXRadioButton5: TSpTBXRadioButton
+          Left = 8
+          Top = 48
+          Width = 50
+          Height = 15
+          Caption = 'Steps'
+          TabOrder = 1
+        end
+        object SpTBXRadioButton6: TSpTBXRadioButton
+          Left = 8
+          Top = 72
+          Width = 37
+          Height = 15
+          Caption = 'Full'
+          TabOrder = 2
+        end
+      end
     end
     object GroupBox27: TGroupBox
       Left = 1
-      Top = 423
-      Width = 367
-      Height = 300
+      Top = 169
+      Width = 458
+      Height = 16
       Align = alTop
       Caption = '     C-SCAN'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 6
       OnDblClick = GroupBox27DblClick
       object Shape7: TShape
         Left = 16
-        Top = 12
+        Top = 20
         Width = 195
         Height = 19
         Brush.Style = bsClear
       end
       object Shape8: TShape
         Left = 16
-        Top = 46
+        Top = 54
         Width = 195
         Height = 18
         Brush.Style = bsClear
       end
       object Shape5: TShape
         Left = 34
-        Top = 12
+        Top = 20
         Width = 89
         Height = 69
         Brush.Style = bsClear
       end
       object Shape6: TShape
         Left = 122
-        Top = 12
+        Top = 20
         Width = 89
         Height = 69
         Brush.Style = bsClear
       end
       object Shape4: TShape
         Left = 16
-        Top = 12
+        Top = 20
         Width = 345
         Height = 69
         Brush.Style = bsClear
       end
       object Label73: TLabel
         Left = 216
-        Top = 16
-        Width = 60
+        Top = 24
+        Width = 74
         Height = 13
         Caption = 'Lenght [mm]'
       end
       object Label74: TLabel
         Left = 216
-        Top = 32
-        Width = 52
+        Top = 40
+        Width = 65
         Height = 13
         Caption = 'Aria [mm2]'
       end
       object Label77: TLabel
         Left = 40
-        Top = 16
-        Width = 64
+        Top = 24
+        Width = 80
         Height = 13
         Caption = 'Position [mm]'
       end
       object Label78: TLabel
         Left = 128
-        Top = 16
-        Width = 53
+        Top = 24
+        Width = 66
         Height = 13
         Caption = 'Value [mm]'
       end
       object Label79: TLabel
         Left = 40
-        Top = 66
+        Top = 74
         Width = 41
         Height = 13
         Caption = '0.0 x 0.0'
@@ -4292,7 +4454,7 @@ object Form6: TForm6
       end
       object Label80: TLabel
         Left = 128
-        Top = 66
+        Top = 74
         Width = 21
         Height = 13
         Caption = '0.00'
@@ -4305,7 +4467,7 @@ object Form6: TForm6
       end
       object Label65: TLabel
         Left = 40
-        Top = 48
+        Top = 56
         Width = 41
         Height = 13
         Caption = '0.0 x 0.0'
@@ -4318,7 +4480,7 @@ object Form6: TForm6
       end
       object Label66: TLabel
         Left = 128
-        Top = 48
+        Top = 56
         Width = 21
         Height = 13
         Caption = '0.00'
@@ -4331,7 +4493,7 @@ object Form6: TForm6
       end
       object Label67: TLabel
         Left = 280
-        Top = 16
+        Top = 24
         Width = 21
         Height = 13
         Caption = '0.00'
@@ -4344,7 +4506,7 @@ object Form6: TForm6
       end
       object Label68: TLabel
         Left = 280
-        Top = 32
+        Top = 40
         Width = 21
         Height = 13
         Caption = '0.00'
@@ -4357,27 +4519,27 @@ object Form6: TForm6
       end
       object Image13: TImage
         Left = 216
-        Top = 62
+        Top = 70
         Width = 33
         Height = 17
       end
       object Label69: TLabel
         Left = 280
-        Top = 64
-        Width = 22
+        Top = 72
+        Width = 24
         Height = 13
         Caption = '0.00'
       end
       object Label70: TLabel
         Left = 280
-        Top = 48
-        Width = 22
+        Top = 56
+        Width = 24
         Height = 13
         Caption = '0.00'
       end
       object Label28: TLabel
         Left = 40
-        Top = 32
+        Top = 40
         Width = 44
         Height = 13
         Caption = 'Label28'
@@ -4390,7 +4552,7 @@ object Form6: TForm6
       end
       object Label32: TLabel
         Left = 128
-        Top = 32
+        Top = 40
         Width = 44
         Height = 13
         Caption = 'Label28'
@@ -4403,7 +4565,7 @@ object Form6: TForm6
       end
       object Label30: TLabel
         Left = 24
-        Top = 32
+        Top = 40
         Width = 7
         Height = 13
         Caption = '0'
@@ -4416,15 +4578,15 @@ object Form6: TForm6
       end
       object Label31: TLabel
         Left = 24
-        Top = 48
-        Width = 6
+        Top = 56
+        Width = 7
         Height = 13
         Caption = '1'
       end
       object Label52: TLabel
         Left = 24
-        Top = 66
-        Width = 6
+        Top = 74
+        Width = 7
         Height = 13
         Caption = '2'
       end
@@ -4434,13 +4596,19 @@ object Form6: TForm6
         Width = 16
         Height = 16
         Caption = '-'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 0
         OnClick = Button8Click
       end
       object PageControl2: TPageControl
-        Left = 0
-        Top = 88
-        Width = 369
+        Left = 2
+        Top = 98
+        Width = 380
         Height = 217
         ActivePage = TabSheet9
         TabOrder = 1
@@ -4532,49 +4700,49 @@ object Form6: TForm6
                 object Label27: TLabel
                   Left = 176
                   Top = 40
-                  Width = 31
+                  Width = 37
                   Height = 13
                   Caption = 'Height'
                 end
                 object Label44: TLabel
                   Left = 224
                   Top = 40
-                  Width = 19
+                  Width = 23
                   Height = 13
                   Caption = '[%]'
                 end
                 object Label26: TLabel
                   Left = 8
                   Top = 80
-                  Width = 28
+                  Width = 33
                   Height = 13
                   Caption = 'Width'
                 end
                 object Label43: TLabel
                   Left = 56
                   Top = 80
-                  Width = 24
+                  Width = 32
                   Height = 13
                   Caption = '[mm]'
                 end
                 object Label25: TLabel
                   Left = 8
                   Top = 40
-                  Width = 24
+                  Width = 29
                   Height = 13
                   Caption = 'Start'
                 end
                 object Label42: TLabel
                   Left = 56
                   Top = 40
-                  Width = 24
+                  Width = 32
                   Height = 13
                   Caption = '[mm]'
                 end
                 object Label53: TLabel
                   Left = 176
                   Top = 80
-                  Width = 29
+                  Width = 33
                   Height = 13
                   Caption = 'Show '
                   Visible = False
@@ -4632,7 +4800,7 @@ object Form6: TForm6
                 object SpTBXCheckBox1: TSpTBXCheckBox
                   Left = 232
                   Top = 18
-                  Width = 43
+                  Width = 48
                   Height = 15
                   Caption = 'Flank'
                   Color = clBtnHighlight
@@ -4644,7 +4812,7 @@ object Form6: TForm6
                 object SpTBXCheckBox2: TSpTBXCheckBox
                   Left = 288
                   Top = 18
-                  Width = 41
+                  Width = 46
                   Height = 15
                   Caption = 'Peak'
                   Color = clBtnHighlight
@@ -4884,70 +5052,70 @@ object Form6: TForm6
                 object Label38: TLabel
                   Left = 0
                   Top = 0
-                  Width = 12
+                  Width = 14
                   Height = 13
                   Caption = 'SV'
                 end
                 object Label39: TLabel
                   Left = 40
                   Top = 0
-                  Width = 25
+                  Width = 33
                   Height = 13
                   Caption = '[m/s]'
                 end
                 object Label19: TLabel
                   Left = 0
                   Top = 40
-                  Width = 21
+                  Width = 25
                   Height = 13
                   Caption = 'Gain'
                 end
                 object Label22: TLabel
                   Left = 40
                   Top = 40
-                  Width = 20
+                  Width = 24
                   Height = 13
                   Caption = '[dB]'
                 end
                 object Label48: TLabel
                   Left = 176
                   Top = 4
-                  Width = 82
+                  Width = 97
                   Height = 13
                   Caption = 'X Scan resolution'
                 end
                 object Label49: TLabel
                   Left = 296
                   Top = 4
-                  Width = 24
+                  Width = 32
                   Height = 13
                   Caption = '[mm]'
                 end
                 object Label50: TLabel
                   Left = 176
                   Top = 44
-                  Width = 82
+                  Width = 97
                   Height = 13
                   Caption = 'Y Scan resolution'
                 end
                 object Label51: TLabel
                   Left = 296
                   Top = 44
-                  Width = 24
+                  Width = 32
                   Height = 13
                   Caption = '[mm]'
                 end
                 object Label62: TLabel
                   Left = 1
                   Top = 80
-                  Width = 57
+                  Width = 67
                   Height = 13
                   Caption = 'Probe delay'
                 end
                 object Label63: TLabel
                   Left = 72
                   Top = 80
-                  Width = 19
+                  Width = 23
                   Height = 13
                   Caption = '[us]'
                 end
@@ -5221,7 +5389,7 @@ object Form6: TForm6
                 end
                 object SpTBXSpinEdit12: TSpTBXSpinEdit
                   Left = 0
-                  Top = 94
+                  Top = 96
                   Width = 65
                   Height = 19
                   Font.Charset = DEFAULT_CHARSET
@@ -5315,8 +5483,8 @@ object Form6: TForm6
       end
       object SpTBXCheckBox20: TSpTBXCheckBox
         Left = 306
-        Top = 64
-        Width = 52
+        Top = 72
+        Width = 55
         Height = 15
         Caption = 'On/Off'
         TabOrder = 2
@@ -5451,7 +5619,7 @@ object Form6: TForm6
     end
   end
   object GroupBox4: TGroupBox
-    Left = 0
+    Left = 4
     Top = 0
     Width = 825
     Height = 769
@@ -5475,11 +5643,13 @@ object Form6: TForm6
     end
   end
   object GroupBox29: TGroupBox
-    Left = 0
+    Left = 4
     Top = 0
     Width = 825
     Height = 769
+    Color = clWhite
     Ctl3D = False
+    ParentColor = False
     ParentCtl3D = False
     TabOrder = 3
     OnMouseMove = GroupBox29MouseMove
@@ -5572,56 +5742,22 @@ object Form6: TForm6
     end
   end
   object GroupBox13: TGroupBox
-    Left = 824
-    Top = 0
-    Width = 73
-    Height = 769
+    Left = 830
+    Top = 760
+    Width = 460
+    Height = 57
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 4
-    object GroupBox16: TGroupBox
-      Left = 0
-      Top = 184
-      Width = 73
-      Height = 105
-      Caption = 'Side view'
-      TabOrder = 6
-      object SpTBXRadioButton4: TSpTBXRadioButton
-        Left = 8
-        Top = 24
-        Width = 40
-        Height = 15
-        Caption = 'Solid'
-        TabOrder = 0
-        TabStop = True
-        Checked = True
-      end
-      object SpTBXRadioButton5: TSpTBXRadioButton
-        Left = 8
-        Top = 48
-        Width = 45
-        Height = 15
-        Caption = 'Steps'
-        TabOrder = 1
-      end
-      object SpTBXRadioButton6: TSpTBXRadioButton
-        Left = 8
-        Top = 72
-        Width = 34
-        Height = 15
-        Caption = 'Full'
-        TabOrder = 2
-      end
-    end
     object SpTBXButton12: TSpTBXButton
       Left = 4
-      Top = 8
-      Width = 64
-      Height = 25
+      Top = 4
+      Width = 122
+      Height = 40
       Caption = 'P&alette'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -24
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
@@ -5629,8 +5765,8 @@ object Form6: TForm6
       OnClick = SpTBXButton12Click
     end
     object SpTBXButton13: TSpTBXButton
-      Left = 4
-      Top = 40
+      Left = 20
+      Top = 100
       Width = 64
       Height = 25
       Caption = '&3D'
@@ -5643,69 +5779,40 @@ object Form6: TForm6
       TabOrder = 1
       OnClick = SpTBXButton13Click
     end
-    object SpTBXButton71: TSpTBXButton
-      Left = 4
-      Top = 72
-      Width = 64
-      Height = 25
-      Caption = '&Note'
-      TabOrder = 2
-      OnClick = SpTBXButton71Click
-    end
-    object SpTBXButton34: TSpTBXButton
-      Left = 4
-      Top = 104
-      Width = 64
-      Height = 25
-      Caption = '&Probe details'
-      TabOrder = 3
-      OnClick = SpTBXButton34Click
-    end
-    object RadioButton25: TSpTBXCheckBox
-      Left = 7
-      Top = 160
-      Width = 42
-      Height = 15
-      Caption = '[mm]'
-      TabOrder = 4
-      OnClick = RadioButton25Click
-      Checked = True
-      State = cbChecked
-    end
-    object SpTBXCheckBox11: TSpTBXCheckBox
-      Left = 5
-      Top = 138
-      Width = 116
-      Height = 15
-      Caption = 'Correct missing data'
-      Color = clBtnHighlight
+    object SpTBXButton66: TLMDButton
+      Left = 338
+      Top = 4
+      Width = 122
+      Height = 40
+      Caption = 'Back'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -24
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 5
-      OnClick = SpTBXCheckBox11Click
+      TabOrder = 2
+      OnClick = SpTBXButton66Click
+      ButtonStyle = ubsOffice
+      Color = clMenu
+      ParentColor = False
     end
   end
-  object SpTBXButton66: TLMDButton
-    Left = 994
-    Top = 778
-    Width = 122
-    Height = 40
-    Caption = 'Back'
+  object SpTBXCheckBox11: TSpTBXCheckBox
+    Left = 5
+    Top = 858
+    Width = 116
+    Height = 15
+    Caption = 'Correct missing data'
+    Color = clBtnHighlight
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -24
+    Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
     TabOrder = 5
-    OnClick = SpTBXButton66Click
-    ButtonStyle = ubsOffice
-    Color = clMenu
-    ParentColor = False
+    OnClick = SpTBXCheckBox11Click
   end
   object Timer1: TTimer
     Interval = 500

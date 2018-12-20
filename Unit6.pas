@@ -283,19 +283,19 @@ type
     GroupBox13: TGroupBox;
     SpTBXButton12: TSpTBXButton;
     SpTBXButton13: TSpTBXButton;
-    SpTBXButton71: TSpTBXButton;
-    SpTBXButton34: TSpTBXButton;
-    RadioButton25: TSpTBXCheckBox;
     Label36: TLabel;
-    SpTBXCheckBox11: TSpTBXCheckBox;
-    SpTBXButton66: TLMDButton;
     SpTBXCheckBox20: TSpTBXCheckBox;
     SpTBXCheckBox14: TSpTBXCheckBox;
+    ComboBox1: TComboBox;
+    RadioButton25: TSpTBXCheckBox;
+    SpTBXCheckBox11: TSpTBXCheckBox;
+    SpTBXButton66: TLMDButton;
     GroupBox16: TGroupBox;
     SpTBXRadioButton4: TSpTBXRadioButton;
     SpTBXRadioButton5: TSpTBXRadioButton;
     SpTBXRadioButton6: TSpTBXRadioButton;
-    ComboBox1: TComboBox;
+    SpTBXButton71: TSpTBXButton;
+    SpTBXButton34: TSpTBXButton;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -1145,7 +1145,6 @@ lFile: TFileStream;
 file_data:TScan_File;
 scanFile: File of TScann_arr;
 
-
 s_tmp:string;
 is_tmp,i1,i2:integer;
 
@@ -1159,9 +1158,9 @@ have_data11 := false;
       if form8.SpTBXListBox2.ItemIndex=1 then form1.OpenDialog1.Filter :='TOF-D (*.tofd)|*.tofd';
       if form8.SpTBXListBox2.ItemIndex=2 then form1.OpenDialog1.Filter :='C-Scan (*.csc)|*.csc';
 	    if form1.OpenDialog1.Execute then begin
-             Screen.Cursor := crHourGlass;
-         form19.show;
-         form19.BringToFront;
+         Screen.Cursor := crHourGlass;
+         if not form19.visible then  form19.show;
+         if not form19.visible then  form19.BringToFront;
          application.ProcessMessages;
           label33.Caption :='File name : '+form1.OpenDialog1.FileName;
           lFile := TFileStream.Create(form1.OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
@@ -1336,15 +1335,11 @@ have_data11 := false;
 
 
           if radiobutton25.Checked then begin
-              edit8.value:=((gates1[1].start-us_probe_delay1)*us1_calc);
-              edit9.value:=(gates1[1].width*us1_calc);
-
-
-              //edit8.value:=(gates1[1].start*1000/us_sv1);
-              //edit9.value:=(gates1[1].width*1000/us_sv1);
+              form6.edit8.value:=((gates1[1].start-us_probe_delay1)*us1_calc);
+              form6.edit9.value:=(gates1[1].width*us1_calc);
           end else begin
-              edit8.value:=(gates1[1].start);
-              edit9.value:=(gates1[1].width);
+              form6.edit8.value:=(gates1[1].start);
+              form6.edit9.value:=(gates1[1].width);
           end;
 
           edit10.Value :=gates1[1].height  ;
@@ -1369,8 +1364,18 @@ have_data11 := false;
             ox_mark_line_y[0]:=0;
           end;
 
+          have_data2:=false;
+          have_data4:=false;
+          have_data8:=false;
+          have_data3:=false;
+          have_data1:=false;
+          have_data10:=false;
+
 
           form12.Only_Draw_Pallete;;
+          have_data2:=false;
+          Draw_axes;
+          have_data2:=true;
           form1.Up_date_gates;
           //application.ProcessMessages;
           Screen.Cursor := crHourGlass;
@@ -1378,34 +1383,30 @@ have_data11 := false;
 
 //     form6.have_data11:=true;
 
-        up_date_graph:=true;
+          up_date_graph:=true;
 
 
 
-          have_data2:=false;
-          have_data4:=false;
-           have_data8:=false;have_data3:=false;
-          have_data1:=false;
-          have_data10:=false;
-
-          draw_scann;
-          Draw_axes;
-          Draw_SideView;
+          ///draw_scann;
+          //Draw_axes;
+          //Draw_SideView;
           Draw_TOFD_OX;
 
-          timer1.Enabled :=true;
+     //     timer1.Enabled :=true;
           Screen.Cursor := crArrow;
           //have_data5:=false;
 //          Image1MouseMove(sender,[],10,10);
 
 
       end;
-    Screen.Cursor := crArrow;
+
   except
     on E : Exception do
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
     end;
     if form19.visible then form19.Hide;
+    Screen.Cursor := crArrow;
+      load_file:=false;
 end;
 
 procedure TForm6.Button16Click(Sender: TObject);
@@ -3007,6 +3008,12 @@ begin
 
    if (not have_data2)or(  start_zoom_offset) then begin
 
+         Screen.Cursor := crHourGlass;
+         if not form19.visible then  form19.show;
+         if not form19.visible  then form19.BringToFront;
+         application.ProcessMessages;
+
+
       if have_data11 then goto 1;
 
       SetLength(mod_scan,0,0);
@@ -3440,6 +3447,8 @@ begin
   image2.Canvas.Font.Color:=clWhite;
   image2.Canvas.Brush.Color:=clBlack;
   image2.Canvas.TextOut(trunc(x1-40),trunc(y1-20),label32.Caption);
+           if form19.visible then form19.Hide;
+         Screen.Cursor := crArrow;
 
   except
     on E : Exception do
@@ -3803,6 +3812,7 @@ procedure TForm6.edit8Change(Sender: TObject);
 begin
 try
 
+  if load_file then exit;
 
 
       if SpTBXRadioButton1.Checked then
@@ -3834,6 +3844,7 @@ end;
 procedure TForm6.edit9Change(Sender: TObject);
 begin
 try
+  if load_file then exit;
 
       if radiobutton25.Checked then begin
         if SpTBXRadioButton1.Checked then
@@ -3861,6 +3872,8 @@ end;
 procedure TForm6.edit10Change(Sender: TObject);
 begin
 try
+  if load_file then exit;
+
       if SpTBXRadioButton1.Checked then begin
             gates1[1].height:= edit10.value;
       end;
@@ -5342,6 +5355,7 @@ end;
 
 procedure TForm6.edit12Change(Sender: TObject);
 begin
+  if load_file then exit;
     if not start_redy then exit;
 
     us_sv1:=edit12.Value;
@@ -5996,7 +6010,7 @@ end;
 procedure TForm6.Button8Click(Sender: TObject);
 begin
    if GroupBox27.Height=16 then
-      GroupBox27.Height:=308
+      GroupBox27.Height:=318
   else
       GroupBox27.Height:=16   ;
 if GroupBox27.Height=16 then
