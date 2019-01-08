@@ -6,6 +6,8 @@ uses Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   SpTBXEditors,strUtils;
 
 const
+      c_srtTras_index = 2;
+
     debug_not_us_key=false;
     opcard_no = 0;
     opcard_driver_disable =1;
@@ -268,10 +270,15 @@ function InvTRCal( x:real):real;
 function DAC_X(x:real):real;
 function US_calc:real;
 function US1_calc:real;
+procedure LoadTranslation;
+procedure SetTranslation;
 
 
 var
 //dgs
+         srtTras:array of array of WideString;
+         srtTras_count:integer;
+         srtTras_index:integer;
          us_mess_tof1_live:real;
          us_mess_tof_live:real;
          us_echo_start_live:real;
@@ -538,7 +545,137 @@ cccc:double;
 
 implementation
 
-uses unit1,unit7,unit6,unit9,unit3,unit8;
+uses unit1, unit4, unit9, unit7,unit6,unit3,unit8;
+
+procedure SetTranslation;
+begin
+    with form1 do begin
+      SpTBXButton75.Caption:= srtTras[0, srtTras_index];
+      GroupBox7.Caption:= srtTras[1, srtTras_index];
+      Label19.Caption := srtTras[2, srtTras_index];
+      SpTBXCheckBox12.Caption:= srtTras[3, srtTras_index];
+      Label21.Caption := srtTras[4, srtTras_index];
+      Label38.Caption := srtTras[5, srtTras_index];
+      Label20.Caption := srtTras[6, srtTras_index];
+      SpTBXCheckBox2.Caption:= srtTras[7, srtTras_index];
+      Label1.Caption := srtTras[8, srtTras_index];
+
+      SpTBXButton77.Caption:= srtTras[9, srtTras_index];
+      GroupBox21.Caption:= srtTras[10, srtTras_index];
+      SpTBXRadioButton1.Caption:= srtTras[11, srtTras_index];
+      SpTBXRadioButton2.Caption:= srtTras[12, srtTras_index];
+      Label17.Caption := srtTras[13, srtTras_index];
+      Label45.Caption := srtTras[14, srtTras_index];
+      SpTBXCheckBox16.Caption:= srtTras[15, srtTras_index];
+      Label48.Caption := srtTras[16, srtTras_index];
+      Label50.Caption := srtTras[17, srtTras_index];
+
+      SpTBXButton78.Caption:= srtTras[18, srtTras_index];
+      GroupBox22.Caption:= srtTras[19, srtTras_index];
+      Label11.Caption := srtTras[20, srtTras_index];
+      SpTBXCheckBox15.Caption:= srtTras[21, srtTras_index];
+      Label16.Caption := srtTras[22, srtTras_index];
+      SpTBXComboBox4.Items.Clear;
+      SpTBXComboBox4.Items.Add(srtTras[23, srtTras_index]);
+      SpTBXComboBox4.Items.Add(srtTras[24, srtTras_index]);
+      SpTBXComboBox4.ItemIndex :=trunc(us_ascan_hf);
+      Label56.Caption := srtTras[25, srtTras_index];
+      Label49.Caption := srtTras[26, srtTras_index];
+
+      SpTBXButton76.Caption:= srtTras[27, srtTras_index];
+      GroupBox8.Caption:= srtTras[28, srtTras_index];
+      Label28.Caption := srtTras[29, srtTras_index];
+      SpTBXCheckBox20.Caption:= srtTras[30, srtTras_index];
+      SpTBXCheckBox10.Caption:= srtTras[31, srtTras_index];
+      SpTBXCheckBox11.Caption:= srtTras[32, srtTras_index];
+      SpTBXCheckBox13.Caption:= srtTras[33, srtTras_index];
+      RadioButton9.Caption:= srtTras[34, srtTras_index];
+      RadioButton10.Caption:= srtTras[35, srtTras_index];
+      RadioButton11.Caption:= srtTras[36, srtTras_index];
+      Label26.Caption:= srtTras[37, srtTras_index];
+      Label27.Caption:= srtTras[38, srtTras_index];
+
+      //SpTBXButton74.Caption:= 'DAC/DGS';
+      SpTBXButton74.Caption:= srtTras[39, srtTras_index];
+
+      SpTBXButton79.Caption:= srtTras[40, srtTras_index];
+      GroupBox23.Caption:= srtTras[41, srtTras_index];
+      Label7.Caption := srtTras[42, srtTras_index];
+      SpTBXCheckBox14.Caption:= srtTras[43, srtTras_index];
+      Label62.Caption := srtTras[44, srtTras_index];
+      Label3.Caption := srtTras[45, srtTras_index];
+      Label9.Caption := srtTras[46, srtTras_index];
+      SpTBXButton81.Caption := srtTras[47, srtTras_index];
+      SpTBXButton82.Caption := srtTras[48, srtTras_index];
+      SpTBXButton124.Caption := srtTras[49, srtTras_index];
+
+      SpTBXButton80.Caption:= srtTras[50, srtTras_index];
+      GroupBox4.Caption:= srtTras[51, srtTras_index];
+      SpTBXButton69.Caption:= srtTras[52, srtTras_index];
+      SpTBXButton70.Caption:= srtTras[53, srtTras_index];
+      SpTBXButton68.Caption:= srtTras[54, srtTras_index];
+      form4.Caption:= srtTras[55, srtTras_index];
+      SpTBXButton25.Caption:= srtTras[56, srtTras_index];
+      form3.Caption:= srtTras[57, srtTras_index];
+      SpTBXButton71.Caption:= srtTras[58, srtTras_index];
+      form9.Caption:= srtTras[59, srtTras_index];
+
+      SpTBXButton125.Caption := srtTras[60, srtTras_index];
+
+      GroupBox6.Caption:= srtTras[61, srtTras_index];
+      SpTBXButton92.Caption:= srtTras[62, srtTras_index];//'Scan/Post';
+      SpTBXButton95.Caption:= srtTras[63, srtTras_index];
+
+      GroupBox9.Caption:= srtTras[64, srtTras_index];
+      SpTBXButton99.Caption:= srtTras[65, srtTras_index];
+      SpTBXButton100.Caption:= srtTras[66, srtTras_index];
+
+      SpTBXButton126.Caption:= srtTras[67, srtTras_index];
+      SpTBXButton83.Caption:= srtTras[68, srtTras_index];
+
+    end;
+
+
+end;
+
+
+procedure LoadTranslation;
+var
+filename,s, s1:WideString;
+spinFile:TextFile;
+j,i:integer;
+begin
+try
+   filename:='language.txt';
+   if FileExists(filename) then begin
+     form8.Memo1.Clear;
+      form8.memo1.Lines.LoadFromFile(filename);
+
+     // AssignFile(spinFile,filename);
+     // Reset(spinFile) ;
+      srtTras_count:=form8.Memo1.Lines.Count;
+      setlength(srtTras,srtTras_count, c_srtTras_index);
+      for j:=0 to srtTras_count-1 do begin
+      //while not eof (spinFile) do begin
+            //inc(srtTras_count);
+            //setlength(srtTras,srtTras_count, c_srtTras_index);
+            //ReadLn(spinFile,s);
+            s:=form8.Memo1.Lines[j];
+            for i := 0 to c_srtTras_index-1 do begin
+                s1:=copy(s,Pos(chr(9),s)+1,length(s)-Pos(chr(9),s));
+                s:=copy(s,1,Pos(chr(9),s)-1);
+                srtTras[j,i]:=s;
+                s:= s1;
+            end;
+      end;
+     // CloseFile(spinFile);
+   end;
+  except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+  end;
+
+end;
+
 
 function US_calc:real;
 begin

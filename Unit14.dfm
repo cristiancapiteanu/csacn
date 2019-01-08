@@ -1,6 +1,6 @@
 object Form14: TForm14
-  Left = 394
-  Top = 117
+  Left = 435
+  Top = 5
   VertScrollBar.ButtonSize = 20
   VertScrollBar.Size = 20
   VertScrollBar.Style = ssFlat
@@ -760,6 +760,19 @@ object Form14: TForm14
     ParentFont = False
     TabOrder = 3
     Visible = False
+    object Label4: TLabel
+      Left = 304
+      Top = 36
+      Width = 147
+      Height = 33
+      Caption = 'Scan Speed:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
     object SpTBXRadioButton1: TSpTBXRadioButton
       Left = 8
       Top = 34
@@ -779,7 +792,7 @@ object Form14: TForm14
       Checked = True
     end
     object SpTBXRadioButton2: TSpTBXRadioButton
-      Left = 232
+      Left = 160
       Top = 34
       Width = 141
       Height = 35
@@ -1204,6 +1217,19 @@ object Form14: TForm14
           OnClick = SpTBXButton29Click
         end
       end
+    end
+    object ComboBox1: TComboBox
+      Left = 456
+      Top = 32
+      Width = 145
+      Height = 43
+      ItemHeight = 35
+      ItemIndex = 0
+      TabOrder = 3
+      Text = 'S1 5mm/s'
+      Items.Strings = (
+        'S1 5mm/s'
+        'S2 10mm/s')
     end
   end
   object Button8: TLMDButton

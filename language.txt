@@ -1,0 +1,69 @@
+Einstellung	Setting	
+Einstellung		
+Verstärkung		
++24dB		
+Bereich		
+Schallgeschwindigkeit		
+Nullp.		
+=PK Vorlauf		
+Unterdrückung [%]		
+Sender		
+Sender		
+S/E		
+IEcho		
+Verstärkung		
+IFF [Hz]		
++24dB		
+Impulsbreite [us]		
+Impulsstärke [Stufe]		
+Empfänger		
+Empfänger		
+Verstärkg.		
++24dB		
+Unterdrückung [%]		
+HF		
+Vollweg		
+A/D Frequenz		
+Frequenzfilter		
+Blenden		
+Blenden		
+Verstärkg.		
++24dB		
+Zeit		
+Amp		
+Spitze/Flanke		
+BlendeA		
+BlendeB		
+BlendeC		
+Breite		
+Höhe		
+Scann		
+Messung		
+Messung		
+Verstärkung		
++24dB		
+Prüfkopf-Vorlauf		
+Winkel		
+X-Wert		
+Auto Justierung		
+S/E Justierkorrektur		
+Anzeige Werte		
+Datei		
+Datei		
+Laden		
+Speichern		
+Bericht		
+Bericht		
+Prüfkopf Daten		
+Prüfkopf Daten		
+Notizen		
+Notizen		
+Verbergen		
+Admin		
+Admin		
+Linienscan		
+Linienscan		
+Zeitbasierender Scan		
+Wegaufnehmer Scan		
+Keyboard		
+Exit		

@@ -1,6 +1,6 @@
 object Form15: TForm15
-  Left = 219
-  Top = 104
+  Left = 146
+  Top = 17
   BorderStyle = bsNone
   Caption = 'C-SCAN'
   ClientHeight = 806
@@ -77,6 +77,13 @@ object Form15: TForm15
     Font.Style = []
     ParentColor = False
     ParentFont = False
+  end
+  object Label4: TLabel
+    Left = 456
+    Top = 760
+    Width = 81
+    Height = 13
+    Caption = 'Label4'
   end
   object GroupBox1: TGroupBox
     Left = 4
@@ -612,5 +619,14 @@ object Form15: TForm15
     ParentFont = False
     CaptionGlowColor = clWhite
     Max = 2000000
+  end
+  object TrackBar1: TTrackBar
+    Left = 376
+    Top = 772
+    Width = 433
+    Height = 33
+    Max = 100
+    TabOrder = 9
+    OnChange = TrackBar1Change
   end
 end

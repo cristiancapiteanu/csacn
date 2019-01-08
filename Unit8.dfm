@@ -3429,6 +3429,48 @@ object Form8: TForm8
     Visible = False
     OnClick = Button12Click
   end
+  object Memo1: TMemo
+    Left = 608
+    Top = 448
+    Width = 185
+    Height = 89
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 8
+  end
+  object Memo12: TRichEdit
+    Left = 656
+    Top = 576
+    Width = 185
+    Height = 89
+    Lines.Strings = (
+      'Memo12')
+    TabOrder = 9
+  end
+  object Memo5: TLMDMemo
+    Left = 928
+    Top = 576
+    Width = 185
+    Height = 89
+    Bevel.Mode = bmWindows
+    Caret.BlinkRate = 530
+    TabOrder = 10
+    HorizScrollBar.Back.Style = sfBrush
+    HorizScrollBar.Back.Brush.Color = clBlue
+    HorizScrollBar.Bevel.Mode = bmStandard
+    VertScrollBar.Back.Style = sfBrush
+    VertScrollBar.Back.Brush.Color = clBlue
+    VertScrollBar.Bevel.Mode = bmStandard
+  end
+  object Memo9: TTntMemo
+    Left = 616
+    Top = 272
+    Width = 185
+    Height = 89
+    Lines.Strings = (
+      'Memo9')
+    TabOrder = 11
+  end
   object Timer4: TTimer
     Interval = 3000
     OnTimer = Timer4Timer

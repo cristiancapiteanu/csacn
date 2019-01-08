@@ -95,6 +95,8 @@ type
     Button8: TLMDButton;
     Button9: TLMDButton;
     SpTBXButton22: TLMDButton;
+    Label4: TLabel;
+    ComboBox1: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure SpTBXButton3Click(Sender: TObject);
     procedure SpTBXButton10Click(Sender: TObject);

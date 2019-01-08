@@ -4,7 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, TntStdCtrls, SpTBXEditors,uutil, ComCtrls,AP_INT_USB,optel_dll,OPCARD20FSLIB;
+  Dialogs, StdCtrls, ExtCtrls, TntStdCtrls, SpTBXEditors,uutil, ComCtrls,AP_INT_USB,optel_dll,OPCARD20FSLIB,
+  LMDControl, LMDCustomControl, LMDCustomPanel, LMDCustomBevelPanel,
+  LMDBaseEdit, LMDCustomMemo, LMDMemo;
 
 type
   TForm8 = class(TForm)
@@ -29,6 +31,10 @@ type
     Button13: TButton;
     Button14: TButton;
     Timer1: TTimer;
+    Memo1: TMemo;
+    Memo12: TRichEdit;
+    Memo5: TLMDMemo;
+    Memo9: TTntMemo;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Timer4Timer(Sender: TObject);
@@ -89,7 +95,7 @@ procedure TForm8.FormCreate(Sender: TObject);
 begin
   top:=0;
   left:=0;
-    GetLocaleFormatSettings(0, fs);
+  GetLocaleFormatSettings(0, fs);
   fs.DecimalSeparator := '.';
 end;
 
@@ -424,106 +430,9 @@ begin
     form1.SpTBXCheckBox5.Visible:=false;
     form1.SpTBXComboBox5.Visible:=false;
 
+    SetTranslation;
+    
     with form1 do begin
-      SpTBXButton75.Caption:= 'Einstellung';
-      GroupBox7.Caption:= 'Einstellung';
-      Label19.Caption := 'Verstärkung';
-      SpTBXCheckBox12.Caption:= '+24dB';
-      Label21.Caption := 'Bereich';
-      Label38.Caption := 'Schallgeschwindigkeit';
-      Label20.Caption := 'Nullp.';
-      SpTBXCheckBox2.Caption:= '=PK Vorlauf';
-      Label1.Caption := 'Unterdrückung [%]';
-
-      SpTBXButton77.Caption:= 'Sender';
-      GroupBox21.Caption:= 'Sender';
-      SpTBXRadioButton1.Caption:= 'S/E';
-      SpTBXRadioButton2.Caption:= 'IEcho';
-      Label17.Caption := 'Verstärkung';
-      Label45.Caption := 'IFF [Hz]';
-      SpTBXCheckBox16.Caption:= '+24dB';
-      Label48.Caption := 'Impulsbreite [us]';
-      Label50.Caption := 'Impulsstärke [Stufe]';
-
-      SpTBXButton78.Caption:= 'Empfänger';
-      GroupBox22.Caption:= 'Empfänger';
-      Label11.Caption := 'Verstärkg.';
-      SpTBXCheckBox15.Caption:= '+24dB';
-      Label16.Caption := 'Unterdrückung [%]';
-      SpTBXComboBox4.Items.Clear;
-      SpTBXComboBox4.Items.Add('HF');
-      SpTBXComboBox4.Items.Add('Vollweg');
-      SpTBXComboBox4.ItemIndex :=trunc(us_ascan_hf);
-      Label56.Caption := 'A/D Frequenz';
-      Label49.Caption := 'Frequenzfilter';
-
-      SpTBXButton76.Caption:= 'Blenden';
-      GroupBox8.Caption:= 'Blenden';
-      Label28.Caption := 'Verstärkg.';
-      SpTBXCheckBox20.Caption:= '+24dB';
-      SpTBXCheckBox10.Caption:= 'Zeit';
-      SpTBXCheckBox11.Caption:= 'Amp';
-      SpTBXCheckBox13.Caption:= 'Spitze/Flanke';
-      RadioButton9.Caption:= 'BlendeA';
-      RadioButton10.Caption:= 'BlendeB';
-      RadioButton11.Caption:= 'BlendeC';
-      Label26.Caption:= 'Breite';
-      Label27.Caption:= 'Höhe';
-
-      //SpTBXButton74.Caption:= 'DAC/DGS';
-      SpTBXButton74.Caption:= 'Scann';
-
-      SpTBXButton79.Caption:= 'Messung';
-      GroupBox23.Caption:= 'Messung';
-      Label7.Caption := 'Verstärkung';
-      SpTBXCheckBox14.Caption:= '+24dB';
-      Label62.Caption := 'Prüfkopf-Vorlauf';
-      Label3.Caption := 'Winkel';
-      Label9.Caption := 'X-Wert';
-      SpTBXButton81.Caption := 'Auto Justierung';
-      SpTBXButton82.Caption := 'S/E Justierkorrektur';
-      SpTBXButton124.Caption := 'Anzeige Werte';
-
-      SpTBXButton80.Caption:= 'Datei';
-      GroupBox4.Caption:= 'Datei';
-      SpTBXButton69.Caption:= 'Laden';
-      SpTBXButton70.Caption:= 'Speichern';
-      SpTBXButton68.Caption:= 'Bericht';
-      form4.Caption:= 'Bericht';
-      SpTBXButton25.Caption:= 'Prüfkopf Daten';
-      form3.Caption:= 'Prüfkopf Daten';
-      SpTBXButton71.Caption:= 'Notizen';
-      form9.Caption:= 'Notizen';
-
-
-      SpTBXButton125.Caption := 'Verbergen';
-
-
-
-
-
-
-
-      GroupBox6.Caption:= 'Admin';
-      SpTBXButton92.Caption:= 'Admin';//'Scan/Post';
-      SpTBXButton95.Caption:= 'Linienscan';
-
-
-      GroupBox9.Caption:= 'Linienscan';
-      SpTBXButton99.Caption:= 'Zeitbasierender Scan';
-      SpTBXButton100.Caption:= 'Wegaufnehmer Scan';
-
-
-      SpTBXButton126.Caption:= 'Keyboard';
-      SpTBXButton83.Caption:= 'Exit';
-
-
-
-
-
-
-
-
       Edit5.Enabled := false;
       SpTBXEdit1.Enabled := false;
       Edit12.Enabled := false;
@@ -550,9 +459,6 @@ begin
       SpTBXSpinEdit12.Enabled := false;
       SpTBXSpinEdit14.Enabled := false;
       SpTBXSpinEdit17.Enabled := false;
-
-      
-
 
     end;
 

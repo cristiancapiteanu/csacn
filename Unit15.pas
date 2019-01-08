@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, SpTBXItem, SpTBXControls, TntStdCtrls,
-  SpTBXEditors, LMDCustomButton, LMDButton;
+  SpTBXEditors, LMDCustomButton, LMDButton, ComCtrls;
 
 type
   TForm15 = class(TForm)
@@ -53,6 +53,8 @@ type
     Label2: TLabel;
     SpTBXProgressBar1: TSpTBXProgressBar;
     Label3: TLabel;
+    TrackBar1: TTrackBar;
+    Label4: TLabel;
     procedure CheckBox1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure SpTBXButton1Click(Sender: TObject);
@@ -76,6 +78,7 @@ type
     procedure SpTBXRadioButton11Click(Sender: TObject);
     procedure SpTBXRadioButton12Click(Sender: TObject);
     procedure SpTBXRadioButton13Click(Sender: TObject);
+    procedure TrackBar1Change(Sender: TObject);
   private
     { Private declarations }
   public
@@ -529,6 +532,11 @@ procedure TForm15.SpTBXRadioButton13Click(Sender: TObject);
 begin
 SpTBXComboBox3.ItemIndex:=1;
 SpTBXComboBox3Change(Sender);
+end;
+
+procedure TForm15.TrackBar1Change(Sender: TObject);
+begin
+label4.Caption:=IntTostr(TrackBar1.Position);
 end;
 
 end.

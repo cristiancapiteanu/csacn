@@ -1,6 +1,6 @@
 object Form6: TForm6
-  Left = 368
-  Top = 80
+  Left = 317
+  Top = 16
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'

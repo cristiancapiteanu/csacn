@@ -471,6 +471,8 @@ type
     SpTBXButton98: TSpTBXButton;
     SpTBXButton173: TSpTBXButton;
     SpTBXButton174: TSpTBXButton;
+    SpTBXButton175: TSpTBXButton;
+    ComboBox1: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -804,6 +806,7 @@ type
     procedure CheckBox3Click(Sender: TObject);
     procedure SpTBXButton173Click(Sender: TObject);
     procedure SpTBXButton174Click(Sender: TObject);
+    procedure ComboBox1Exit(Sender: TObject);
 
 
   private
@@ -1266,6 +1269,9 @@ try
      edit1.Text:= SpTBXButton169.Caption;
      edit2.Text:= Floattostr(us_pulse_wave_train);//SpTBXButton171.Caption;
      TrackBar1.Position := trunc(us_wave);
+     ComboBox1.ItemIndex := StrToInt(SpTBXButton175.Caption);
+     srtTras_index := ComboBox1.ItemIndex;
+     SetTranslation;
      avr_const:= TrackBar1.Position/100;
      inv_output:=CheckBox3.Checked;
     try
@@ -2181,32 +2187,34 @@ try
 
           if start_scann then   //////////////////////////////////////  scann
           begin
-                  if ( abs(scann_arr[scann_counter].xy_coor.x - x_temp)>= abs(encoder[encoder_index].enc_x_rez/2) ) or
-                     ( abs(scann_arr[scann_counter].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez/2) ) then
+                  if ( abs(x_temp - x_temp) >= abs(encoder[encoder_index].enc_x_rez/2) ) or
+                     ( abs(y_temp - y_temp) >= abs(encoder[encoder_index].enc_y_rez/2) ) then
                        inc(scann_counter);
 
                   if ( abs(scann_arr[scann_counter-1].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then begin
                      new_line:=true;
-                     tmp_x:= scann_arr[scann_counter-1].xy_coor.x;
                   end;
-  {
+
                   if new_line then
                      if (scann_arr[scann_counter-2].xy_coor.x - scann_arr[scann_counter-1].xy_coor.x) > 0 then begin
                       //   scann_arr[scann_counter] := scann_arr[scann_counter-1];
-                      //   scann_arr[scann_counter].xy_coor.y := scann_arr[scann_counter].xy_coor.y - encoder[encoder_index].enc_y_rez;
+                         tmp_x := 0;
+                         case form14.ComboBox1.ItemIndex of
+                              0: tmp_x:=0;
+                              1: tmp_x:=0;
+                              2: tmp_x:=0;
+                         end;
+                         tmp_x := form15.TrackBar1.Position;
+                         y_temp := y_temp - tmp_x * abs(encoder[encoder_index].enc_y_rez);
                         // inc(scann_counter);
-                     end;
-{
-                     if (scann_arr[scann_counter-1].xy_coor.x - tmp_x) < 0 then begin
-                        x_temp:= x_temp - abs(encoder[encoder_index].enc_x_rez);
-
-                       //  := 1.0 ;
+                     end else begin
                         new_line:=false;
-                        tmp_x := 0;
+                     //if (scann_arr[scann_counter-1].xy_coor.x - tmp_x) < 0 then begin
+//                        x_temp:= x_temp - abs(encoder[encoder_index].enc_x_rez);
                      end;
- }
+
           end;
- 
+
           scann_arr[scann_counter].xy_coor.x := x_temp;
           scann_arr[scann_counter].xy_coor.y := y_temp;
   except
@@ -11614,6 +11622,13 @@ begin
     form12.GroupBox3.Visible :=false;
   end;
 
+end;
+
+procedure TForm1.ComboBox1Exit(Sender: TObject);
+begin
+SpTBXButton175.Caption:= IntToStr(ComboBox1.ItemIndex);
+srtTras_index:=ComboBox1.ItemIndex;
+SetTranslation;
 end;
 
 end.

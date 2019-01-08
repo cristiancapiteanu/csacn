@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 489
-  Top = 64
+  Left = 300
+  Top = 21
   BorderStyle = bsNone
   Caption = 'US Card'
   ClientHeight = 811
@@ -8847,10 +8847,10 @@ object Form1: TForm1
         OnExit = Edit1Exit
       end
       object SpTBXButton169: TSpTBXButton
-        Left = 177
-        Top = 660
-        Width = 200
-        Height = 66
+        Left = 184
+        Top = 696
+        Width = 193
+        Height = 30
         Caption = 'unitedndt'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -8872,10 +8872,10 @@ object Form1: TForm1
         OnExit = Edit2Exit
       end
       object SpTBXButton170: TSpTBXButton
-        Left = 177
-        Top = 588
-        Width = 200
-        Height = 66
+        Left = 184
+        Top = 648
+        Width = 201
+        Height = 38
         Caption = '100'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -8888,10 +8888,10 @@ object Form1: TForm1
         OnClick = SpTBXButton84Click
       end
       object SpTBXButton171: TSpTBXButton
-        Left = 178
-        Top = 515
-        Width = 200
-        Height = 66
+        Left = 184
+        Top = 592
+        Width = 194
+        Height = 45
         Caption = '500'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -8901,7 +8901,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 7
         Visible = False
-        OnClick = SpTBXButton84Click
       end
       object CheckBox3: TCheckBox
         Left = 24
@@ -8912,9 +8911,38 @@ object Form1: TForm1
         TabOrder = 8
         OnClick = CheckBox3Click
       end
+      object SpTBXButton175: TSpTBXButton
+        Left = 183
+        Top = 528
+        Width = 194
+        Height = 45
+        Caption = '0'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -48
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 9
+        Visible = False
+      end
+      object ComboBox1: TComboBox
+        Left = 32
+        Top = 464
+        Width = 249
+        Height = 43
+        ItemHeight = 35
+        ItemIndex = 0
+        TabOrder = 10
+        Text = 'Deutsch'
+        OnExit = ComboBox1Exit
+        Items.Strings = (
+          'Deutsch'
+          'English')
+      end
     end
     object GroupBox9: TGroupBox
-      Left = 300
+      Left = 1190
       Top = 8
       Width = 377
       Height = 749
