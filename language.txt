@@ -67,3 +67,107 @@ Zeitbasierender Scan
 Wegaufnehmer Scan		
 Keyboard		
 Exit		
+Pallete	Pallete	
+Take from gate	Take from gate	
+[mm]	[mm]	
+TOF-D	TOF-D	
+Std	Std	
+TOF-D OY	TOF-D OY	
+Std	Std	
+Files	Files	
+Pallete file name	Pallete file name	
+New	New	
+From   to	From   to	
+New	New	
+Invert	Invert	
+Invert	Invert	
+Change color/ value	Change color/ value	
+Auto	Auto	
+Messung	Messung	
+Scale	Scale	
+Auto	Auto	
+xfill	xfill	
+Apply	Apply	
+Load	Load	
+Save	Save	
+Back	Back	
+Next	Next	
+Pos.:	Pos.:	
+Coor Pos:	Coor Pos:	
+Scan Pos:	Scan Pos:	
+Reset	Reset	
+Built in	Built in	
+Encoder select	Encoder select	
+Info	Info	
+Name	Name	
+X axis enable	X axis enable	
+Y axis enable	Y axis enable	
+X axis INV	X axis INV	
+Y axis INV	Y axis INV	
+X axis resolution: 	X axis resolution: 	
+ step/mm	 step/mm	
+Y axis resolution: 	Y axis resolution: 	
+ step/mm	 step/mm	
+< Back	< Back	
+Calibration >	Calibration >	
+Save	Save	
+Calibration	Calibration	
+Distance	Distance	
+Steps	Steps	
+Press Start and move Distance then press Stop	Press Start and move Distance then press Stop	
+Start	Start	
+Stop	Stop	
+X axis	X axis	
+Y axis	Y axis	
+Distance	Distance	
+Steps	Steps	
+Press Start and move Distance then press Stop	Press Start and move Distance then press Stop	
+Start	Start	
+Stop	Stop
+< Back	< Back	
+Save	Save	
+Select an encoder	Select an encoder	
+X first axis	X first axis	
+Y first axis	Y first axis	
+Scan Speed:	Scan Speed:	
+X axis	X axis	
+Auto Length	Auto Length	
+Auto Stop	Auto Stop	
+Scan length	Scan length	
+Scan resolution	Scan resolution	
+Y axis	Y axis	
+Auto Length	Auto Length	
+Auto Stop	Auto Stop	
+Scan length	Scan length	
+Scan resolution	Scan resolution	
+Load	Load	
+Save	Save	
+Start	Start	
+Stop	Stop	
+Spot	Spot	
+Square	Square	
+Round	Round	
+Prop	Prop	
+Grid	Grid	
+Free	Free	
+Map	Map	
+Over	Over	
+Min	Min	
+Max	Max	
+Function	Function	
+Reset	Reset	
+Setup	Setup	
+Start	Start	
+Stop	Stop	
+Memory	Memory	
+Pos: 	Pos: 	
+Val:	Val:	
+REC	REC	
+Back	Back	
+Next	Next	
+
+
+
+
+
+

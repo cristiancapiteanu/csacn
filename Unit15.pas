@@ -474,7 +474,7 @@ begin
 
     start_scann:=false;
           scann_counter:=0;
-     form14.SpTBXButton22.Caption:='Start';
+     form14.SpTBXButton22.Caption:=srtTras[144, srtTras_index];
 end;
 
 procedure TForm15.FormShow(Sender: TObject);

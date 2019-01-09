@@ -1,6 +1,6 @@
 object Form12: TForm12
-  Left = 982
-  Top = 0
+  Left = 894
+  Top = 3
   HorzScrollBar.Visible = False
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone

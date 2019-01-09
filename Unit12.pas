@@ -697,7 +697,7 @@ begin
               file_data[0].color[i]:=pallete[i].color ;
               file_data[0].value[i]:=pallete[i].value ;
           end;
-          label29.Caption :='Pallete file name : '+form1.SaveDialog1.FileName;
+          label29.Caption :=srtTras[77, srtTras_index]+form1.SaveDialog1.FileName;
           s:=form1.SaveDialog1.FileName;
           if pos('.pal',form1.SaveDialog1.FileName) >0 then
             s:=copy(form1.SaveDialog1.FileName,0,pos('.pal',form1.SaveDialog1.FileName)-1);
@@ -1248,7 +1248,7 @@ file_data:Tfile_pal;
 begin
   try
           setlength(file_data,1);
-          label29.Caption :='Pallete file name : '+pallete_file_name;
+          label29.Caption :=srtTras[77, srtTras_index]+pallete_file_name;
           lFile := TFileStream.Create(pallete_file_name, fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_pal));
 		      lFile.Free;

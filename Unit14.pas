@@ -294,8 +294,8 @@ begin
     else
       encoder[encoder_index].enc_y_rez := 0;
 
-    SpTBXLabel2.Caption:='X axis rezolution: '+ FloatToStrF(encoder[encoder_index].enc_x_rez ,ffFixed,6,2)+' mm/step';
-    SpTBXLabel3.Caption:='Y axis rezolution: '+ FloatToStrF(encoder[encoder_index].enc_y_rez ,ffFixed,6,2)+' mm/step';
+    SpTBXLabel2.Caption:=srtTras[106, srtTras_index]+ FloatToStrF(encoder[encoder_index].enc_x_rez ,ffFixed,6,2)+srtTras[107, srtTras_index];
+    SpTBXLabel3.Caption:=srtTras[108, srtTras_index]+ FloatToStrF(encoder[encoder_index].enc_y_rez ,ffFixed,6,2)+srtTras[109, srtTras_index];
 
 
     if SpTBXCheckBox1.checked then begin
@@ -1508,11 +1508,11 @@ end;
 
 procedure TForm14.SpTBXButton1Click(Sender: TObject);
 begin
-  if SpTBXButton1.Caption='Start' then begin
-      SpTBXButton1.Caption:='Stop';
+  if SpTBXButton1.Caption=srtTras[117, srtTras_index] then begin
+      SpTBXButton1.Caption:=srtTras[118, srtTras_index];
       enc_cal_x_off:=enc_cal_x;
   end else begin
-      SpTBXButton1.Caption:='Start';
+      SpTBXButton1.Caption:=srtTras[117, srtTras_index];
       encoder[encoder_index].enc_x_steps:=enc_cal_x-enc_cal_x_off;
       SpTBXSpinEdit2.Value:=encoder[encoder_index].enc_x_steps;
   end;
@@ -1520,11 +1520,11 @@ end;
 
 procedure TForm14.SpTBXButton14Click(Sender: TObject);
 begin
-if SpTBXButton14.Caption='Start' then begin
-      SpTBXButton14.Caption:='Stop';
+if SpTBXButton14.Caption=srtTras[124, srtTras_index] then begin
+      SpTBXButton14.Caption:=srtTras[125, srtTras_index];
        enc_cal_y_off:=enc_cal_y;
   end else begin
-      SpTBXButton14.Caption:='Start';
+      SpTBXButton14.Caption:=srtTras[124, srtTras_index];
       encoder[encoder_index].enc_y_steps:=enc_cal_y-enc_cal_y_off;
       SpTBXSpinEdit3.Value:=encoder[encoder_index].enc_y_steps;
   end;
@@ -1537,11 +1537,11 @@ begin
       load_file:=false;
       if not encoder[encoder_index].enc_x_enbl then exit;
 
-      if SpTBXButton22.Caption='Start' then   begin
+      if SpTBXButton22.Caption=srtTras[144, srtTras_index] then   begin
 //      if not ScannerMove then   begin
 
           //timer1.Enabled := false;
-          SpTBXButton22.Caption:='Stop';
+          SpTBXButton22.Caption:=srtTras[145, srtTras_index];
           form11.SpTBXButton5.Caption:=SpTBXButton22.Caption;
           form15.SpTBXButton5.Caption:=SpTBXButton22.Caption;
           TabSheet3.Enabled:=false;
@@ -1649,7 +1649,7 @@ begin
          timer1.Enabled := true;
          start_scann:=false;
          ScannerMove:=false;
-         SpTBXButton22.Caption:='Start';
+         SpTBXButton22.Caption:=srtTras[144, srtTras_index];
          form11.SpTBXButton5.Caption:=SpTBXButton22.Caption;
          form15.SpTBXButton5.Caption:=SpTBXButton22.Caption;
 

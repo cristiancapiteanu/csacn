@@ -1,6 +1,6 @@
 object Form14: TForm14
-  Left = 435
-  Top = 5
+  Left = 965
+  Top = 2
   VertScrollBar.ButtonSize = 20
   VertScrollBar.Size = 20
   VertScrollBar.Style = ssFlat
@@ -25,7 +25,7 @@ object Form14: TForm14
   TextHeight = 13
   object GroupBox2: TGroupBox
     Left = 4
-    Top = 0
+    Top = -8
     Width = 617
     Height = 393
     Caption = 'Info'

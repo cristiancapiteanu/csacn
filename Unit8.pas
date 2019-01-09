@@ -32,9 +32,6 @@ type
     Button14: TButton;
     Timer1: TTimer;
     Memo1: TMemo;
-    Memo12: TRichEdit;
-    Memo5: TLMDMemo;
-    Memo9: TTntMemo;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Timer4Timer(Sender: TObject);
@@ -431,7 +428,7 @@ begin
     form1.SpTBXComboBox5.Visible:=false;
 
     SetTranslation;
-    
+
     with form1 do begin
       Edit5.Enabled := false;
       SpTBXEdit1.Enabled := false;

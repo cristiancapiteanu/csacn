@@ -3489,23 +3489,23 @@ begin
                 if SpTBXCheckBox11.Checked  then begin
                      r_val:=(US_Mess[j].amp);
                      if r_val>100 then
-                        Form15.label2.Caption :='Val : >100'
+                        Form15.label2.Caption :=srtTras[163, srtTras_index]+' >100'
                     else
-                        Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2);
+                        Form15.label2.Caption :=srtTras[163, srtTras_index]+' '+FloatToStrF(r_val ,ffFixed,6,2);
                 end;
 
                 if  SpTBXCheckBox10.Checked then begin
                   r_val:=US_Mess[j].tof;
-                  if radiobutton26.Checked  then Form15.label2.Caption :='Val : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
+                  if radiobutton26.Checked  then Form15.label2.Caption :=srtTras[163, srtTras_index]+' '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
                   if radiobutton25.Checked  then
                     if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
-                        Form15.label2.Caption :='Val : '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
+                        Form15.label2.Caption :=srtTras[163, srtTras_index]+' '+FloatToStrF(TRCal((r_val-us_probe_delay)*US_calc)  ,ffFixed,6,2)+' [mm]'
                     else
-                        Form15.label2.Caption :='Val : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
+                        Form15.label2.Caption :=srtTras[163, srtTras_index]+' '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                 end ;
               end else begin
                       Form15.label2.Font.Color := clBlack;
-                      Form15.label2.Caption :='Val : N/C'
+                      Form15.label2.Caption :=srtTras[163, srtTras_index]+' N/C'
               end;
             end else begin //ECHO START
                if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit T(A) [us]'

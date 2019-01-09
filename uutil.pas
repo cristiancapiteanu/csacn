@@ -545,10 +545,12 @@ cccc:double;
 
 implementation
 
-uses unit1, unit4, unit9, unit7,unit6,unit3,unit8;
+uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
 
 procedure SetTranslation;
 begin
+  try
+
     with form1 do begin
       SpTBXButton75.Caption:= srtTras[0, srtTras_index];
       GroupBox7.Caption:= srtTras[1, srtTras_index];
@@ -634,6 +636,127 @@ begin
       SpTBXButton83.Caption:= srtTras[68, srtTras_index];
 
     end;
+
+    with form12 do begin
+         GroupBox1.caption:= srtTras[69, srtTras_index];
+         SpTBXButton3.Caption:= srtTras[70, srtTras_index];
+         SpTBXCheckBox1.Caption:= srtTras[71, srtTras_index];
+
+         GroupBox2.Caption:= srtTras[72, srtTras_index];
+         Button1.Caption:= srtTras[73, srtTras_index];
+
+         GroupBox3.Caption:= srtTras[74, srtTras_index];
+         Button2.Caption:= srtTras[75, srtTras_index];
+
+         GroupBox5.Caption:= srtTras[76, srtTras_index];
+         Label29.Caption:= srtTras[77, srtTras_index];
+
+         GroupBox25.Caption:= srtTras[78, srtTras_index];
+         Label61.Caption:= srtTras[79, srtTras_index];
+         Button21.Caption:= srtTras[80, srtTras_index];
+         Button20.Caption:= srtTras[81, srtTras_index];
+         Button22.Caption:= srtTras[82, srtTras_index];
+
+         GroupBox16.Caption:= srtTras[83, srtTras_index];
+         SpTBXCheckBox2.Caption:= srtTras[84, srtTras_index];
+
+         GroupBox7.Caption:= srtTras[85, srtTras_index];
+
+         GroupBox13.Caption:= srtTras[86, srtTras_index];
+         CheckBox4.Caption:= srtTras[87, srtTras_index];
+         RadioButton21.Caption:= srtTras[88, srtTras_index];
+
+         LMDButton1.Caption:= srtTras[89, srtTras_index];
+
+         Button10.Caption:= srtTras[90, srtTras_index];
+         Button11.Caption:= srtTras[91, srtTras_index];
+         SpTBXButton1.Caption:= srtTras[92, srtTras_index];
+         SpTBXButton83.Caption:= srtTras[93, srtTras_index];
+    end;
+    with form14 do begin
+         Label1.Caption:= srtTras[94, srtTras_index];
+         Label3.Caption:= srtTras[95, srtTras_index];
+         Label2.Caption:= srtTras[96, srtTras_index];
+         SpTBXButton23.Caption:= srtTras[97, srtTras_index];
+         SpTBXCheckBox10.Caption:= srtTras[98, srtTras_index];
+         GroupBox3.Caption:= srtTras[99, srtTras_index];
+         GroupBox2.Caption:= srtTras[100, srtTras_index];
+         SpTBXLabel1.Caption:= srtTras[101, srtTras_index];
+         SpTBXCheckBox1.Caption:= srtTras[102, srtTras_index];
+         SpTBXCheckBox2.Caption:= srtTras[103, srtTras_index];
+         SpTBXCheckBox3.Caption:= srtTras[104, srtTras_index];
+         SpTBXCheckBox4.Caption:= srtTras[105, srtTras_index];
+         SpTBXLabel2.Caption:= srtTras[106, srtTras_index]+srtTras[107, srtTras_index];
+         //SpTBXLabel2.Caption:= srtTras[107, srtTras_index];
+         SpTBXLabel3.Caption:= srtTras[108, srtTras_index]+srtTras[109, srtTras_index];
+         //SpTBXLabel3.Caption:= srtTras[109, srtTras_index];
+         SpTBXButton8.Caption:= srtTras[110, srtTras_index];
+         SpTBXButton10.Caption:= srtTras[111, srtTras_index];
+         SpTBXButton9.Caption:= srtTras[112, srtTras_index];
+         GroupBox1.Caption:= srtTras[113, srtTras_index];
+         SpTBXLabel4.Caption:= srtTras[114, srtTras_index];
+         SpTBXLabel5.Caption:= srtTras[115, srtTras_index];
+         SpTBXLabel6.Caption:= srtTras[116, srtTras_index];
+         SpTBXButton1.Caption:= srtTras[117, srtTras_index];
+         //SpTBXButton1.Caption:= srtTras[118, srtTras_index];
+         TabSheet1.Caption:= srtTras[119, srtTras_index];
+
+         TabSheet2.Caption:= srtTras[120, srtTras_index];
+         SpTBXLabel7.Caption:= srtTras[121, srtTras_index];
+         SpTBXLabel8.Caption:= srtTras[122, srtTras_index];
+         SpTBXLabel9.Caption:= srtTras[123, srtTras_index];
+         SpTBXButton14.Caption:= srtTras[124, srtTras_index];
+         //SpTBXButton14.Caption:= srtTras[125, srtTras_index];
+         SpTBXButton7.Caption:= srtTras[126, srtTras_index];
+         SpTBXButton6.Caption:= srtTras[127, srtTras_index];
+
+         GroupBox4.Caption:= srtTras[128, srtTras_index];
+         SpTBXRadioButton1.Caption:= srtTras[129, srtTras_index];
+         SpTBXRadioButton2.Caption:= srtTras[130, srtTras_index];
+         Label4.Caption:= srtTras[131, srtTras_index];
+         TabSheet3.Caption:= srtTras[132, srtTras_index];
+         SpTBXCheckBox7.Caption:= srtTras[133, srtTras_index];
+         SpTBXCheckBox8.Caption:= srtTras[134, srtTras_index];
+         SpTBXLabel10.Caption:= srtTras[135, srtTras_index];
+         SpTBXLabel11.Caption:= srtTras[136, srtTras_index];
+         TabSheet4.Caption:= srtTras[137, srtTras_index];
+         SpTBXCheckBox6.Caption:= srtTras[138, srtTras_index];
+         SpTBXCheckBox9.Caption:= srtTras[139, srtTras_index];
+         SpTBXLabel13.Caption:= srtTras[140, srtTras_index];
+         SpTBXLabel14.Caption:= srtTras[141, srtTras_index];
+         Button8.Caption:= srtTras[142, srtTras_index];
+         Button9.Caption:= srtTras[143, srtTras_index];
+         SpTBXButton22.Caption:= srtTras[144, srtTras_index];
+         //SpTBXButton22.Caption:= srtTras[145, srtTras_index];
+    end;
+    with form15 do begin
+         SpTBXLabel1.Caption:= srtTras[146, srtTras_index];
+         SpTBXRadioButton7.Caption:= srtTras[147, srtTras_index];
+         SpTBXRadioButton8.Caption:= srtTras[148, srtTras_index];
+         CheckBox4.Caption:= srtTras[149, srtTras_index];
+         SpTBXLabel2.Caption:= srtTras[150, srtTras_index];
+         SpTBXRadioButton9.Caption:= srtTras[151, srtTras_index];
+         SpTBXRadioButton10.Caption:= srtTras[152, srtTras_index];
+         SpTBXRadioButton11.Caption:= srtTras[153, srtTras_index];
+         SpTBXRadioButton12.Caption:= srtTras[154, srtTras_index];
+         SpTBXRadioButton13.Caption:= srtTras[155, srtTras_index];
+         SpTBXLabel3.Caption:= srtTras[156, srtTras_index];
+         SpTBXButton1.Caption:= srtTras[157, srtTras_index];
+         SpTBXButton3.Caption:= srtTras[158, srtTras_index];
+         SpTBXButton5.Caption:= srtTras[159, srtTras_index];
+         //SpTBXButton5.Caption:=s srtTras[160, srtTras_index];
+         Label3.Caption:= srtTras[161, srtTras_index];
+         Label20.Caption:= srtTras[162, srtTras_index];
+         Label2.Caption:= srtTras[163, srtTras_index];//
+         Label1.Caption:= srtTras[164, srtTras_index];
+         SpTBXButton2.Caption:= srtTras[165, srtTras_index];
+         SpTBXButton83.Caption:= srtTras[166, srtTras_index];
+
+    end;
+
+  except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+  end;
 
 
 end;

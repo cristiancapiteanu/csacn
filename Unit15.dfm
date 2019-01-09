@@ -1,6 +1,6 @@
 object Form15: TForm15
-  Left = 146
-  Top = 17
+  Left = 295
+  Top = 7
   BorderStyle = bsNone
   Caption = 'C-SCAN'
   ClientHeight = 806
@@ -81,7 +81,7 @@ object Form15: TForm15
   object Label4: TLabel
     Left = 456
     Top = 760
-    Width = 81
+    Width = 32
     Height = 13
     Caption = 'Label4'
   end

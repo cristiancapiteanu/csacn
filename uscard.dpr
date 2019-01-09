@@ -35,7 +35,6 @@ begin
   Application.Initialize;
   Application.Title := 'US Card';
   Application.CreateForm(TForm8, Form8);
-  LoadTranslation;
   Application.CreateForm(TForm6, Form6);
   Application.CreateForm(TForm11, Form11);
   Application.CreateForm(TForm2, Form2);
@@ -53,6 +52,7 @@ begin
   Application.CreateForm(TForm18, Form18);
   Application.CreateForm(TForm19, Form19);
   Application.CreateForm(TForm1, Form1);
+  LoadTranslation;
   start_redy:=true;
   Application.Run;
 end.
