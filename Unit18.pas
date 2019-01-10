@@ -44,7 +44,7 @@ end;
 
 procedure TForm18.Edit1Enter(Sender: TObject);
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+  //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 end;
 
 procedure TForm18.LMDButton2Click(Sender: TObject);

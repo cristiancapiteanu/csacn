@@ -1,4 +1,6 @@
-                               unit Unit1;
+unit Unit1;
+
+{$MAXSTACKSIZE $2000000}
 
 interface
 
@@ -864,7 +866,6 @@ type
     procedure Do_Average;
     procedure Do_Alarm;
     procedure Do_Select_TOF;
-    procedure Do_Proc_Enc(index:integer);
     procedure Do_Update_scann_arr;
     procedure Draw_ASCAN;
     procedure Draw_ASCAN_Axis(var img100:Timage);
@@ -2136,92 +2137,7 @@ try
 
 end;
 
-procedure TForm1.Do_Proc_Enc(index:integer);
 
-begin
-try
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
-                   //enc_cur_x:=encod_t;
-                   //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
-                   //enc_cur_y:=encod_t;
-
-                  if encoder_index>=0 then
-                  begin
-                       if form14.Visible then
-                          form14.label1.Caption :='Pos: '+intToStr(trunc(enc_cur_x))+'[stp] x '+IntToStr(trunc(enc_cur_y))+' [stp]';
-                          if form14.offset_flag then begin
-                                    form14.offset_flag:=false;
-                                    enc_cur_x_offset:=enc_cur_x;
-                                    enc_cur_y_offset:=enc_cur_y;
-                          end;
-
-                       enc_cal_x:=enc_cur_x;
-                       enc_cal_y:=enc_cur_y;
-
-                       enc_cur_x:=enc_cur_x-enc_cur_x_offset;
-                       enc_cur_y:=enc_cur_y-enc_cur_y_offset;
-
-                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
-                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
-
-                       if encoder[encoder_index].enc_x_rez<>0 then
-                          enc_cur_x:=enc_cur_x*abs(encoder[encoder_index].enc_x_rez);
-                       if encoder[encoder_index].enc_y_rez <>0 then
-                          enc_cur_y:=enc_cur_y*abs(encoder[encoder_index].enc_y_rez);
-
-
-                       if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
-                       if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
-                  end;
-
-// scann_counter_old :=scann_counter;
-          if scaner_type = 2 then begin
-                    // x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
-                    // y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
-          end else begin
-                      x_temp := enc_cur_x;
-                      y_temp := enc_cur_y;
-          end;
-
-
-
-          if start_scann then   //////////////////////////////////////  scann
-          begin
-                  if ( abs(x_temp - x_temp) >= abs(encoder[encoder_index].enc_x_rez/2) ) or
-                     ( abs(y_temp - y_temp) >= abs(encoder[encoder_index].enc_y_rez/2) ) then
-                       inc(scann_counter);
-
-                  if ( abs(scann_arr[scann_counter-1].xy_coor.y - y_temp)>= abs(encoder[encoder_index].enc_y_rez) ) then begin
-                     new_line:=true;
-                  end;
-
-                  if new_line then
-                     if (scann_arr[scann_counter-2].xy_coor.x - scann_arr[scann_counter-1].xy_coor.x) > 0 then begin
-                      //   scann_arr[scann_counter] := scann_arr[scann_counter-1];
-                         tmp_x := 0;
-                         case form14.ComboBox1.ItemIndex of
-                              0: tmp_x:=0;
-                              1: tmp_x:=0;
-                              2: tmp_x:=0;
-                         end;
-                         tmp_x := form15.TrackBar1.Position;
-                         y_temp := y_temp - tmp_x * abs(encoder[encoder_index].enc_y_rez);
-                        // inc(scann_counter);
-                     end else begin
-                        new_line:=false;
-                     //if (scann_arr[scann_counter-1].xy_coor.x - tmp_x) < 0 then begin
-//                        x_temp:= x_temp - abs(encoder[encoder_index].enc_x_rez);
-                     end;
-
-          end;
-
-          scann_arr[scann_counter].xy_coor.x := x_temp;
-          scann_arr[scann_counter].xy_coor.y := y_temp;
-  except
-    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
-  end;
-
-end;
 
 procedure TForm1.Do_Update_scann_arr;
 var
@@ -2307,6 +2223,8 @@ try
       //               enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
     //                 enc_cur_x := enc_cur_x_100;//r_val;
                      enc_cur_x := r_val;
+                     if enc_cur_x > old_x_position then scan_direction:=true else scan_direction:=false;
+                     old_x_position:= enc_cur_x;
                   end;
                   //enc_cur_x := enc_cur_x +0.1;
 
@@ -3282,6 +3200,7 @@ NONE
 
 
  for i := 0 to StringGrid4.RowCount-1 do begin
+   if length(StringGrid4.Cells[0,i])> 0 then
    case StrToInt(StringGrid4.Cells[0,i]) of
     100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
     101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
@@ -3336,7 +3255,8 @@ NONE
    my_label.Caption :='';
 
  for i := 0 to StringGrid5.RowCount-1 do begin
-   case StrToInt(StringGrid5.Cells[0,i]) of
+    if length(StringGrid5.Cells[0,i])> 0 then
+    case StrToInt(StringGrid5.Cells[0,i]) of
     100: my_label.Caption :=my_label.Caption + 'T(A)=' + FloatToStrF(TRCal(r_val100-us_probe_delay),ffFixed,6,2)+ ' [us]  ';
     101: my_label.Caption :=my_label.Caption + 's(A)='+ FloatToStrF(TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
     102: my_label.Caption :=my_label.Caption + 'a(A)='+ FloatToStrF(-us_x+sin((us_angle)*pi/180)*TRCal((r_val100-us_probe_delay)*US_calc),ffFixed,6,2)+ ' [mm]  ';
@@ -9286,17 +9206,17 @@ end;
 procedure TForm1.SpTBXButton126Click(Sender: TObject);
 begin
 
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+ // ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 end;
 
 procedure TForm1.Edit13Enter(Sender: TObject);
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+  //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 end;
 
 procedure TForm1.edit14Enter(Sender: TObject);
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+ // ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 end;
 
 procedure TForm1.SpTBXButton127Click(Sender: TObject);

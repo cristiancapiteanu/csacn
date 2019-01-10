@@ -13,7 +13,6 @@ object Form12: TForm12
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  FormStyle = fsStayOnTop
   OldCreateOrder = False
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -848,5 +847,29 @@ object Form12: TForm12
     OnTimer = Timer1Timer
     Left = 608
     Top = 632
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 88
+    Top = 128
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 88
+    Top = 184
+  end
+  object TntOpenDialog1: TTntOpenDialog
+    Left = 64
+    Top = 88
+  end
+  object LMDOpenDialog1: TLMDOpenDialog
+    Left = 136
+    Top = 96
+  end
+  object LMDFileOpenDialog1: TLMDFileOpenDialog
+    FavoriteLinks = <>
+    FileTypes = <>
+    FileTypeIndex = 0
+    Options = []
+    Left = 32
+    Top = 120
   end
 end

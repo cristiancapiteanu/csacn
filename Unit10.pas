@@ -728,7 +728,7 @@ lFile: TFileStream;
 file_data:Tfile_ms;
 s:string;
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+  //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
     try
       form1.SaveDialog1.Filter :='Time scann settings (*.tss)|*.tss';
 	    if form1.SaveDialog1.Execute then begin

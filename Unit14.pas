@@ -97,6 +97,8 @@ type
     SpTBXButton22: TLMDButton;
     Label4: TLabel;
     ComboBox1: TComboBox;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
     procedure FormShow(Sender: TObject);
     procedure SpTBXButton3Click(Sender: TObject);
     procedure SpTBXButton10Click(Sender: TObject);
@@ -1001,10 +1003,11 @@ file_data:Tfile_enc;
 begin
 //  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
   try
-      form1.OpenDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
-	    if form1.OpenDialog1.Execute then begin
+       OpenDialog1.InitialDir:='C:\Saphirp\data';
+      OpenDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
+	    if OpenDialog1.Execute then begin
        setlength(file_data,1);
-       lFile := TFileStream.Create(form1.OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
+       lFile := TFileStream.Create(OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
 	     TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_enc));
 	     lFile.Free;
 
@@ -1047,10 +1050,11 @@ lFile: TFileStream;
 file_data:Tfile_enc;
 s:string;
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+  //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
     try
-      form1.SaveDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
-	    if form1.SaveDialog1.Execute then begin
+       SaveDialog1.InitialDir:='C:\Saphirp\data';
+      SaveDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
+	    if SaveDialog1.Execute then begin
           setlength(file_data,1);
 
 
@@ -1075,7 +1079,7 @@ begin
           file_data[0].Y_axis_len:=( Y_axis_len);
           file_data[0].first_axis:=( first_axis  );
 
-          s:=form1.SaveDialog1.FileName;
+          s:=SaveDialog1.FileName;
           if pos('.ess',form1.SaveDialog1.FileName) >0 then
             s:=copy(form1.SaveDialog1.FileName,0,pos('.ess',form1.SaveDialog1.FileName)-1);
           if FileExists(s+'.ess') then begin
@@ -1609,6 +1613,7 @@ begin
 
           ScannerMove:=true;
           start_scann:=true;
+          new_line:=false;
           scann_counter:=0;
           scann_arr[scann_counter].xy_coor.x := 0;
           scann_arr[scann_counter].xy_coor.y := 0;
@@ -1781,7 +1786,7 @@ end;
 
 procedure TForm14.SpTBXEdit1Enter(Sender: TObject);
 begin
-ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+//ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 end;
 
 end.

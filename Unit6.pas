@@ -1157,6 +1157,7 @@ have_data11 := false;
       if form8.SpTBXListBox2.ItemIndex=0 then form1.OpenDialog1.Filter :='B-Scan (*.lsc)|*.lsc';
       if form8.SpTBXListBox2.ItemIndex=1 then form1.OpenDialog1.Filter :='TOF-D (*.tofd)|*.tofd';
       if form8.SpTBXListBox2.ItemIndex=2 then form1.OpenDialog1.Filter :='C-Scan (*.csc)|*.csc';
+      form1.OpenDialog1.InitialDir:='C:\Saphirp\data';
 	    if form1.OpenDialog1.Execute then begin
          Screen.Cursor := crHourGlass;
          if not form19.visible then  form19.show;
@@ -1406,7 +1407,8 @@ have_data11 := false;
     end;
     if form19.visible then form19.Hide;
     Screen.Cursor := crArrow;
-      load_file:=false;
+    load_file:=false;
+    form6.BringToFront;
 end;
 
 procedure TForm6.Button16Click(Sender: TObject);
@@ -1417,6 +1419,8 @@ scanFile: File of TScann_arr;
     file_data:TScan_File;
     file_scan: TScann_arr;
 s,s1:string;
+lFile1: TFileStream;
+file_data1:Tfile_pal;
 begin
 //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
   try
@@ -1424,7 +1428,8 @@ begin
       if form8.SpTBXListBox2.ItemIndex=1 then form1.SaveDialog1.Filter :='TOF-D (*.tofd)|*.tofd';
       if form8.SpTBXListBox2.ItemIndex=2 then form1.SaveDialog1.Filter :='C-Scan (*.csc)|*.csc';
 
-	    if form1.SaveDialog1.Execute then begin
+	    form1.SaveDialog1.InitialDir:='C:\Saphirp\data';
+      if form1.SaveDialog1.Execute then begin
           file_data.scann_counter :=scann_counter;
      //     SetLength(file_data.scann_arr ,scann_counter);
 
@@ -1499,6 +1504,13 @@ begin
                     file_data.defect[i]:=defect[i];
            file_data.scaner_type:=scaner_type;
 
+
+          setlength(file_data1,1);
+          for i:=1 to 16 do begin
+              file_data1[0].color[i]:=pallete[i].color ;
+              file_data1[0].value[i]:=pallete[i].value ;
+          end;
+
           label33.Caption :='File name : '+form1.SaveDialog1.FileName;
           s:=form1.SaveDialog1.FileName;
           if form8.SpTBXListBox2.ItemIndex=0 then s1:='.lsc';
@@ -1512,6 +1524,10 @@ begin
                   lFile := TFileStream.Create(s+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
+
+                  lFile1 := TFileStream.Create(s+s1+'_pal', fmCreate);
+      		        TKBDynamic.WriteTo(lFile1, file_data, TypeInfo(Tfile_pal));
+		              lFile1.Free;
 
                   AssignFile(scanFile,s+s1+'_raw');
                   Rewrite(scanFile);
@@ -1527,6 +1543,12 @@ begin
                   lFile := TFileStream.Create(s+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
+
+                  
+                  lFile1 := TFileStream.Create(s+s1+'_pal', fmCreate);
+      		        TKBDynamic.WriteTo(lFile1, file_data, TypeInfo(Tfile_pal));
+		              lFile1.Free;
+
                   
                   AssignFile(scanFile,s+s1+'_raw');
                   Rewrite(scanFile);
@@ -1544,7 +1566,7 @@ begin
     on E : Exception do
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
     end;
-
+        form6.BringToFront;
 
 end;
 

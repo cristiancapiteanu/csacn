@@ -772,6 +772,7 @@ object Form14: TForm14
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      Visible = False
     end
     object SpTBXRadioButton1: TSpTBXRadioButton
       Left = 8
@@ -1227,6 +1228,7 @@ object Form14: TForm14
       ItemIndex = 0
       TabOrder = 3
       Text = 'S1 5mm/s'
+      Visible = False
       Items.Strings = (
         'S1 5mm/s'
         'S2 10mm/s')
@@ -1294,5 +1296,13 @@ object Form14: TForm14
     OnTimer = Timer1Timer
     Left = 56
     Top = 72
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 76
+    Top = 152
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 108
+    Top = 160
   end
 end

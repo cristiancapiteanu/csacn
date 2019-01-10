@@ -74,7 +74,7 @@ end;
 
 procedure TForm4.SpTBXButton3Click(Sender: TObject);
 begin
- ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+ //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 
 end;
 

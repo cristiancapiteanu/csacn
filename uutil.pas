@@ -272,6 +272,7 @@ function US_calc:real;
 function US1_calc:real;
 procedure LoadTranslation;
 procedure SetTranslation;
+procedure Do_Proc_Enc(index:integer);
 
 
 var
@@ -541,12 +542,103 @@ new_line: boolean;
 tmp_x:double;
 cccc:double;
 
+ii100:integer;
+possbar:integer;
+old_x_position:real;
+scan_direction:boolean;
+
 
 
 implementation
 
 uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
 
+
+procedure Do_Proc_Enc(index:integer);
+var
+dx,dy:real;
+begin
+try
+                   //check := check + Opcard_GetEncxPosition(opcard_no, 0, encod_t);
+                   //enc_cur_x:=encod_t;
+                   //check := check + Opcard_GetEncxPosition(opcard_no, 1, encod_t);
+                   //enc_cur_y:=encod_t;
+
+                  if encoder_index>=0 then
+                  begin
+                       //if (enc_cur_x-x_temp) > 0 then
+
+                       //x_temp := enc_cur_x;
+
+                       if form14.Visible then
+                          form14.label1.Caption :='Pos: '+intToStr(trunc(enc_cur_x))+'[stp] x '+IntToStr(trunc(enc_cur_y))+' [stp]';
+                       if form14.offset_flag then begin
+                          form14.offset_flag:=false;
+                          enc_cur_x_offset:=enc_cur_x;
+                          enc_cur_y_offset:=enc_cur_y;
+                       end;
+
+                       enc_cal_x:=enc_cur_x;
+                       enc_cal_y:=enc_cur_y;
+
+                       enc_cur_x:=enc_cur_x-enc_cur_x_offset;
+                       enc_cur_y:=enc_cur_y-enc_cur_y_offset;
+
+                       if encoder[encoder_index].enc_x_inv then enc_cur_x:=-1*enc_cur_x;
+                       if encoder[encoder_index].enc_y_inv then enc_cur_y:=-1*enc_cur_y;
+
+                       if encoder[encoder_index].enc_x_rez<>0 then
+                          enc_cur_x:=enc_cur_x*abs(encoder[encoder_index].enc_x_rez);
+                       if encoder[encoder_index].enc_y_rez <>0 then
+                          enc_cur_y:=enc_cur_y*abs(encoder[encoder_index].enc_y_rez);
+
+
+                       if not encoder[encoder_index].enc_x_enbl then enc_cur_x:=0;
+                       if not encoder[encoder_index].enc_y_enbl then enc_cur_y:=0;
+                  end;
+
+// scann_counter_old :=scann_counter;
+          if scaner_type = 2 then begin
+                    // x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
+                    // y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
+          end else begin
+                   //   x_temp := enc_cur_x;
+                  //   y_temp := enc_cur_y;
+          end;
+
+
+
+          if start_scann then   //////////////////////////////////////  scann
+          begin
+                  dx:= abs(scann_arr[scann_counter].xy_coor.x - enc_cur_x);
+                  dy:= abs(scann_arr[scann_counter].xy_coor.y - enc_cur_y);
+                  if ( dx >= (x_axis_rez/2) ) or ( dy >= (y_axis_rez) ) then begin
+
+                         //if scan_direction then begin
+                  if scann_counter > 3 then
+                         if (scann_arr[scann_counter-2].xy_coor.x - scann_arr[scann_counter].xy_coor.x)> 0 then begin
+                            enc_cur_x := enc_cur_x - 1 * x_axis_rez;
+                            form15.Label6.Caption := 'minus';
+                         end else begin
+                            enc_cur_x := enc_cur_x + 1 * x_axis_rez;
+                            form15.Label6.Caption := 'plus';
+                         end;
+
+                     inc(scann_counter);
+
+                     scann_arr[scann_counter].xy_coor.x := enc_cur_x;
+                     scann_arr[scann_counter].xy_coor.y := enc_cur_y;
+                  end;
+          end;
+
+
+
+
+  except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+  end;
+
+end;
 procedure SetTranslation;
 begin
   try

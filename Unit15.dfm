@@ -1,9 +1,9 @@
 object Form15: TForm15
-  Left = 295
-  Top = 7
+  Left = 286
+  Top = 0
   BorderStyle = bsNone
   Caption = 'C-SCAN'
-  ClientHeight = 806
+  ClientHeight = 819
   ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -78,12 +78,12 @@ object Form15: TForm15
     ParentColor = False
     ParentFont = False
   end
-  object Label4: TLabel
-    Left = 456
-    Top = 760
+  object Label6: TLabel
+    Left = 840
+    Top = 808
     Width = 32
     Height = 13
-    Caption = 'Label4'
+    Caption = 'Label6'
   end
   object GroupBox1: TGroupBox
     Left = 4
@@ -619,14 +619,5 @@ object Form15: TForm15
     ParentFont = False
     CaptionGlowColor = clWhite
     Max = 2000000
-  end
-  object TrackBar1: TTrackBar
-    Left = 376
-    Top = 772
-    Width = 433
-    Height = 33
-    Max = 100
-    TabOrder = 9
-    OnChange = TrackBar1Change
   end
 end

@@ -5,7 +5,8 @@ interface
 uses
   ShellApi,Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, SpTBXControls, SpTBXItem, ComCtrls, ExtCtrls,uutil,uKBDynamic,
-  LMDCustomButton, LMDButton;
+  LMDCustomButton, LMDButton, TntDialogs, LMDUnicodeDialogs,
+  LMDCustomComponent, LMDVistaDialogs;
 
 type
   TForm12 = class(TForm)
@@ -72,6 +73,11 @@ type
     GroupBox7: TGroupBox;
     RadioButton1: TRadioButton;
     ComboBox1: TComboBox;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    TntOpenDialog1: TTntOpenDialog;
+    LMDOpenDialog1: TLMDOpenDialog;
+    LMDFileOpenDialog1: TLMDFileOpenDialog;
     procedure RadioButton23Click(Sender: TObject);
     procedure RadioButton24Click(Sender: TObject);
     procedure SpTBXTrackBar1Change(Sender: TObject);
@@ -661,16 +667,18 @@ procedure TForm12.Button10Click(Sender: TObject);
 begin
 //  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
     try
-      form1.OpenDialog1.Filter :='Color pallete (*.pal)|*.pal';
-	    if form1.OpenDialog1.Execute then begin
-          pallete_file_name:=form1.OpenDialog1.FileName;
-     Screen.Cursor := crHourGlass;
-
-  form6.have_data2:=false;
-  form6.have_data1:=false;
-  form6.have_data10:=false;
+      //form12.FormStyle:=fsNormal;
+      OpenDialog1.InitialDir:='C:\Saphirp\data';
+      OpenDialog1.Filter :='Color pallete (*.pal)|*.pal';
+	    if OpenDialog1.Execute then begin
+          pallete_file_name:=OpenDialog1.FileName;
+          Screen.Cursor := crHourGlass;
+          form6.have_data2:=false;
+          form6.have_data1:=false;
+          form6.have_data10:=false;
           OpenPallete;
-         Only_Draw_Pallete;
+          Only_Draw_Pallete;
+          application.ProcessMessages;
       end;
   except
     on E : Exception do
@@ -688,17 +696,18 @@ lFile: TFileStream;
 file_data:Tfile_pal;
 s:string;
 begin
-  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+ // ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
     try
-      form1.SaveDialog1.Filter :='Color pallete (*.pal)|*.pal';
-	    if form1.SaveDialog1.Execute then begin
+      SaveDialog1.InitialDir:='C:\Saphirp\data';
+      SaveDialog1.Filter :='Color pallete (*.pal)|*.pal';
+	    if SaveDialog1.Execute then begin
           setlength(file_data,1);
           for i:=1 to 16 do begin
               file_data[0].color[i]:=pallete[i].color ;
               file_data[0].value[i]:=pallete[i].value ;
           end;
           label29.Caption :=srtTras[77, srtTras_index]+form1.SaveDialog1.FileName;
-          s:=form1.SaveDialog1.FileName;
+          s:=SaveDialog1.FileName;
           if pos('.pal',form1.SaveDialog1.FileName) >0 then
             s:=copy(form1.SaveDialog1.FileName,0,pos('.pal',form1.SaveDialog1.FileName)-1);
           if FileExists(s+'.pal') then begin
