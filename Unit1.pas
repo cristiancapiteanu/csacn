@@ -2199,6 +2199,7 @@ try
     new(tmp31);
     new(tmp41);
     for k:=0 to optel_pack-1 do begin
+                  tmp4:=1;
                   inc(data_optel, 11);
 
                   tmp11^:=data_optel^; //8 + 3 =11   input
@@ -2219,13 +2220,14 @@ try
                   tmp41^:=data_optel^; //12 + 3 =15
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then begin
+                  if (scaner_type <> 2)and(r_val<>0) then begin
       //               enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
     //                 enc_cur_x := enc_cur_x_100;//r_val;
                      enc_cur_x := r_val;
                      if enc_cur_x > old_x_position then scan_direction:=true else scan_direction:=false;
                      old_x_position:= enc_cur_x;
                   end;
+                  if r_val = 0 then tmp4:=0;
                   //enc_cur_x := enc_cur_x +0.1;
 
                   tmp11^:=data_optel^; //13 + 3 =16
@@ -2237,9 +2239,10 @@ try
                   tmp41^:=data_optel^; //16 + 3 =19
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
-                  if scaner_type <> 2 then begin
+                  if (scaner_type <> 2)and(r_val<>0) then begin
                      enc_cur_y:=r_val;
                   end;
+                  if r_val = 0 then tmp4:=0;
 
                   tmp1:=data_optel^; //17 + 3 =20            ///alaram
                   inc(data_optel);
@@ -2325,12 +2328,14 @@ try
                       inc(data_optel);
                   end;
 
-                  Fill_draw_ascn_new;
-                  Do_Average;
-                  Do_Alarm;
-                  Do_Proc_Enc(k);
-                  Do_Select_TOF;
-                  Do_Update_scann_arr;
+                  if tmp4 =1 then begin
+                     Fill_draw_ascn_new;
+                     Do_Average;
+                     Do_Alarm;
+                     Do_Proc_Enc(k);
+                     Do_Select_TOF;
+                     Do_Update_scann_arr;
+                  end;
             end;
 
         Dispose(tmp11);
@@ -3674,10 +3679,11 @@ begin
             form15.Image1.Canvas.Font.Color:=clWhite;
             form15.Image1.Canvas.Brush.Color:=clBlack;
 
-            if SpTBXCheckBox11.Checked then begin
+            if (SpTBXCheckBox11.Checked) or (SpTBXCheckBox32.Checked)
+                                         or (SpTBXCheckBox33.Checked)
+                                         or (SpTBXCheckBox34.Checked) then begin
                 form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
-            end;
-            if SpTBXCheckBox10.Checked  then begin
+            end else begin
               if form1.radiobutton26.Checked  then begin
                 form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
               end;

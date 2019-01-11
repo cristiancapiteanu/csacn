@@ -78,13 +78,6 @@ object Form15: TForm15
     ParentColor = False
     ParentFont = False
   end
-  object Label6: TLabel
-    Left = 840
-    Top = 808
-    Width = 32
-    Height = 13
-    Caption = 'Label6'
-  end
   object GroupBox1: TGroupBox
     Left = 4
     Top = 0

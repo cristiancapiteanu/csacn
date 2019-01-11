@@ -651,13 +651,13 @@ try
                   end;
 
 // scann_counter_old :=scann_counter;
-          if scaner_type = 2 then begin
+       //   if scaner_type = 2 then begin
                     // x_temp := xy_coor_old.x+index*(xy_coor.x-xy_coor_old.x)/optel_pack;
                     // y_temp := xy_coor_old.y+index*(xy_coor.y-xy_coor_old.y)/optel_pack;
-          end else begin
+     //     end else begin
                    //   x_temp := enc_cur_x;
                   //   y_temp := enc_cur_y;
-          end;
+     //     end;
 
 
 
@@ -665,18 +665,21 @@ try
           begin
                   dx:= abs(scann_arr[scann_counter].xy_coor.x - enc_cur_x);
                   dy:= abs(scann_arr[scann_counter].xy_coor.y - enc_cur_y);
-                  if ( dx >= (x_axis_rez/2) ) or ( dy >= (y_axis_rez) ) then begin
-
+           //       if ( (dx >= (x_axis_rez/2)) ) or ( dy >= (y_axis_rez) ) then begin
+                  if ( (dx >= (x_axis_rez/2)) and scan_direction) or ( dy >= (y_axis_rez) ) then begin
+                 // if ( dy >= (y_axis_rez/4) )then x_temp:=enc_cur_x;
                          //if scan_direction then begin
-                  if scann_counter > 3 then
-                         if (scann_arr[scann_counter-2].xy_coor.x - scann_arr[scann_counter].xy_coor.x)> 0 then begin
-                            enc_cur_x := enc_cur_x - 1 * x_axis_rez;
+                  //if scann_counter > 3 then
+                     //    if scan_direction then begin
+                     //    form15.Label4.Caption:= floattostr(x_temp)+ '   ' + floattostr(enc_cur_x);
+                    {     if (enc_cur_x- x_temp)> 0 then begin
+                            enc_cur_x := enc_cur_x - form15.TrackBar1.Position * x_axis_rez;
                             form15.Label6.Caption := 'minus';
                          end else begin
-                            enc_cur_x := enc_cur_x + 1 * x_axis_rez;
+                           // enc_cur_x := enc_cur_x + 1 * x_axis_rez;
                             form15.Label6.Caption := 'plus';
                          end;
-
+                     }
                      inc(scann_counter);
 
                      scann_arr[scann_counter].xy_coor.x := enc_cur_x;

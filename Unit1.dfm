@@ -9075,7 +9075,7 @@ object Form1: TForm1
       end
     end
     object GroupBox8: TGroupBox
-      Left = 1190
+      Left = 300
       Top = 8
       Width = 377
       Height = 749

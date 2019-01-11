@@ -53,7 +53,6 @@ type
     Label2: TLabel;
     SpTBXProgressBar1: TSpTBXProgressBar;
     Label3: TLabel;
-    Label6: TLabel;
     procedure CheckBox1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure SpTBXButton1Click(Sender: TObject);

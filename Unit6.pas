@@ -1589,6 +1589,7 @@ begin
 
               end else begin end;
           end else begin
+                  CreateDir(s+s2);
                   lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
