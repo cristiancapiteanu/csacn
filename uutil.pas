@@ -273,6 +273,8 @@ function US1_calc:real;
 procedure LoadTranslation;
 procedure SetTranslation;
 procedure Do_Proc_Enc(index:integer);
+procedure ExecuteAndWait(const aCommando: string);
+procedure DeleteDirectory(const Name: string);
 
 
 var
@@ -553,7 +555,58 @@ implementation
 
 uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
 
+procedure DeleteDirectory(const Name: string);
+var
+  F: TSearchRec;
+begin
+  if FindFirst(Name + '\*', faAnyFile, F) = 0 then begin
+    try
+      repeat
+        if (F.Attr and faDirectory <> 0) then begin
+          if (F.Name <> '.') and (F.Name <> '..') then begin
+            DeleteDirectory(Name + '\' + F.Name);
+          end;
+        end else begin
+          DeleteFile(Name + '\' + F.Name);
+        end;
+      until FindNext(F) <> 0;
+    finally
+      FindClose(F);
+    end;
+    RemoveDir(Name);
+  end;
+end;
 
+procedure ExecuteAndWait(const aCommando: string);
+var
+  tmpStartupInfo: TStartupInfo;
+  tmpProcessInformation: TProcessInformation;
+  tmpProgram: String;
+begin
+  tmpProgram := trim(aCommando);
+  FillChar(tmpStartupInfo, SizeOf(tmpStartupInfo), 0);
+  with tmpStartupInfo do
+  begin
+    cb := SizeOf(TStartupInfo);
+    wShowWindow := SW_HIDE;
+  end;
+
+  if CreateProcess(nil, pchar(tmpProgram), nil, nil, true, CREATE_NO_WINDOW,
+    nil, nil, tmpStartupInfo, tmpProcessInformation) then
+  begin
+    // loop every 10 ms
+    while WaitForSingleObject(tmpProcessInformation.hProcess, 10) > 0 do
+    begin
+      Application.ProcessMessages;
+    end;
+    CloseHandle(tmpProcessInformation.hProcess);
+    CloseHandle(tmpProcessInformation.hThread);
+  end
+  else
+  begin
+    RaiseLastOSError;
+  end;
+end;
 procedure Do_Proc_Enc(index:integer);
 var
 dx,dy:real;

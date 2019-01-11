@@ -1140,14 +1140,16 @@ end;
      }
 procedure TForm6.Button12Click(Sender: TObject);
 var
-i:integer;
+i,j:integer;
 lFile: TFileStream;
 file_data:TScan_File;
 scanFile: File of TScann_arr;
 
-s_tmp:string;
+s_tmp,s,s1,s2,s3:string;
 is_tmp,i1,i2:integer;
 
+lFile1: TFileStream;
+file_data1:Tfile_pal;
 begin
 //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 load_file:=true;
@@ -1162,16 +1164,40 @@ have_data11 := false;
          Screen.Cursor := crHourGlass;
          if not form19.visible then  form19.show;
          if not form19.visible then  form19.BringToFront;
-         application.ProcessMessages;
+          application.ProcessMessages;
+
           label33.Caption :='File name : '+form1.OpenDialog1.FileName;
-          lFile := TFileStream.Create(form1.OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
+          s:=form1.OpenDialog1.FileName;
+          if form8.SpTBXListBox2.ItemIndex=0 then s1:='.lsc';
+          if form8.SpTBXListBox2.ItemIndex=1 then s1:='.tofd';
+          if form8.SpTBXListBox2.ItemIndex=2 then s1:='.csc';
+          if pos(s1,s) >0 then
+             s:=copy(s,0,pos(s1,s)-1);
+          for i:=0 to Length(s) do begin
+              if s[i]='\' then j:=i;
+          end;
+          s2:=copy(s,j+1,length(s));
+          s:=copy(s,0,j);
+
+          DeleteDirectory(s+s2);
+          CreateDir(s+s2);
+          s3:='e '+s+s2+s1+'.rar ' +s+s2;
+//                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
+          ExecuteAndWait('rar.exe '+s3);
+
+
+
+          lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(TScan_File));
 		      lFile.Free;
+
           //checkbox2.Checked:=false;
           scann_counter:=file_data.scann_counter;
           //SetLength(scann_arr, scann_counter+2);
 
-          AssignFile(scanFile,form1.OpenDialog1.FileName+ '_raw');
+          pallete_file_name:=s+s2+'\'+s2+s1 + '_pal';
+
+          AssignFile(scanFile,s+s2+'\'+s2+s1 + '_raw');
           Reset(scanFile);
           try
              for i:=0 to scann_counter-1 do
@@ -1373,7 +1399,17 @@ have_data11 := false;
           have_data10:=false;
 
 
+          Screen.Cursor := crHourGlass;
+
+          try
+             form12.OpenPallete;
+          except
+                on E : Exception do
+                   ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+          end;
+
           form12.Only_Draw_Pallete;;
+          application.ProcessMessages;
           have_data2:=false;
           Draw_axes;
           have_data2:=true;
@@ -1392,7 +1428,7 @@ have_data11 := false;
           //Draw_axes;
           //Draw_SideView;
           Draw_TOFD_OX;
-
+          DeleteDirectory(s+s2);
      //     timer1.Enabled :=true;
           Screen.Cursor := crArrow;
           //have_data5:=false;
@@ -1413,12 +1449,13 @@ end;
 
 procedure TForm6.Button16Click(Sender: TObject);
 var
-i:integer;
+i,j:integer;
 lFile: TFileStream;
 scanFile: File of TScann_arr;
     file_data:TScan_File;
     file_scan: TScann_arr;
-s,s1:string;
+s,s1,s2,s3:string;
+
 lFile1: TFileStream;
 file_data1:Tfile_pal;
 begin
@@ -1472,9 +1509,6 @@ begin
           file_data.File_us.us_ascan_hf:=us_ascan_hf;
           file_data.File_us.us_probe_delay:=us_probe_delay1;
 
-
-
-
           file_data.File_ms.X_axis_rez:=(X_axis_rez) ;
           file_data.File_ms.X_axis_len :=(X_axis_len) ;
           file_data.File_ms.Y_axis_rez:=(Y_axis_rez );
@@ -1502,7 +1536,7 @@ begin
           SetLength(file_data.defect ,defect_count);
           for i:=0 to defect_count-1 do
                     file_data.defect[i]:=defect[i];
-           file_data.scaner_type:=scaner_type;
+          file_data.scaner_type:=scaner_type;
 
 
           setlength(file_data1,1);
@@ -1516,20 +1550,30 @@ begin
           if form8.SpTBXListBox2.ItemIndex=0 then s1:='.lsc';
           if form8.SpTBXListBox2.ItemIndex=1 then s1:='.tofd';
           if form8.SpTBXListBox2.ItemIndex=2 then s1:='.csc';
+
           if pos(s1,form1.SaveDialog1.FileName) >0 then
-            s:=copy(form1.SaveDialog1.FileName,0,pos(s1,form1.SaveDialog1.FileName)-1);
-          if FileExists(s+s1) then begin
+             s:=copy(form1.SaveDialog1.FileName,0,pos(s1,form1.SaveDialog1.FileName)-1);
+
+          for i:=0 to Length(s) do begin
+              if s[i]='\' then j:=i;
+          end;
+          s2:=copy(s,j+1,length(s));
+          s:=copy(s,0,j);
+
+          if FileExists(s+s2+s1) then begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
-                  lFile := TFileStream.Create(s+s1, fmCreate);
+                  DeleteDirectory(s+s2);
+                  CreateDir(s+s2);
+                  lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
 
-                  lFile1 := TFileStream.Create(s+s1+'_pal', fmCreate);
-      		        TKBDynamic.WriteTo(lFile1, file_data, TypeInfo(Tfile_pal));
+                  lFile1 := TFileStream.Create(s+s2+'\'+s2+s1+'_pal', fmCreate);
+      		        TKBDynamic.WriteTo(lFile1, file_data1, TypeInfo(Tfile_pal));
 		              lFile1.Free;
 
-                  AssignFile(scanFile,s+s1+'_raw');
+                  AssignFile(scanFile,s+s2+'\'+s2+s1+'_raw');
                   Rewrite(scanFile);
                   try
                    for i:=0 to scann_counter-1 do
@@ -1537,20 +1581,25 @@ begin
                   finally
                          CloseFile(scanFile);
                   end;
+
+                  DeleteFile(s+s2+s1);
+                  s3:='a -ep '+ s2+s1+ ' ' + s + s2;
+//                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
+                  ExecuteAndWait('rar.exe '+s3);
 
               end else begin end;
           end else begin
-                  lFile := TFileStream.Create(s+s1, fmCreate);
+                  lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
 		              lFile.Free;
 
-                  
-                  lFile1 := TFileStream.Create(s+s1+'_pal', fmCreate);
-      		        TKBDynamic.WriteTo(lFile1, file_data, TypeInfo(Tfile_pal));
+
+                  lFile1 := TFileStream.Create(s+s2+'\'+s2+s1+'_pal', fmCreate);
+      		        TKBDynamic.WriteTo(lFile1, file_data1, TypeInfo(Tfile_pal));
 		              lFile1.Free;
 
-                  
-                  AssignFile(scanFile,s+s1+'_raw');
+
+                  AssignFile(scanFile,s+s2+'\'+s2+s1+'_raw');
                   Rewrite(scanFile);
                   try
                    for i:=0 to scann_counter-1 do
@@ -1559,6 +1608,8 @@ begin
                          CloseFile(scanFile);
                   end;
 
+                  s3:='a -ep '+ s2+s1+ ' ' + s + s2;
+                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
           end;
 
       end;
