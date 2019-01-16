@@ -54,5 +54,6 @@ begin
   Application.CreateForm(TForm1, Form1);
   LoadTranslation;
   start_redy:=true;
+  SetOffline;
   Application.Run;
 end.

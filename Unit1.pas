@@ -11513,7 +11513,7 @@ end;
 
 procedure TForm1.SpTBXButton174Click(Sender: TObject);
 begin
- timer2.Enabled:= false;
+  timer2.Enabled:= false;
 
   form8.SpTBXListBox2.ItemIndex := 2;
 

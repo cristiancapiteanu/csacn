@@ -1182,7 +1182,6 @@ have_data11 := false;
           DeleteDirectory(s+s2);
           CreateDir(s+s2);
           s3:='e '+s+s2+s1+' ' +s+s2;
-//                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
           ExecuteAndWait('rar.exe '+s3);
 
 
@@ -1467,6 +1466,11 @@ begin
 
 	    form1.SaveDialog1.InitialDir:='C:\Saphirp\data';
       if form1.SaveDialog1.Execute then begin
+         Screen.Cursor := crHourGlass;
+         if not form19.visible then  form19.show;
+         if not form19.visible then  form19.BringToFront;
+          application.ProcessMessages;
+
           file_data.scann_counter :=scann_counter;
      //     SetLength(file_data.scann_arr ,scann_counter);
 
@@ -1584,8 +1588,8 @@ begin
 
                   DeleteFile(s+s2+s1);
                   s3:='a -ep '+ s2+s1+ ' ' + s + s2;
-//                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
                   ExecuteAndWait('rar.exe '+s3);
+                  DeleteDirectory(s+s2);
 
               end else begin end;
           end else begin
@@ -1609,8 +1613,10 @@ begin
                          CloseFile(scanFile);
                   end;
 
+                  //DeleteFile(s+s2+s1);
                   s3:='a -ep '+ s2+s1+ ' ' + s + s2;
-                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
+                  ExecuteAndWait('rar.exe '+s3);
+                  DeleteDirectory(s+s2);
           end;
 
       end;
@@ -1618,7 +1624,9 @@ begin
     on E : Exception do
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
     end;
-        form6.BringToFront;
+       if form19.visible then form19.Hide;
+    Screen.Cursor := crArrow;
+     form6.BringToFront;
 
 end;
 

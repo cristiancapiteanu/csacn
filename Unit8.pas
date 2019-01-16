@@ -107,14 +107,20 @@ begin
   form6.WindowState:= wsMinimized;//wsNormal	;
   form1.WindowState:= wsNormal	;
 
+  SetOffline;
+  
   if ParamCount > 0 then begin
+  {
     form1.Hide;
-
     form8.Show;
-      top:=0;
-     left:=0;
-     width:=1300;
-     height:=850;
+    top:=0;
+    left:=0;
+    width:=1300;
+    height:=850;
+   }
+   if ParamStr(0) = 'cscan' then begin
+   end;
+
   end else begin
     //form1.FormStyle:=fsStayOnTop;
    // form1.BringToFront;

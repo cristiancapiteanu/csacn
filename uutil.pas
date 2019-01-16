@@ -275,6 +275,7 @@ procedure SetTranslation;
 procedure Do_Proc_Enc(index:integer);
 procedure ExecuteAndWait(const aCommando: string);
 procedure DeleteDirectory(const Name: string);
+procedure SetOffline;
 
 
 var
@@ -554,6 +555,22 @@ scan_direction:boolean;
 implementation
 
 uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
+procedure SetOffline;
+begin
+     form1.SpTBXButton174.Visible:=false;
+    form1.SpTBXButton173.Visible:=false;
+    form1.SpTBXButton72.Visible:=false;
+if ParamCount > 0 then begin
+   if ParamStr(1) = 'cscan' then begin
+       form1.SpTBXButton174.Visible:=true;
+       form1.SpTBXButton173.Visible:=true;
+       form1.SpTBXButton72.Visible:=true;
+       form1.SpTBXButton174Click(nil);
+   end;
+  end else begin
+
+  end;
+end;
 
 procedure DeleteDirectory(const Name: string);
 var
