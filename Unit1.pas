@@ -2328,14 +2328,15 @@ try
                       inc(data_optel);
                   end;
 
-                  if tmp4 =1 then begin
+                  //if (tmp4 = 0) and start_scann then begin
+                  //end else begin
                      Fill_draw_ascn_new;
                      Do_Average;
                      Do_Alarm;
-                     Do_Proc_Enc(k);
+                     if (tmp4 = 1) then Do_Proc_Enc(k);
                      Do_Select_TOF;
                      Do_Update_scann_arr;
-                  end;
+                  //end;
             end;
 
         Dispose(tmp11);

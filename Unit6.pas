@@ -1181,7 +1181,7 @@ have_data11 := false;
 
           DeleteDirectory(s+s2);
           CreateDir(s+s2);
-          s3:='e '+s+s2+s1+'.rar ' +s+s2;
+          s3:='e '+s+s2+s1+' ' +s+s2;
 //                  ShellExecute(handle,'open',PChar('rar.exe'), PChar(s3) ,'',SW_SHOWNORMAL);
           ExecuteAndWait('rar.exe '+s3);
 
