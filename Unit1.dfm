@@ -1,6 +1,6 @@
 object Form1: TForm1
   Left = 300
-  Top = 21
+  Top = 8
   BorderStyle = bsNone
   Caption = 'US Card'
   ClientHeight = 811
@@ -9024,7 +9024,6 @@ object Form1: TForm1
         Width = 297
         Height = 81
         Caption = 'Line Scan'
-        Enabled = False
         TabOrder = 6
         OnClick = SpTBXButton95Click
       end
@@ -9034,7 +9033,6 @@ object Form1: TForm1
         Width = 297
         Height = 81
         Caption = 'TOF-D'
-        Enabled = False
         TabOrder = 7
         OnClick = SpTBXButton96Click
       end

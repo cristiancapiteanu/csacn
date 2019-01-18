@@ -1465,7 +1465,7 @@ begin
       if form8.SpTBXListBox2.ItemIndex=2 then form1.SaveDialog1.Filter :='C-Scan (*.csc)|*.csc';
 
 	    form1.SaveDialog1.InitialDir:='C:\Saphirp\data';
-      if form1.SaveDialog1.Execute then begin
+       if form1.SaveDialog1.Execute then begin
          Screen.Cursor := crHourGlass;
          if not form19.visible then  form19.show;
          if not form19.visible then  form19.BringToFront;
@@ -1587,7 +1587,7 @@ begin
                   end;
 
                   DeleteFile(s+s2+s1);
-                  s3:='a -ep '+ s2+s1+ ' ' + s + s2;
+                  s3:='a -ep '+ '"' +s2 +s1+ '"'+ ' ' + '"' + s +s2+ '"';
                   ExecuteAndWait('rar.exe '+s3);
                   DeleteDirectory(s+s2);
 
@@ -1614,7 +1614,7 @@ begin
                   end;
 
                   //DeleteFile(s+s2+s1);
-                  s3:='a -ep '+ s2+s1+ ' ' + s + s2;
+                  s3:='a -ep '+ '"' +s2 +s1+ '"'+ ' ' + '"' + s +s2+ '"';
                   ExecuteAndWait('rar.exe '+s3);
                   DeleteDirectory(s+s2);
           end;

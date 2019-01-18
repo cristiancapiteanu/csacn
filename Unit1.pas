@@ -2221,14 +2221,14 @@ try
                   inc(data_optel);
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if (scaner_type <> 2)and(r_val<>0) then begin
-      //               enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
-    //                 enc_cur_x := enc_cur_x_100;//r_val;
                      enc_cur_x := r_val;
+                    // enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
+                   //  enc_cur_x := enc_cur_x_100;//r_val;
                      if enc_cur_x > old_x_position then scan_direction:=true else scan_direction:=false;
                      old_x_position:= enc_cur_x;
                   end;
                   if r_val = 0 then tmp4:=0;
-                  //enc_cur_x := enc_cur_x +0.1;
+                  //enc_cur_x := enc_cur_x +0.1; scan_direction:=true;
 
                   tmp11^:=data_optel^; //13 + 3 =16
                   inc(data_optel);
@@ -2333,7 +2333,8 @@ try
                      Fill_draw_ascn_new;
                      Do_Average;
                      Do_Alarm;
-                     if (tmp4 = 1) then Do_Proc_Enc(k);
+                     if (tmp4 = 1) then
+                        Do_Proc_Enc(k);
                      Do_Select_TOF;
                      Do_Update_scann_arr;
                   //end;
@@ -8172,9 +8173,9 @@ begin
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
 
-    SpTBXButton95.visible := false;
-    SpTBXButton96.visible := false;
-    SpTBXButton98.visible := false;
+   // SpTBXButton95.visible := false;
+   // SpTBXButton96.visible := false;
+   // SpTBXButton98.visible := false;
     if j=0 then begin
       SpTBXButton99.visible := false;
       SpTBXButton100.visible := false;
@@ -8215,9 +8216,9 @@ begin
               if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
-    SpTBXButton95.visible := false;
-    SpTBXButton96.visible := false;
-    SpTBXButton98.visible := false;
+  //  SpTBXButton95.visible := false;
+  //  SpTBXButton96.visible := false;
+  //  SpTBXButton98.visible := false;
     if j=0 then begin
       SpTBXButton99.visible := false;
       SpTBXButton100.visible := false;
@@ -9434,15 +9435,24 @@ SpTBXButton92.Color := clMenu;
   GroupBox9.Visible :=true;
 
 
-  SpTBXButton95.Visible:= true;
-  SpTBXButton96.Visible:= true;
-  SpTBXButton98.Visible:= true;
+ // SpTBXButton95.Visible:= true;
+ // SpTBXButton96.Visible:= true;
+ // SpTBXButton98.Visible:= true;
 
 
   SpTBXButton99.Visible:= false;
   SpTBXButton100.Visible:= false;
   SpTBXButton101.Visible:= false;
   SpTBXButton102.Visible:= false;
+
+
+
+               form1.SpTBXButton72.Visible:=po_t;
+             form1.SpTBXButton173.Visible:=po_b;
+             form1.SpTBXButton95.Visible:=s_b;
+             form1.SpTBXButton98.Visible:=s_c;
+             form1.SpTBXButton96.Visible:=s_t;
+             form1.SpTBXButton174.Visible:=po_c;
 
 
 end;

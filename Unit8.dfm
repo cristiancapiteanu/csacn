@@ -1,6 +1,6 @@
 object Form8: TForm8
   Left = 265
-  Top = 9
+  Top = 10
   BorderStyle = bsNone
   Caption = 'US Card'
   ClientHeight = 697

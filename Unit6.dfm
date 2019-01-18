@@ -1,6 +1,6 @@
 object Form6: TForm6
-  Left = 228
-  Top = 214
+  Left = 241
+  Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
@@ -5799,8 +5799,8 @@ object Form6: TForm6
     end
   end
   object SpTBXCheckBox11: TSpTBXCheckBox
-    Left = 5
-    Top = 858
+    Left = 709
+    Top = 778
     Width = 116
     Height = 15
     Caption = 'Correct missing data'

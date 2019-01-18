@@ -108,7 +108,10 @@ begin
   form1.WindowState:= wsNormal	;
 
   SetOffline;
-  
+
+  form1.CheckBox2.Checked:=true;
+  Screen.Cursor := crArrow;
+
   if ParamCount > 0 then begin
   {
     form1.Hide;
@@ -118,15 +121,12 @@ begin
     width:=1300;
     height:=850;
    }
-   if ParamStr(0) = 'cscan' then begin
-   end;
-
   end else begin
     //form1.FormStyle:=fsStayOnTop;
    // form1.BringToFront;
-    form1.CheckBox2.Checked:=true;
+    //form1.CheckBox2.Checked:=true;
   end;
-       Screen.Cursor := crArrow;
+
 
 end;
 
@@ -327,9 +327,9 @@ form6.GroupBox27.Visible:=true;
       form13.SpTBXCheckBox4.Visible:=true;
       form13.SpTBXCheckBox5.Visible:=false;
       form13.SpTBXCheckBox4.Checked:=true;
-            form10.SpTBXCheckBox1.Checked:=true;
+      form10.SpTBXCheckBox1.Checked:=true;
       form10.SpTBXCheckBox1.Enabled:=true;
-       up_date_graph:=true;
+      up_date_graph:=true;
       form6.Button4Click(sender);
   end;
 

@@ -1699,18 +1699,16 @@ begin
          load_file:=false;
 
 
-         Form8.SpTBXListBox2Click(Sender); //CRISTIAN 12,12
+        // Form8.SpTBXListBox2Click(Sender); //CRISTIAN 18,01
          form17.Hide;
-         form6.FormStyle:=fsStayOnTop;
+        // form6.FormStyle:=fsStayOnTop; //CRISTIAN 18,01
          // form8.BringToFront;
-         form6.BringToFront;        //CRISTIAN 12,12
+        // form6.BringToFront;        //CRISTIAN 18,01
       //        form19.hide;
-         form6.Button16Click(sender);  //CRISTIAN 12,12
+         form6.Button16Click(sender);  //CRISTIAN 18,01
        //  ShowMessage(IntToStr(scann_counter_old1)+' '+IntToStr(scann_counter));
       end;
-
-
-           Screen.Cursor := crArrow;
+      Screen.Cursor := crArrow;
 end;
 
 procedure TForm14.FormHide(Sender: TObject);

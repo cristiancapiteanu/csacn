@@ -550,26 +550,111 @@ possbar:integer;
 old_x_position:real;
 scan_direction:boolean;
 
+s_b, s_c, s_t:boolean;
+po_b, po_c, po_t:boolean;
+
 
 
 implementation
 
 uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
 procedure SetOffline;
+var
+s, s1:string;
+i, j: integer;
 begin
-     form1.SpTBXButton174.Visible:=false;
-    form1.SpTBXButton173.Visible:=false;
-    form1.SpTBXButton72.Visible:=false;
-if ParamCount > 0 then begin
-   if ParamStr(1) = 'cscan' then begin
-       form1.SpTBXButton174.Visible:=true;
-       form1.SpTBXButton173.Visible:=true;
-       form1.SpTBXButton72.Visible:=true;
-       form1.SpTBXButton174Click(nil);
-   end;
-  end else begin
+    {
+s:='';
 
-  end;
+     if CheckBox1.Checked then s:=s+'A' else s:=s+'B';   //b
+     if CheckBox2.Checked then s:=s+'A' else s:=s+'B';      //c
+     if CheckBox3.Checked then s:=s+'A' else s:=s+'B';         //t
+
+     if CheckBox5.Checked then s:=s+'A' else s:=s+'B';   //b
+     if CheckBox6.Checked then s:=s+'A' else s:=s+'B';      //c
+     if CheckBox7.Checked then s:=s+'A' else s:=s+'B';         //t
+
+     i:= random(10);
+     s1:='';
+
+     s1:=chr(ord('A')+i);
+
+     for j:=1 to 6 do begin
+         s1:=s1+chr(ord(s[j])+j+i);
+     end;
+
+
+    Edit1.Text:=s1;
+    }
+
+    s_b:=false;
+    s_c:=false;
+    s_t:=false;
+
+    po_b:=false;
+    po_c:=false;
+    po_t:=false;
+
+{
+    form1.SpTBXButton174.Visible:=false;   //c
+    form1.SpTBXButton173.Visible:=false;    //b
+    form1.SpTBXButton72.Visible:=false;     //t
+
+    form1.SpTBXButton95.Visible:=false;    //b
+    form1.SpTBXButton96.Visible:=false;    //t
+    form1.SpTBXButton98.Visible:=false; //c
+}
+
+    if ParamCount > 0 then begin
+
+       s:=ParamStr(1);
+       if Length(s)=7 then begin
+          i:=ord(s[1])-ord('A');
+          s1:='';
+          for j:= 1 to 6 do begin
+              s1:= s1 + chr(ord(s[1+j])-j-i);
+          end;
+          //b
+          if s1[1]= 'A' then begin
+             s_b:=true;
+          end else begin end;
+          //c
+          if s1[2]= 'A' then begin
+             s_c:=true;
+          end else begin end;
+          //t
+          if s1[3]= 'A' then begin
+             s_t:=true;
+          end else begin end;
+
+          //b
+          if s1[4]= 'A' then begin
+             po_b:=true;
+          end else begin end;
+          //c
+          if s1[5]= 'A' then begin
+             po_c:=true;
+             //form1.SpTBXButton173.Visible:=true;
+             //form1.SpTBXButton72.Visible:=true;
+             if (s1[1]='B') and (s1[2]='B')and(s1[3]='B') then
+                form1.SpTBXButton174Click(nil);
+          end else begin end;
+          //t
+          if s1[6]= 'A' then begin
+             po_t:=true;
+          end else begin end;
+       end;
+
+
+    end else begin
+
+    end;
+             form1.SpTBXButton72.Visible:=po_t;
+             form1.SpTBXButton173.Visible:=po_b;
+             form1.SpTBXButton95.Visible:=s_b;
+             form1.SpTBXButton98.Visible:=s_c;
+             form1.SpTBXButton96.Visible:=s_t;
+             form1.SpTBXButton174.Visible:=po_c;
 end;
 
 procedure DeleteDirectory(const Name: string);
