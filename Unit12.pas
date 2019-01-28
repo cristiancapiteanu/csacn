@@ -966,34 +966,33 @@ begin
         0 :begin
             j:=1;
             r_val:=scann_arr[1].US_Mess[j].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            j:=1;
+            j:=2;
             r_val:=scann_arr[1].US_Mess[j].tof;
-            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            j:=2;
-            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:=scann_arr[1].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=scann_arr[1].US_Mess[2].tof;
+         //   r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            j:=2;
-            r_val:=scann_arr[1].US_Mess[j].tof;
-           // r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         4 :begin
-            r_val:=scann_arr[1].US_Mess[1].tof;
-            r_val1:=scann_arr[1].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         5 :begin
-            r_val:=scann_arr[1].US_Mess[1].tof;
-          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-
-            r_val1:=scann_arr[1].US_Mess[2].tof;
-          //  r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-
-            r_val := r_val1- r_val;
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
       end;
 
@@ -1010,35 +1009,34 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             j:=1;
-            r_val:=scann_arr[i].US_Mess[j].tof;
+            r_val:=scann_arr[1].US_Mess[j].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            j:=1;
-            r_val:=scann_arr[i].US_Mess[j].tof;
+            j:=2;
+            r_val:=scann_arr[1].US_Mess[j].tof;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            j:=2;
-            r_val:=scann_arr[i].US_Mess[j].tof;
+            r_val:=scann_arr[1].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=scann_arr[1].US_Mess[2].tof;
+         //   r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            j:=2;
-            r_val:=scann_arr[i].US_Mess[j].tof;
-       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         4 :begin
-            r_val:=scann_arr[i].US_Mess[1].tof;
-            r_val1:=scann_arr[i].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         5 :begin
-            r_val:=scann_arr[i].US_Mess[1].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-
-            r_val1:=scann_arr[i].US_Mess[2].tof;
-       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-
-            r_val := r_val1- r_val;
+            j:=3;
+            r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
       end;
 
@@ -1046,8 +1044,8 @@ begin
          if r_val<r_val_min then r_val_min:= r_val;
          if r_val>r_val_max then r_val_max:= r_val;
 
-       end;
-        r_val_avg:=r_val_avg/scann_counter;
+      end;
+      r_val_avg:=r_val_avg/scann_counter;
 
 
       case form6.combobox1.ItemIndex of
@@ -1078,6 +1076,10 @@ begin
               r_val_min:=(Gates1[2].start - Gates1[1].start - Gates1[1].width);
           //  if r_val_max > (Gates1[2].start - Gates1[1].start + Gates1[2].width) then
               r_val_max:=(Gates1[2].start - Gates1[1].start + Gates1[2].width);
+        end ;
+        6 :begin
+         //   if r_val_min < Gates1[1].start then r_val_min:=Gates1[1].start;
+         //   if r_val_max > (Gates1[1].start + Gates1[1].width)  then r_val_max:=(Gates1[1].start + Gates1[1].width);
         end ;
       end;
 
@@ -1149,6 +1151,7 @@ begin
   
        if form13.SpTBXCheckBox3.Checked then form13.Button7Click(nil);
 
+        
 
    Screen.Cursor := crHourGlass;
     //start_zoom_offset:=true;
@@ -1322,12 +1325,15 @@ b_form15_on :=false;
       SpTBXCheckBox1.Checked :=true;
 
       ComboBox1.Items.Clear;
-      ComboBox1.Items.Add('Laufzeit T(A) [us]');
+     // ComboBox1.Items.Add('Laufzeit T(A) [us]');
       ComboBox1.Items.Add('Schallweg s(A) [mm]');
-      ComboBox1.Items.Add('Laufzeit T(B) [us]');
+     // ComboBox1.Items.Add('Laufzeit T(B) [us]');
       ComboBox1.Items.Add('Schallweg s(B) [mm]');
-      ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
+     // ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
       ComboBox1.Items.Add('Ds = s(B)-s(A) [mm]');
+      ComboBox1.Items.Add('H[A] [%]');
+      ComboBox1.Items.Add('H[B] [%]');
+      ComboBox1.Items.Add('H[C] [%]');
       ComboBox1.ItemIndex:=0;
 
 end;
@@ -1535,7 +1541,8 @@ begin
   form6.have_data1:=false;
   form6.have_data10:=false;
   form6.have_data11:=true;
-
+  Draw_Pallete;
+  
 end;
 
 procedure TForm12.SpTBXTrackBar4Change(Sender: TObject);

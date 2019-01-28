@@ -1,11 +1,11 @@
 object Form6: TForm6
-  Left = 241
+  Left = 206
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 802
-  ClientWidth = 1288
+  ClientHeight = 832
+  ClientWidth = 1286
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -49,7 +49,7 @@ object Form6: TForm6
       Left = 1
       Top = 137
       Width = 458
-      Height = 16
+      Height = 270
       Align = alTop
       Caption = '      View A-Scan'
       Font.Charset = DEFAULT_CHARSET
@@ -74,17 +74,17 @@ object Form6: TForm6
       object Label1: TLabel
         Left = 8
         Top = 200
-        Width = 37
+        Width = 17
         Height = 13
-        Caption = 'Label1'
+        Caption = '0,0'
       end
       object Label8: TLabel
-        Left = 323
+        Left = 343
         Top = 200
-        Width = 37
+        Width = 17
         Height = 13
         Alignment = taRightJustify
-        Caption = 'Label8'
+        Caption = '0,0'
       end
       object GroupBox15: TGroupBox
         Left = 8
@@ -96,24 +96,24 @@ object Form6: TForm6
         ParentCtl3D = False
         TabOrder = 0
         object RadioButton20: TSpTBXRadioButton
-          Left = 56
-          Top = 50
+          Left = 64
+          Top = 66
           Width = 39
           Height = 15
           Caption = 'TOF'
           TabOrder = 0
-          TabStop = True
           OnClick = RadioButton20Click
-          Checked = True
         end
         object RadioButton19: TSpTBXRadioButton
           Left = 9
-          Top = 50
+          Top = 66
           Width = 44
           Height = 15
           Caption = 'Amp'
           TabOrder = 1
+          TabStop = True
           OnClick = RadioButton19Click
+          Checked = True
         end
         object ComboBox1: TComboBox
           Left = 8
@@ -132,8 +132,8 @@ object Form6: TForm6
           OnChange = ComboBox1Change
         end
         object RadioButton25: TSpTBXCheckBox
-          Left = 159
-          Top = 24
+          Left = 127
+          Top = 64
           Width = 50
           Height = 15
           Caption = '[mm]'
@@ -146,8 +146,8 @@ object Form6: TForm6
       object GroupBox14: TGroupBox
         Left = 12
         Top = 272
-        Width = 245
-        Height = 41
+        Width = 69
+        Height = 161
         Caption = 'Gates'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -174,8 +174,8 @@ object Form6: TForm6
           Checked = True
         end
         object RadioButton17: TSpTBXRadioButton
-          Left = 88
-          Top = 18
+          Left = 8
+          Top = 42
           Width = 50
           Height = 15
           Caption = 'Gate 2'
@@ -189,8 +189,8 @@ object Form6: TForm6
           OnClick = RadioButton17Click
         end
         object RadioButton18: TSpTBXRadioButton
-          Left = 175
-          Top = 18
+          Left = 7
+          Top = 66
           Width = 50
           Height = 15
           Caption = 'Gate 3'
@@ -209,7 +209,7 @@ object Form6: TForm6
         Top = 0
         Width = 16
         Height = 16
-        Caption = '+'
+        Caption = '-'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -222,7 +222,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 201
+      Top = 689
       Width = 458
       Height = 16
       Align = alTop
@@ -1312,7 +1312,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 185
+      Top = 673
       Width = 458
       Height = 16
       Align = alTop
@@ -3064,7 +3064,7 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 217
+      Top = 705
       Width = 458
       Height = 16
       Align = alTop
@@ -3156,9 +3156,9 @@ object Form6: TForm6
     end
     object GroupBox12: TGroupBox
       Left = 1
-      Top = 153
+      Top = 407
       Width = 458
-      Height = 16
+      Height = 250
       Align = alTop
       Caption = '     C-SCAN Move/Zoom'
       Font.Charset = DEFAULT_CHARSET
@@ -4316,6 +4316,8 @@ object Form6: TForm6
         Caption = 'Mirror OY'
         TabOrder = 4
         OnClick = SpTBXCheckBox12Click
+        Checked = True
+        State = cbChecked
       end
       object SpTBXCheckBox13: TSpTBXCheckBox
         Left = 80
@@ -4363,7 +4365,7 @@ object Form6: TForm6
     end
     object GroupBox27: TGroupBox
       Left = 1
-      Top = 169
+      Top = 657
       Width = 458
       Height = 16
       Align = alTop
@@ -5490,10 +5492,19 @@ object Form6: TForm6
         TabOrder = 2
       end
     end
+    object Memo1: TMemo
+      Left = 360
+      Top = 664
+      Width = 89
+      Height = 89
+      Lines.Strings = (
+        'Memo1')
+      TabOrder = 7
+    end
   end
   object GroupBox1: TGroupBox
-    Left = 72
-    Top = 936
+    Left = 208
+    Top = 824
     Width = 729
     Height = 57
     Color = clBtnHighlight
@@ -5619,7 +5630,7 @@ object Form6: TForm6
     end
   end
   object GroupBox4: TGroupBox
-    Left = 4
+    Left = 0
     Top = 0
     Width = 825
     Height = 769
@@ -5643,7 +5654,7 @@ object Form6: TForm6
     end
   end
   object GroupBox29: TGroupBox
-    Left = 4
+    Left = 0
     Top = 0
     Width = 825
     Height = 769
@@ -5740,6 +5751,55 @@ object Form6: TForm6
       Height = 100
       Visible = False
     end
+    object Label54: TLabel
+      Left = 60
+      Top = 8
+      Width = 108
+      Height = 13
+      Caption = '                                    '
+    end
+    object Label55: TLabel
+      Left = 60
+      Top = 88
+      Width = 108
+      Height = 13
+      Caption = '                                    '
+    end
+    object Label56: TLabel
+      Left = 780
+      Top = 88
+      Width = 108
+      Height = 13
+      Caption = '                                    '
+    end
+    object Label57: TLabel
+      Left = 710
+      Top = 88
+      Width = 87
+      Height = 13
+      Caption = '                             '
+    end
+    object Label58: TLabel
+      Left = 710
+      Top = 8
+      Width = 87
+      Height = 13
+      Caption = '                             '
+    end
+    object Label59: TLabel
+      Left = 710
+      Top = 592
+      Width = 87
+      Height = 13
+      Caption = '                             '
+    end
+    object Label60: TLabel
+      Left = 780
+      Top = 592
+      Width = 108
+      Height = 13
+      Caption = '                                    '
+    end
   end
   object GroupBox13: TGroupBox
     Left = 830
@@ -5812,7 +5872,10 @@ object Form6: TForm6
     Font.Style = []
     ParentFont = False
     TabOrder = 5
+    Visible = False
     OnClick = SpTBXCheckBox11Click
+    Checked = True
+    State = cbChecked
   end
   object Timer1: TTimer
     Interval = 500

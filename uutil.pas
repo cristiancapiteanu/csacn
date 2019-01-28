@@ -303,6 +303,9 @@ var
   nearF_mat:real;
   nearF_matF:real;
 
+  maxim_x:integer;
+maxim_y:integer;
+
 //dgs
         inv_output:boolean;
 
@@ -1066,6 +1069,7 @@ var
 i:integer;
 a,b:real;
 begin
+try
   if x<TRCal((dac_list[1].a-us_probe_delay)*dac_sv/1000) then begin
      DAC_X:=dac_list[1].b;
      exit;
@@ -1086,7 +1090,9 @@ begin
 
         exit;
     end;
-
+ except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+  end;
 end;
 
 function TRCal( x:real):real;
@@ -1096,6 +1102,7 @@ a1,a2,b1,b2:real;
 i:integer;
 
 begin
+try
   if form1.RadioButton25.Checked then begin
     if form1.SpTBXRadioButton2.Checked then begin
       if calibration_list_count>1 then begin
@@ -1160,6 +1167,9 @@ begin
   end else begin
       TRCal:=x;
   end;
+except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
+  end;
 end;
 
 function InvTRCal( x:real):real;
@@ -1169,6 +1179,7 @@ a1,a2,b1,b2:real;
 i:integer;
 
 begin
+try
   if form1.RadioButton25.Checked then begin
     if form1.SpTBXRadioButton2.Checked then begin
       if calibration_list_count>1 then begin
@@ -1233,6 +1244,9 @@ begin
     end;
   end else begin
                 InvTRCal:=x;
+  end;
+except
+    on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
 end;
 

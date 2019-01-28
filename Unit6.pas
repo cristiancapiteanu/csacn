@@ -296,6 +296,14 @@ type
     SpTBXRadioButton6: TSpTBXRadioButton;
     SpTBXButton71: TSpTBXButton;
     SpTBXButton34: TSpTBXButton;
+    Memo1: TMemo;
+    Label54: TLabel;
+    Label55: TLabel;
+    Label56: TLabel;
+    Label57: TLabel;
+    Label58: TLabel;
+    Label59: TLabel;
+    Label60: TLabel;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -1145,11 +1153,12 @@ lFile: TFileStream;
 file_data:TScan_File;
 scanFile: File of TScann_arr;
 
-s_tmp,s,s1,s2,s3:string;
+s_tmp,s,s1,s2,s3,s10:string;
 is_tmp,i1,i2:integer;
 
 lFile1: TFileStream;
 file_data1:Tfile_pal;
+txtFile:TextFile;
 begin
 //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
 load_file:=true;
@@ -1181,7 +1190,7 @@ have_data11 := false;
 
           DeleteDirectory(s+s2);
           CreateDir(s+s2);
-          s3:='e '+s+s2+s1+' ' +s+s2;
+          s3:='e '+ '"' +s+s2+s1+ '"' + ' ' + '"' +s+s2+ '"' ;
           ExecuteAndWait('rar.exe '+s3);
 
 
@@ -1205,6 +1214,17 @@ have_data11 := false;
                  CloseFile(scanFile);
           end;
 
+          if fileexists(s+s2+'\'+s2+s1+'_ini') then begin
+                  AssignFile(txtFile,s+s2+'\'+s2+s1+'_ini');
+                  Reset(txtFile);
+                  try
+                      Readln(txtFile, s10);
+                      form6.combobox1.itemindex:=StrToInt(s10);
+                      form12.combobox1.itemindex:=StrToInt(s10);
+                  finally
+                         CloseFile(txtFile);
+                  end;
+          end;
         //  for i:=0 to scann_counter-1 do
         //    scann_arr[i]:=file_data.scann_arr[i];
 
@@ -1453,10 +1473,12 @@ lFile: TFileStream;
 scanFile: File of TScann_arr;
     file_data:TScan_File;
     file_scan: TScann_arr;
-s,s1,s2,s3:string;
-
+s,s1,s2,s3,s4,s5:string;
+txtFile:TextFile;
 lFile1: TFileStream;
 file_data1:Tfile_pal;
+
+myHour, myMin, mySec, myMilli : Word;
 begin
 //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
   try
@@ -1465,7 +1487,10 @@ begin
       if form8.SpTBXListBox2.ItemIndex=2 then form1.SaveDialog1.Filter :='C-Scan (*.csc)|*.csc';
 
 	    form1.SaveDialog1.InitialDir:='C:\Saphirp\data';
-       if form1.SaveDialog1.Execute then begin
+//       if form1.SaveDialog1.Execute then begin
+
+
+
          Screen.Cursor := crHourGlass;
          if not form19.visible then  form19.show;
          if not form19.visible then  form19.BringToFront;
@@ -1550,7 +1575,11 @@ begin
           end;
 
           label33.Caption :='File name : '+form1.SaveDialog1.FileName;
-          s:=form1.SaveDialog1.FileName;
+          //s:=form1.SaveDialog1.FileName;
+
+          DecodeTime(now(), myHour, myMin, mySec, myMilli);
+          s:='C:\Saphirp\data\' + 'temp'+IntToStr(myMilli)+IntToStr(Random(1000000));
+
           if form8.SpTBXListBox2.ItemIndex=0 then s1:='.lsc';
           if form8.SpTBXListBox2.ItemIndex=1 then s1:='.tofd';
           if form8.SpTBXListBox2.ItemIndex=2 then s1:='.csc';
@@ -1564,9 +1593,9 @@ begin
           s2:=copy(s,j+1,length(s));
           s:=copy(s,0,j);
 
-          if FileExists(s+s2+s1) then begin
-            if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
-              begin
+          //if FileExists(s+s2+s1) then begin
+            //if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then begin
+
                   DeleteDirectory(s+s2);
                   CreateDir(s+s2);
                   lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
@@ -1584,49 +1613,72 @@ begin
                       write(scanFile, scann_arr[i]);
                   finally
                          CloseFile(scanFile);
+                  end;
+
+                  AssignFile(txtFile,s+s2+'\'+s2+s1+'_ini');
+                  Rewrite(txtFile);
+                  try
+                      if form6.Visible then
+                         writeln(txtFile, IntToStr(form6.combobox1.itemindex))
+                      else
+                         writeln(txtFile, IntToStr(form12.combobox1.itemindex));
+
+                  finally
+                         CloseFile(txtFile);
                   end;
 
                   DeleteFile(s+s2+s1);
                   s3:='a -ep '+ '"' +s2 +s1+ '"'+ ' ' + '"' + s +s2+ '"';
                   ExecuteAndWait('rar.exe '+s3);
-                  DeleteDirectory(s+s2);
-
-              end else begin end;
-          end else begin
-                  CreateDir(s+s2);
-                  lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
-      		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
-		              lFile.Free;
 
 
-                  lFile1 := TFileStream.Create(s+s2+'\'+s2+s1+'_pal', fmCreate);
-      		        TKBDynamic.WriteTo(lFile1, file_data1, TypeInfo(Tfile_pal));
-		              lFile1.Free;
+      if form1.SaveDialog1.Execute then begin
+         s4:=form1.SaveDialog1.FileName;
+         if pos(s1,form1.SaveDialog1.FileName) >0 then
+            s4:=copy(form1.SaveDialog1.FileName,0,pos(s1,form1.SaveDialog1.FileName)-1);
+            for i:=0 to Length(s) do begin
+              if s4[i]='\' then j:=i;
+            end;
+            s5:=copy(s4,j+1,length(s4));
+            if FileExists(s4+s1) then begin
+               if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then begin
+               //overwrite
+                   DeleteFile(s4+s1);
 
-
-                  AssignFile(scanFile,s+s2+'\'+s2+s1+'_raw');
-                  Rewrite(scanFile);
-                  try
-                   for i:=0 to scann_counter-1 do
-                      write(scanFile, scann_arr[i]);
-                  finally
-                         CloseFile(scanFile);
-                  end;
-
-                  //DeleteFile(s+s2+s1);
-                  s3:='a -ep '+ '"' +s2 +s1+ '"'+ ' ' + '"' + s +s2+ '"';
-                  ExecuteAndWait('rar.exe '+s3);
-                  DeleteDirectory(s+s2);
-          end;
-
+                   RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
+                   RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
+                   RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
+                   RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
+                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s2 + '"';
+                   ExecuteAndWait('rar.exe '+s3);
+      DeleteFile(s+s2+s1);
+      DeleteDirectory(s+s2);
+               end else begin
+               end;
+            end else begin
+                //write
+                   RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
+                   RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
+                   RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
+                   RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
+                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s2 + '"';
+                   ExecuteAndWait('rar.exe '+s3);
+      DeleteFile(s+s2+s1);
+      DeleteDirectory(s+s2);
+            end;
       end;
+
+
   except
     on E : Exception do
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
     end;
-       if form19.visible then form19.Hide;
+
+
+
+    if form19.visible then form19.Hide;
     Screen.Cursor := crArrow;
-     form6.BringToFront;
+    form6.BringToFront;
 
 end;
 
@@ -1760,34 +1812,33 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
+         //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            k:=1;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
-            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
       if r_val >= 0 then
@@ -1928,8 +1979,8 @@ begin
       j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
       if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
       if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
-      label1.Caption:= FloatToStrF(us_delay1/us_sv1 ,ffFixed,6,2);;
-      label8.Caption:= FloatToStrF((US_Width1)/us_sv1 ,ffFixed,6,2);;
+      label1.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1)*us1_calc) ,ffFixed,6,2);;  //+ 1000*us_delay1/us_sv1
+      label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay+US_Width1-us_probe_delay1)*us1_calc) ,ffFixed,6,2);;
 
 {
       image8.Canvas.Pen.Color:=clBlack;
@@ -2204,12 +2255,15 @@ begin
 
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
+
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
         if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+
         if form8.SpTBXListBox2.ItemIndex=0 then
           label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)
         else
           label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,2);
+
         if c_scan_mouse_down then defect[defect_count].x2:=mod_scan[i,j].xy_coor.x;
         if c_scan_mouse_down then defect[defect_count].y2:=mod_scan[i,j].xy_coor.y;
 
@@ -2220,27 +2274,14 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            k:=1;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
             r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-        end ;
-        3 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-        end ;
-        4 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
-        end ;
-        5 :begin
             r_val:=mod_scan[i,j].US_Mess[1].tof;
             r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
@@ -2249,11 +2290,27 @@ begin
 
             r_val := r_val1- r_val;
         end ;
+        3 :begin
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
+        end ;
+        4 :begin
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
+        end ;
+        5 :begin
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
+        end ;
       end;
+
+      if not mod_scan[i,j].have_ascan then r_val:=-1;
+      
       if r_val >= 0 then
         label32.Caption :=FloatToStrF(r_val ,ffFixed,6,2)
       else
         label32.Caption :='±';
+
       if c_scan_mouse_down then defect[defect_count].h2:=r_val;
 
       {
@@ -2380,9 +2437,12 @@ begin
      //   if radiobutton18.Checked then k:=3;
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
+
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
         if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+
         point_rez:=(imgwidth/(X_axis_len/x_axis_rez));
+
         if image3.Visible then
         for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
           //if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
@@ -2392,38 +2452,33 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
+         //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            k:=1;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-      //      r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
-
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-           // r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
 
@@ -2451,9 +2506,10 @@ begin
                    image3.Canvas.Pen.Color:=pallete[l].color ;
                    if SpTBXCheckBox13.Checked then
                       image3.Canvas.Rectangle(trunc(image3.Width -(i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),
-                                           trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
+                                              trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
                    else
-                      image3.Canvas.Rectangle(trunc((i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),trunc((d_rap*x_axis_rez*(i+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) );
+                      image3.Canvas.Rectangle(trunc((i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),
+                      trunc((d_rap*x_axis_rez*(i+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) );
                 end else begin
                    break;
                 end;
@@ -2465,11 +2521,11 @@ begin
                    image3.Canvas.Brush.Color:=trunc(GetColor(pallete[1].value+(pallete[16].value -pallete[1].value)*l/image3.Height) );
                    image3.Canvas.Pen.Color:=trunc(GetColor(pallete[1].value+(pallete[16].value -pallete[1].value)*l/image3.Height));
                    if SpTBXCheckBox13.Checked then
-                      image3.Canvas.Rectangle(trunc(image3.Width -(i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1) ),
-                                           trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l) ) )
+                      image3.Canvas.Rectangle(trunc(image3.Width -(    i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1) ),
+                                              trunc(image3.Width -(d_rap*x_axis_rez*(i-2)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l) ) )
                    else
-                      image3.Canvas.Rectangle(trunc((i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1) ),
-                                              trunc((d_rap*x_axis_rez*(i+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)) );
+                      image3.Canvas.Rectangle(trunc((    i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1) ),
+                                              trunc((d_rap*x_axis_rez*(i+2)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)) );
                 end else begin
                    break;
                 end;
@@ -2477,6 +2533,22 @@ begin
           end;//if
 
         end;
+      {
+        image3.Canvas.Brush.Style:=bsClear;
+        image3.Canvas.Font.Color:=clYellow;
+        image3.Canvas.TextOut(0,              + 8,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc) ,ffFixed,6,2));
+        image3.Canvas.TextOut(0,image3.Height - 8,FloatToStrF(TRCal((pallete[1].value-us_probe_delay)*us_calc) ,ffFixed,6,2));
+       }
+        form6.label54.Caption:= FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc) ,ffFixed,6,2) ;
+        form6.label55.Caption:= FloatToStrF(TRCal((pallete[1].value-us_probe_delay)*us_calc) ,ffFixed,6,2) ;
+
+        form6.label57.Caption:=form6.label55.Caption;
+        form6.label56.Caption:=form6.label54.Caption;
+        form6.label58.Caption:=form6.label54.Caption;
+        form6.label59.Caption:=form6.label55.Caption;
+        form6.label60.Caption:=form6.label54.Caption;
+
+
 
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
@@ -2492,38 +2564,33 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
+         //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            k:=1;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-      //      r_val:= TRCal((r_val-us_probe_delay1)*us_calc);
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
-
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-          //  r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-           // r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
 
@@ -2566,11 +2633,11 @@ begin
                    image6.Canvas.Brush.Color:=trunc(GetColor(pallete[1].value+(pallete[16].value -pallete[1].value)*l/image3.Height) );
                    image6.Canvas.Pen.Color:=trunc(GetColor(pallete[1].value+(pallete[16].value -pallete[1].value)*l/image3.Height));
                    if SpTBXCheckBox12.Checked then
-                   image6.Canvas.Rectangle(((l-1)),trunc(image6.Height-(d_rap*y_axis_rez*(j-0)+y_offset)*(z_zoom/100)),
-                                           ((l)),trunc(image6.Height-(d_rap*y_axis_rez*(j+1)+y_offset)*(z_zoom/100))  )
+                   image6.Canvas.Rectangle(trunc((l-1)),trunc(image6.Height-(d_rap*y_axis_rez*(j-0)+y_offset)*(z_zoom/100)),
+                                           trunc((l)),trunc(image6.Height-(d_rap*y_axis_rez*(j+2)+y_offset)*(z_zoom/100))  )
                    else
-                   image6.Canvas.Rectangle(((l-1)),trunc((d_rap*y_axis_rez*(j+0)+y_offset)*(z_zoom/100)),
-                                          ((l)),trunc((d_rap*y_axis_rez*(j+1)+y_offset)*(z_zoom/100))  );
+                   image6.Canvas.Rectangle(trunc((l-1)),trunc((d_rap*y_axis_rez*(j+0)+y_offset)*(z_zoom/100)),
+                                          trunc((l)),trunc((d_rap*y_axis_rez*(j+2)+y_offset)*(z_zoom/100))  );
                 end else begin
                    break;
                 end;
@@ -3014,8 +3081,8 @@ begin
   image5.Canvas.Pen.Color:=clBlack;
   image5.Canvas.Pen.Style :=psDot;
   if  SpTBXCheckBox12.Checked then begin
-    image5.Canvas.MoveTo(0,image5.Height - y_old  - 20);
-    image5.Canvas.LineTo(image5.Width ,image5.Height  - y_old  -20 );
+    image5.Canvas.MoveTo(0,            image5.Height  - y_old  - 140 );
+    image5.Canvas.LineTo(image5.Width ,image5.Height  - y_old  - 140 );
   end else begin
     image5.Canvas.MoveTo(0,y_old+8);
     image5.Canvas.LineTo(image5.Width ,y_old +8);
@@ -3083,11 +3150,13 @@ point_rezx,point_rezy,point_rez:real;
 //mod_scan:array of array  of TScann_arr;
 Scann_arr2:TScann_arr;
 k1,k2:real;
+
+
 label 1;
 begin
   try
    if scann_counter<2 then exit;
-
+   memo1.Clear;
    if (not have_data2)or(  start_zoom_offset) then begin
 
          Screen.Cursor := crHourGlass;
@@ -3098,27 +3167,30 @@ begin
 
       if have_data11 then goto 1;
 
+      memo1.Lines.Add('line 1');
       SetLength(mod_scan,0,0);
       SetLength(mod_scan,round(X_axis_len/x_axis_rez)+2,round(y_axis_len/y_axis_rez)+2);
       for i:=0 to round(X_axis_len/x_axis_rez)-1 do
           for j:=0 to round(y_axis_len/y_axis_rez)-1 do 
               mod_scan[i,j].have_ascan:=false;                                                                                                    
 
+      memo1.Lines.Add('line 2');
       for i:=1 to scann_counter-1 do begin
+          if (scann_arr[i].xy_coor.x>0)and(scann_arr[i].xy_coor.y>0)then begin
+
           x1:=(scann_arr[i].xy_coor.x/x_axis_rez);
           y1:=(scann_arr[i].xy_coor.y/y_axis_rez);
+
           if x1<0 then x1:=0;
           if y1<0 then y1:=0;
+
           if x1>round(X_axis_len/x_axis_rez) then x1:=round(X_axis_len/x_axis_rez);
           if y1>round(y_axis_len/y_axis_rez) then y1:=round(y_axis_len/y_axis_rez);
-
-
-
 
           if radiobutton16.Checked then k:=1;
           if radiobutton17.Checked then k:=2;
           if radiobutton18.Checked then k:=3;
-
+          //amplitude eval
           if radiobutton19.Checked then begin
              if scann_arr[i].US_Mess[k].amp >0 then
                 case SpTBXComboBox4.ItemIndex of
@@ -3134,6 +3206,8 @@ begin
                   end;
                 end;
           end;
+
+          //tof eval
           if radiobutton20.Checked then begin
              if scann_arr[i].US_Mess[k].tof >0 then
                 case SpTBXComboBox4.ItemIndex of
@@ -3151,23 +3225,61 @@ begin
           end ;
 
           mod_scan[round(x1),round(y1)].have_ascan:=true;
+         end;
       end;
 
-     //if not start_scann then
-      if SpTBXCheckBox11.Checked then
-      for i:=0 to round(X_axis_len/x_axis_rez)-1 do
-          for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+       memo1.Lines.Add('line 3');
+    //if not start_scann then
+      if SpTBXCheckBox11.Checked then begin
+         r_val3:=0;
+         r_val4:=round(y_axis_len/y_axis_rez)-1;
+
+         r_val5:=0;
+         r_val6:=round(X_axis_len/x_axis_rez)-1;
+
+         for j:=0 to round(r_val4) do begin
+              if (mod_scan[10,j].xy_coor.x=0) and (mod_scan[10,j].xy_coor.y=0) then begin
+                 r_val3:=r_val3+1;
+                 if  r_val3>10 then begin
+                     r_val4:= j-10;
+                     break;
+                 end;
+              end else begin
+                  r_val3:=0;
+              end;
+         end;
+         maxim_y:=round(r_val4);
+
+         for i:=round(r_val6) downto 0 do begin
+              if (mod_scan[i,maxim_y-1].xy_coor.x<>0) and (mod_scan[i,maxim_y-1].xy_coor.y<>0) then begin
+                 r_val5:=r_val5+1;
+                 if  r_val5>10 then begin
+                     r_val6:= i+10;
+                     break;
+                 end;
+              end else begin
+                  r_val5:=0;
+              end;
+         end;
+         maxim_x:=round(r_val6);
+
+     for i:=0 to maxim_x-1 do  begin
+     // for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
+          for j:=0 to maxim_y-1 do begin
+          //for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
               if (mod_scan[i,j].xy_coor.x=0) and (mod_scan[i,j].xy_coor.y=0) then
               begin
-                  if (Scann_arr2.xy_coor.x<>0) or (Scann_arr2.xy_coor.y<>0) then
-                      mod_scan[i,j]:=Scann_arr2;
+                  if (Scann_arr2.xy_coor.x<>0) or (Scann_arr2.xy_coor.y<>0) then mod_scan[i,j]:=Scann_arr2;
               end else begin
                   Scann_arr2:=mod_scan[i,j];
               end;
           end;
+      end;
+     end;
 
+       memo1.Lines.Add('line 4');
 
- if have_data4 then  begin
+     if have_data4 then  begin
           r_val3:=0;
           r_val3:=0;
           r_val3:=(X_axis_len/image1.Width) *(ox_mark_line_x[1] );
@@ -3195,7 +3307,7 @@ begin
 
 
           for i:=trunc(r_val3) to trunc(r_val) do
-          for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+          for j:=0 to maxim_y-1 do begin
           if mod_scan[i,j].have_ascan then begin
             for k:=r_val5 to r_val6  do
                   mod_scan[i,j].US_arr1[k]:=100;
@@ -3204,7 +3316,9 @@ begin
       end;
       end;
 
-       if have_data3 then  begin
+memo1.Lines.Add('line 5');
+
+   if have_data3 then  begin
           r_val3:=0;
           r_val3:=0;
           r_val3:=(X_axis_len/image1.Width) *(ox_mark_line_x[2] );
@@ -3220,7 +3334,7 @@ begin
             r_val:= round(X_axis_len/x_axis_rez)-1;
           end;
           for i:=trunc(r_val3) to trunc(r_val) do
-          for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+          for j:=0 to maxim_y-1 do begin
           if mod_scan[i,j].have_ascan then begin
             r_temp:=0;
             for k:=(r_val0-10) to (r_val0+10)  do
@@ -3249,7 +3363,8 @@ begin
       end;
       end;
 
-       if have_data8 then  begin
+        memo1.Lines.Add('line 6');
+     if have_data8 then  begin
 
           i1:=trunc(ox_mark_line_x[2]/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
           j1:=trunc((ox_mark_line_y[2]/y_axis_rez/d_rap/(z_zoom/100)-y_offset/y_axis_rez/d_rap));
@@ -3257,8 +3372,8 @@ begin
           if (j1<0) or (j1>(y_axis_len/y_axis_rez)) then j1:=0;
           r_val:=100-mod_scan[i1,j1].US_arr1[trunc(( (-y_offset_ox+ox_mark_line_y[2])*(z_zoom_ox/100) )*400/image16.Height) ];
 
-          for i:=0 to round(x_axis_len/x_axis_rez)-1 do
-          for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+          for i:=0 to maxim_x-1 do
+          for j:=0 to maxim_y-1 do begin
 
           if mod_scan[i,j].have_ascan then begin
             r_val3:=100-mod_scan[i,j].US_arr1[trunc(( (-y_offset_ox+ox_mark_line_y[2])*(z_zoom_ox/100) )*400/image16.Height) ];
@@ -3275,6 +3390,8 @@ begin
           end;
 
       end;
+        memo1.Lines.Add('line 7');
+
       have_data3:=false;
       have_data8:=false;
       have_data4:=false;
@@ -3390,12 +3507,16 @@ begin
 
 
 
+          memo1.Lines.Add('line 8');
 
 
-      for i:=0 to round(X_axis_len/x_axis_rez)-1 do
-          for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+      for i:=0 to maxim_x-1 do
+          for j:=0 to maxim_y-1 do begin
+          // if (mod_scan[i,j].have_ascan)and(mod_scan[i,j].xy_coor.x>0)and(mod_scan[i,j].xy_coor.y>0) then begin
+
             x1:=i*d_rap*x_axis_rez+x_offset;
             y1:=j*d_rap*y_axis_rez+y_offset ;
+
             x1:=x1*z_zoom/100 ;
             y1:=y1*z_zoom/100;
 
@@ -3412,38 +3533,33 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
+         //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            k:=1;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;
+        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+
+            r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
-            k:=1;
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-            r_val := r_val1- r_val;
-
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-     //       r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-     //       r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-            r_val := r_val1- r_val;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
 
@@ -3461,20 +3577,26 @@ begin
             k1:=1;
             if SpTBXCheckBox12.Checked then begin
                  y1:=image2.Height-y1;
-                 k1:=-1.1;
+                 k1:=-2;
             end;
+
             k2:=1;
             if SpTBXCheckBox13.Checked then begin
                  x1:=image2.Width-x1;
-                 k2:=-1.1;
+                 k2:=-2;
             end;
+
             if form12.radiobutton23.Checked then begin
                 image2.canvas.rectangle(trunc(x1),trunc(y1),round(x1+point_rezx*k2),round(y1+point_rezy*k1));
             end;
             if form12.radiobutton24.Checked then begin
                 image2.canvas.Ellipse (trunc(x1),trunc(y1),round(x1+point_rezx*k2),round(y1+point_rezy*k1));
             end;
+         //   end;
           end;
+
+
+        memo1.Lines.Add('line 8,1');
 
         image2.Canvas.Pen.Style:=psDot	;
         image2.Canvas.Pen.Mode :=pmNot	;
@@ -3500,6 +3622,7 @@ begin
 
   end;
 
+        memo1.Lines.Add('line 9');
 
   //draw cursor
   image2.Canvas.Pen.Width :=1;
@@ -3528,8 +3651,17 @@ begin
 
   image2.Canvas.Font.Color:=clWhite;
   image2.Canvas.Brush.Color:=clBlack;
-  image2.Canvas.TextOut(trunc(x1-40),trunc(y1-20),label32.Caption);
-           if form19.visible then form19.Hide;
+  image2.Canvas.TextOut(trunc(x1+20),trunc(y1-20),label32.Caption);
+
+      image2.Canvas.Pen.Color:=clBlack;//clWhite;
+      image2.Canvas.Pen.Width:=1;
+      //image2.Canvas.Pen.Mode:=pmCopy	;
+
+      image2.Canvas.Brush.Style:=bsClear	 ;
+    //  image2.Canvas.Brush.Color :=clWhite;
+      image2.Canvas.Rectangle(0,0,image2.Width,image2.Height );
+
+  if form19.visible then form19.Hide;
          Screen.Cursor := crArrow;
 
   except
@@ -3594,12 +3726,15 @@ imgwidth:=300;
 
 
       ComboBox1.Items.Clear;
-      ComboBox1.Items.Add('Laufzeit T(A) [us]');
-      ComboBox1.Items.Add('Schallweg s(A) [mm]');
-      ComboBox1.Items.Add('Laufzeit T(B) [us]');
-      ComboBox1.Items.Add('Schallweg s(B) [mm]');
-      ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
-      ComboBox1.Items.Add('Ds = s(B)-s(A) [mm]');
+      //ComboBox1.Items.Add('Laufzeit T(A) [us]');
+      ComboBox1.Items.Add('Schallweg s(A) [mm]');     //1
+      //ComboBox1.Items.Add('Laufzeit T(B) [us]');
+      ComboBox1.Items.Add('Schallweg s(B) [mm]');      //2
+      //ComboBox1.Items.Add('DT = T(B)-T(A) [us]');
+      ComboBox1.Items.Add('Ds = s(B)-s(A) [mm]');       //3
+      ComboBox1.Items.Add('H[A] [%]');                   //4
+      ComboBox1.Items.Add('H[B] [%]');                    //5
+      ComboBox1.Items.Add('H[C] [%]');                     //6
       ComboBox1.ItemIndex:=0;
 
 
@@ -7852,6 +7987,10 @@ begin
         5 :begin
             RadioButton20.Checked:= true;
             RadioButton16.Checked:= true;
+        end ;
+        6 :begin
+            RadioButton19.Checked:= true;
+            RadioButton18.Checked:= true;
         end ;
       end;
 

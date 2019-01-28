@@ -1,5 +1,5 @@
 object Form15: TForm15
-  Left = 286
+  Left = 241
   Top = 0
   BorderStyle = bsNone
   Caption = 'C-SCAN'

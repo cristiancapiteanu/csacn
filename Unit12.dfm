@@ -817,7 +817,6 @@ object Form12: TForm12
     Font.Style = []
     ParentFont = False
     TabOrder = 14
-    Visible = False
     object RadioButton1: TRadioButton
       Left = 104
       Top = 168

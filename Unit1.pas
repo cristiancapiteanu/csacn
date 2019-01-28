@@ -2222,8 +2222,6 @@ try
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if (scaner_type <> 2)and(r_val<>0) then begin
                      enc_cur_x := r_val;
-                    // enc_cur_x_100 := enc_cur_x_100 + 0.1;//r_val;
-                   //  enc_cur_x := enc_cur_x_100;//r_val;
                      if enc_cur_x > old_x_position then scan_direction:=true else scan_direction:=false;
                      old_x_position:= enc_cur_x;
                   end;
@@ -2328,16 +2326,14 @@ try
                       inc(data_optel);
                   end;
 
-                  //if (tmp4 = 0) and start_scann then begin
-                  //end else begin
-                     Fill_draw_ascn_new;
-                     Do_Average;
-                     Do_Alarm;
-                     if (tmp4 = 1) then
-                        Do_Proc_Enc(k);
-                     Do_Select_TOF;
-                     Do_Update_scann_arr;
-                  //end;
+                  Fill_draw_ascn_new;
+                  Do_Average;
+                  Do_Alarm;
+                  if (tmp4 = 1) then begin
+                     Do_Proc_Enc(k);
+                  end;
+                  Do_Select_TOF;
+                  Do_Update_scann_arr;
             end;
 
         Dispose(tmp11);
@@ -3185,6 +3181,10 @@ NONE
 //us_gain*exp( -1*(dac_str+dac_range*i/100)*dac_att )
 
 
+   if r_val100<=0 then  r_val100 := us_probe_delay;
+   if r_val200<=0 then  r_val200 := us_probe_delay;
+   if r_val300<=0 then  r_val300 := us_probe_delay;
+
    if SpTBXComboBox6.ItemIndex = 1 then begin
      db_val100 := -US_gain*exp( -1*(TRCal((r_val100-us_probe_delay)*us_calc))*dac_att ) + a_val100*us_gain/100/power(10,(us_gain-us_gain)/20);
      db_val200 := -US_gain*exp( -1*(TRCal((r_val200-us_probe_delay)*us_calc))*dac_att ) + a_val200*us_gain/100/power(10,(us_gain-us_gain)/20);
@@ -3201,9 +3201,6 @@ NONE
 
 
 
-   if r_val100<=0 then  r_val100 := us_probe_delay;
-   if r_val200<=0 then  r_val200 := us_probe_delay;
-   if r_val300<=0 then  r_val300 := us_probe_delay;
 
 
  for i := 0 to StringGrid4.RowCount-1 do begin
@@ -3401,7 +3398,7 @@ begin
               if SpTBXCheckBox33.checked then b1:=false;
               if SpTBXCheckBox34.checked then b1:=false;
 
-
+             b1:=false;//cancel no echo start
             if b1 then begin  //NO ECHO START
               j:=0;
               if radiobutton9.Checked  and SpTBXCheckBox17.Checked then j:=1;
@@ -3485,6 +3482,12 @@ begin
                         Form15.label2.Caption :='Ds : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                end;
 
+               if form12.ComboBox1.ItemIndex = 6 then begin  //'Laufzeit H[C] %]'
+                  j:=3;
+                  r_val:=US_Mess[j].amp;
+                  Form15.label2.Caption :='H(C) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [%]';
+               end;
+
                 if j = 1 then Form15.label2.Font.Color := clBlue;
                 if j = 2 then Form15.label2.Font.Color := clRed;//clOlive;
 
@@ -3536,6 +3539,9 @@ begin
                      r_val :=scann_arr[l].US_Mess[1].tof;
                      r_val1:=scann_arr[l].US_Mess[2].tof;
                      r_val := r_val1- r_val;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 6 then begin  //'Laufzeit H[C] %]'
+                     r_val:=scann_arr[l].US_Mess[3].amp;
                   end;
               end;
 
@@ -11280,7 +11286,7 @@ end else begin
 
     us_delay_probe_f100:=false;
 
-    form12.GroupBox7.Visible:=false;
+    form12.GroupBox7.Visible:=true;//false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;
@@ -11335,7 +11341,7 @@ end else begin
 
     us_delay_probe_f100:=false;
 
-    form12.GroupBox7.Visible:=false;
+    form12.GroupBox7.Visible:=true;//false;
     Label99.Visible:=false;
     SpTBXButton11.enabled:=true;
     SpTBXButton5.enabled:=true;
@@ -11388,7 +11394,7 @@ end else begin
     us_echo_start := 0;
     us_delay_probe_f100:=false;
 
-    form12.GroupBox7.Visible:=false;
+    form12.GroupBox7.Visible:=true;//false;
     Label99.Visible:=false;
 
     SpTBXButton11.enabled:=true;
@@ -11529,10 +11535,16 @@ begin
 
   postpros:=true;
   start_scann:=false;
+  scann_counter:=0;
   form8.SpTBXListBox2Click(Sender);
   form6.Height:=812;
   form6.Width:=1296;
   form6.Visible:= true;
+  form6.image8.Canvas.Pen.Color:=clLime ;
+    form6.image8.Canvas.Pen.Width:=1;
+    form6.image8.Canvas.Brush.Style:=bsSolid	 ;
+    form6.image8.Canvas.Brush.Color :=clBlack;
+    form6.image8.Canvas.Rectangle(0,0,form6.image8.Width,form6.image8.Height );
   form6.Show;
   form6.WindowState:=wsNormal;
   //form6.FormStyle:=fsStayOnTop;

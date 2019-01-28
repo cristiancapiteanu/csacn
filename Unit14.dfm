@@ -1,6 +1,6 @@
 object Form14: TForm14
-  Left = 960
-  Top = 3
+  Left = 803
+  Top = 5
   VertScrollBar.ButtonSize = 20
   VertScrollBar.Size = 20
   VertScrollBar.Style = ssFlat
