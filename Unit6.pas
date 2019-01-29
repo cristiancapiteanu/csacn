@@ -1812,28 +1812,28 @@ begin
         0 :begin
             k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].tof;
-         //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
-       //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
-        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
+            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
-       //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
+            r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=3;
+            k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=3;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
@@ -1841,6 +1841,7 @@ begin
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
+
       if r_val >= 0 then
         label66.Caption :=FloatToStrF(r_val ,ffFixed,6,2)
       else
@@ -1980,7 +1981,7 @@ begin
       if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
       if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
       label1.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1)*us1_calc) ,ffFixed,6,2);;  //+ 1000*us_delay1/us_sv1
-      label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay+US_Width1-us_probe_delay1)*us1_calc) ,ffFixed,6,2);;
+      label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1+US_Width1)*us1_calc) ,ffFixed,6,2);;//us_probe_delay1
 
 {
       image8.Canvas.Pen.Color:=clBlack;
@@ -2273,29 +2274,29 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             k:=1;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
             r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
             r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
             r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
             r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
         end ;
         3 :begin
-            k:=3;
+            k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=3;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
@@ -2451,29 +2452,30 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             k:=1;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
          //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
        //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
        //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            k:=3;
+            k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=3;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
@@ -2539,8 +2541,8 @@ begin
         image3.Canvas.TextOut(0,              + 8,FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc) ,ffFixed,6,2));
         image3.Canvas.TextOut(0,image3.Height - 8,FloatToStrF(TRCal((pallete[1].value-us_probe_delay)*us_calc) ,ffFixed,6,2));
        }
-        form6.label54.Caption:= FloatToStrF(TRCal((pallete[16].value-us_probe_delay)*us_calc) ,ffFixed,6,2) ;
-        form6.label55.Caption:= FloatToStrF(TRCal((pallete[1].value-us_probe_delay)*us_calc) ,ffFixed,6,2) ;
+        form6.label54.Caption:= FloatToStrF(TRCal((pallete[16].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2) ;
+        form6.label55.Caption:= FloatToStrF(TRCal((pallete[1].value-us_probe_delay1)*us1_calc) ,ffFixed,6,2) ;
 
         form6.label57.Caption:=form6.label55.Caption;
         form6.label56.Caption:=form6.label54.Caption;
@@ -2563,29 +2565,30 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             k:=1;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
          //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
        //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
        //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            k:=3;
+            k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=3;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
@@ -3532,29 +3535,30 @@ memo1.Lines.Add('line 5');
       case form6.combobox1.ItemIndex of
         0 :begin
             k:=1;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
          //   r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             k:=2;
-            r_val:=mod_scan[i,j].US_Mess[k].tof;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
        //     r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=mod_scan[i,j].US_Mess[1].tof;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=mod_scan[i,j].US_Mess[2].tof;
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
        //     r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            k:=3;
+            k:=1;                                                                                                    
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            k:=3;
+            k:=2;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
@@ -5691,13 +5695,17 @@ begin
 
 
 if form8.SpTBXListBox2.ItemIndex =2 then begin
-    form12.GroupBox4.Visible :=true;
+    form12.GroupBox4.Visible :=false;//true;
     form12.GroupBox6.Visible :=true;
-    form12.GroupBox13.Visible :=true;
+    form12.GroupBox13.Visible :=false;//true;
+    form12.SpTBXButton3.Visible :=false;//true;
  end;
+
 if form8.SpTBXListBox2.ItemIndex =0 then begin
-    form12.GroupBox4.Visible :=true;
-    form12.GroupBox13.Visible :=true;
+    form12.GroupBox4.Visible :=false;//true;
+    form12.GroupBox13.Visible :=false;//true;
+    form12.SpTBXButton3.Visible :=false;//true;
+
  end;
 if form8.SpTBXListBox2.ItemIndex =1 then begin
     form12.GroupBox4.Visible :=false;
@@ -7974,21 +7982,17 @@ begin
         end ;
         2 :begin
             RadioButton20.Checked:= true;
-            RadioButton17.Checked:= true;
+            RadioButton16.Checked:= true;
         end ;
         3 :begin
-            RadioButton20.Checked:= true;
-            RadioButton17.Checked:= true;
+            RadioButton19.Checked:= true;
+            RadioButton16.Checked:= true;
         end ;
         4 :begin
-            RadioButton20.Checked:= true;
-            RadioButton16.Checked:= true;
+            RadioButton19.Checked:= true;
+            RadioButton17.Checked:= true;
         end ;
         5 :begin
-            RadioButton20.Checked:= true;
-            RadioButton16.Checked:= true;
-        end ;
-        6 :begin
             RadioButton19.Checked:= true;
             RadioButton18.Checked:= true;
         end ;

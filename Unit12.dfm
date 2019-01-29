@@ -600,8 +600,8 @@ object Form12: TForm12
       OnExit = TrackBar2Exit
     end
     object SpTBXButton3: TSpTBXButton
-      Left = 16
-      Top = 536
+      Left = 24
+      Top = 592
       Width = 257
       Height = 40
       Caption = 'Take from gate'
@@ -615,8 +615,8 @@ object Form12: TForm12
       OnClick = SpTBXButton3Click
     end
     object SpTBXTrackBar4: TSpTBXTrackBar
-      Left = 8
-      Top = 592
+      Left = 16
+      Top = 528
       Width = 273
       Height = 49
       LineSize = 2

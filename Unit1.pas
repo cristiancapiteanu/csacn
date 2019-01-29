@@ -8293,6 +8293,10 @@ form8.SpTBXListBox3Click(Sender);
 
 GroupBox6.Visible:=false;
 GroupBox9.Visible:=true;
+    form12.SpTBXButton3.Visible :=true;
+    form12.GroupBox7.Visible :=true;
+
+
 
 if form6.Visible then form6.Hide;
 

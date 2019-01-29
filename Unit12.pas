@@ -965,29 +965,30 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             j:=1;
-            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:=scann_arr[1].US_Mess[j].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             j:=2;
-            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:=scann_arr[1].US_Mess[j].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=scann_arr[1].US_Mess[1].tof;
+            r_val:=scann_arr[1].US_Mess[1].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=scann_arr[1].US_Mess[2].tof;
+            r_val1:=scann_arr[1].US_Mess[2].tof;//+scann_arr[i].us_delay;
          //   r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            j:=3;
+            j:=1;
             r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         4 :begin
-            j:=3;
+            j:=2;
             r_val:=scann_arr[1].US_Mess[j].amp;
         end ;
         5 :begin
@@ -1009,34 +1010,35 @@ begin
       case form6.combobox1.ItemIndex of
         0 :begin
             j:=1;
-            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:=scann_arr[i].US_Mess[j].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
             j:=2;
-            r_val:=scann_arr[1].US_Mess[j].tof;
+            r_val:=scann_arr[i].US_Mess[j].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=scann_arr[1].US_Mess[1].tof;
+            r_val:=scann_arr[i].US_Mess[1].tof;//+scann_arr[i].us_delay;
         //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
 
-            r_val1:=scann_arr[1].US_Mess[2].tof;
+            r_val1:=scann_arr[i].US_Mess[2].tof;//+scann_arr[i].us_delay;
          //   r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
 
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            j:=1;
+            r_val:=scann_arr[i].US_Mess[j].amp;
         end ;
         4 :begin
-            j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            j:=2;
+            r_val:=scann_arr[i].US_Mess[j].amp;
         end ;
         5 :begin
             j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            r_val:=scann_arr[i].US_Mess[j].amp;
         end ;
       end;
 
@@ -1058,28 +1060,16 @@ begin
             if r_val_max > (Gates1[1].start + Gates1[1].width)  then r_val_max:=(Gates1[1].start + Gates1[1].width);
         end ;
         2 :begin
-            if r_val_min < Gates1[2].start then r_val_min:=Gates1[2].start;
-            if r_val_max > (Gates1[2].start + Gates1[2].width)  then r_val_max:=(Gates1[2].start + Gates1[2].width);
-        end ;
-        3 :begin
-            if r_val_min < Gates1[2].start then r_val_min:=Gates1[2].start;
-            if r_val_max > (Gates1[2].start + Gates1[2].width)  then r_val_max:=(Gates1[2].start + Gates1[2].width);
-        end ;
-        4 :begin
-        //    if r_val_min < (Gates1[2].start - Gates1[1].start - Gates1[1].width) then
-              r_val_min:=(Gates1[2].start - Gates1[1].start - Gates1[1].width);
-        //    if r_val_max > (Gates1[2].start - Gates1[1].start + Gates1[2].width) then
-              r_val_max:=(Gates1[2].start - Gates1[1].start + Gates1[2].width);
-        end ;
-        5 :begin
           //  if r_val_min < (Gates1[2].start - Gates1[1].start - Gates1[1].width) then
               r_val_min:=(Gates1[2].start - Gates1[1].start - Gates1[1].width);
           //  if r_val_max > (Gates1[2].start - Gates1[1].start + Gates1[2].width) then
               r_val_max:=(Gates1[2].start - Gates1[1].start + Gates1[2].width);
         end ;
-        6 :begin
-         //   if r_val_min < Gates1[1].start then r_val_min:=Gates1[1].start;
-         //   if r_val_max > (Gates1[1].start + Gates1[1].width)  then r_val_max:=(Gates1[1].start + Gates1[1].width);
+        3 :begin
+        end ;
+        4 :begin
+        end ;
+        5 :begin
         end ;
       end;
 

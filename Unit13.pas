@@ -70,41 +70,41 @@ if SpTBXCheckBox4.Checked then begin
           for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
            //     if form6.radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
            //     if form6.radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
-      {
+
       case form6.combobox1.ItemIndex of
         0 :begin
-            j:=1;
-            r_val:=scann_arr[1].US_Mess[j].tof;
-        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
+//            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         1 :begin
-            j:=2;
-            r_val:=scann_arr[1].US_Mess[j].tof;
-        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].tof;//+mod_scan[i,j].us_delay;
+//            r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
         end ;
         2 :begin
-            r_val:=scann_arr[1].US_Mess[1].tof;
-        //    r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
-
-            r_val1:=scann_arr[1].US_Mess[2].tof;
-         //   r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
-
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[1].tof;//+mod_scan[i,j].us_delay;
+            //r_val:= TRCal((r_val-us_probe_delay1)*us1_calc);
+            r_val1:=mod_scan[i,j].US_Mess[2].tof;//+mod_scan[i,j].us_delay;
+            //r_val1:= TRCal((r_val1-us_probe_delay1)*us1_calc);
             r_val := r_val1- r_val;
+            r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            k:=1;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
-            j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            k:=2;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         5 :begin
-            j:=3;
-            r_val:=scann_arr[1].US_Mess[j].amp;
+            k:=3;
+            r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
       end;
-         }
+
                 SpTBXProgressBar2.Position:=SpTBXProgressBar2.Position+1;
                 form6.NTGraph3D1.AddElement;
                 form6.NTGraph3D1.ElementPointColor[l]:=trunc(form6.GetColor(r_val));
