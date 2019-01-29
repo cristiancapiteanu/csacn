@@ -46,8 +46,8 @@ begin
   Application.CreateForm(TForm10, Form10);
   Application.CreateForm(TForm13, Form13);
   Application.CreateForm(TForm12, Form12);
-  Application.CreateForm(TForm14, Form14);
   Application.CreateForm(TForm15, Form15);
+  Application.CreateForm(TForm14, Form14);
   Application.CreateForm(TForm17, Form17);
   Application.CreateForm(TForm18, Form18);
   Application.CreateForm(TForm19, Form19);

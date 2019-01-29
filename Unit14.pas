@@ -121,9 +121,7 @@ type
     procedure SpTBXButton23Click(Sender: TObject);
     procedure SpTBXCheckBox7Click(Sender: TObject);
     procedure SpTBXCheckBox6Click(Sender: TObject);
-    procedure SpTBXSpinEdit4Change(Sender: TObject);
     procedure SpTBXSpinEdit5Change(Sender: TObject);
-    procedure SpTBXSpinEdit7Change(Sender: TObject);
     procedure SpTBXSpinEdit8Change(Sender: TObject);
     procedure SpTBXButton21Click(Sender: TObject);
     procedure SpTBXCheckBox8Click(Sender: TObject);
@@ -156,6 +154,12 @@ type
     procedure SpTBXRadioButton2Click(Sender: TObject);
     procedure SpTBXCheckBox10Click(Sender: TObject);
     procedure SpTBXEdit1Enter(Sender: TObject);
+    procedure SpTBXSpinEdit7Change(Sender: TObject);
+    procedure SpTBXSpinEdit4Change(Sender: TObject);
+    procedure SpTBXSpinEdit7KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure SpTBXSpinEdit4KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     procedure RefreshDataEdit;
     procedure update_comport;
@@ -167,6 +171,7 @@ type
     offset_flag:boolean;
     file_index:integer;
     add_new:boolean;
+    cha:boolean;
   end;
 
 var
@@ -434,6 +439,7 @@ var
 i:integer;
 begin
   try
+cha:=false;
     enc_cur_x_offset:=0;
     enc_cur_y_offset:=0;
     offset_flag:=false;
@@ -956,20 +962,9 @@ begin
 
 end;
 
-procedure TForm14.SpTBXSpinEdit4Change(Sender: TObject);
-begin
-  X_axis_len:=SpTBXSpinEdit4.Value ;
-end;
-
 procedure TForm14.SpTBXSpinEdit5Change(Sender: TObject);
 begin
     X_axis_rez:=SpTBXSpinEdit5.Value ;
-
-end;
-
-procedure TForm14.SpTBXSpinEdit7Change(Sender: TObject);
-begin
-  y_axis_len:=SpTBXSpinEdit7.Value ;
 
 end;
 
@@ -1001,7 +996,7 @@ var
 lFile: TFileStream;
 file_data:Tfile_enc;
 begin
-//  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+cha:=true;//  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
   try
        OpenDialog1.InitialDir:='C:\Saphirp\data';
       OpenDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
@@ -1142,7 +1137,7 @@ procedure TForm14.SpTBXButton15Click(Sender: TObject);
 var
 edit:TSpTBXSpinEdit;
 begin
-  edit:=SpTBXSpinEdit4;
+cha:=true;  edit:=SpTBXSpinEdit4;
    if (edit.SpinOptions.Increment > edit.SpinOptions.MinValue) and (edit.Value < edit.SpinOptions.Increment) then edit.Value:= edit.SpinOptions.MinValue;
   edit.Value:=edit.Value -edit.SpinOptions.Increment ;
 
@@ -1152,7 +1147,7 @@ procedure TForm14.SpTBXButton17Click(Sender: TObject);
 var
 edit:TSpTBXSpinEdit;
 begin
-  edit:=SpTBXSpinEdit4;
+cha:=true;  edit:=SpTBXSpinEdit4;
   edit.Value:=edit.Value +edit.SpinOptions.Increment ;
 end;
 
@@ -1178,7 +1173,7 @@ procedure TForm14.SpTBXButton24Click(Sender: TObject);
 var
 edit:TSpTBXSpinEdit;
 begin
-  edit:=SpTBXSpinEdit7;
+cha:=true;  edit:=SpTBXSpinEdit7;
     if (edit.SpinOptions.Increment > edit.SpinOptions.MinValue) and (edit.Value < edit.SpinOptions.Increment) then edit.Value:= edit.SpinOptions.MinValue;
   edit.Value:=edit.Value -edit.SpinOptions.Increment ;
 
@@ -1188,7 +1183,7 @@ procedure TForm14.SpTBXButton26Click(Sender: TObject);
 var
 edit:TSpTBXSpinEdit;
 begin
-  edit:=SpTBXSpinEdit7;
+cha:=true;  edit:=SpTBXSpinEdit7;
   edit.Value:=edit.Value +edit.SpinOptions.Increment ;
 end;
 
@@ -1785,6 +1780,41 @@ end;
 procedure TForm14.SpTBXEdit1Enter(Sender: TObject);
 begin
 //ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
+end;
+
+procedure TForm14.SpTBXSpinEdit7Change(Sender: TObject);
+begin
+  if not cha then exit;
+  y_axis_len:=SpTBXSpinEdit7.Value ;
+  x_axis_len := y_axis_len * (form15.image1.width/form15.Image1.Height);
+  cha:=false;
+  SpTBXSpinEdit4.Value:=x_axis_len;
+  cha:=true;
+
+
+end;
+
+procedure TForm14.SpTBXSpinEdit4Change(Sender: TObject);
+begin
+  if not cha then exit;
+  X_axis_len:=SpTBXSpinEdit4.Value ;
+  y_axis_len := X_axis_len / (form15.image1.width/form15.Image1.Height);
+  cha:=false;
+  SpTBXSpinEdit7.Value:=y_axis_len;
+  cha:=true;
+
+end;
+
+procedure TForm14.SpTBXSpinEdit7KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+cha:=true;
+end;
+
+procedure TForm14.SpTBXSpinEdit4KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+cha:=true;
 end;
 
 end.

@@ -917,6 +917,7 @@ object Form14: TForm14
           ParentFont = False
           TabOrder = 5
           OnChange = SpTBXSpinEdit4Change
+          OnKeyDown = SpTBXSpinEdit4KeyDown
           SpinButton.Left = 127
           SpinButton.Top = 0
           SpinButton.Width = 14
@@ -1079,6 +1080,7 @@ object Form14: TForm14
           ParentFont = False
           TabOrder = 3
           OnChange = SpTBXSpinEdit7Change
+          OnKeyDown = SpTBXSpinEdit7KeyDown
           SpinButton.Left = 127
           SpinButton.Top = 0
           SpinButton.Width = 14

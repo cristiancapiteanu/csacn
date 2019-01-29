@@ -1392,9 +1392,9 @@ end;
 
 procedure TForm12.SpTBXButton83Click(Sender: TObject);
 begin
-  X_axis_len:=form14.SpTBXSpinEdit4.Value ;
+ // X_axis_len:=form14.SpTBXSpinEdit4.Value ;
   X_axis_rez:=form14.SpTBXSpinEdit5.Value ;
-  y_axis_len:=form14.SpTBXSpinEdit7.Value ;
+ // y_axis_len:=form14.SpTBXSpinEdit7.Value ;
   y_axis_rez:=form14.SpTBXSpinEdit8.Value ;
 
 

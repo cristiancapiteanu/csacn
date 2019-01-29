@@ -3432,13 +3432,7 @@ begin
                       Form15.label2.Caption :=srtTras[163, srtTras_index]+' N/C'
               end;
             end else begin //ECHO START
-               if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit T(A) [us]'
-                  j:=1;
-                  r_val:=US_Mess[j].tof;
-                  Form15.label2.Caption :='T(A) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-               end;
-
-               if form12.ComboBox1.ItemIndex = 1 then begin  //'Schallweg s(A) [mm]'
+               if form12.ComboBox1.ItemIndex = 0 then begin  //'Schallweg s(A) [mm]'
                   j:=1;
                   r_val:=US_Mess[j].tof;
                   if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
@@ -3447,13 +3441,7 @@ begin
                         Form15.label2.Caption :='s(A) : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                end;
 
-               if form12.ComboBox1.ItemIndex = 2 then begin  //'Laufzeit T(B) [us]'
-                  j:=2;
-                  r_val:=US_Mess[j].tof;
-                  Form15.label2.Caption :='T(B) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-               end;
-
-               if form12.ComboBox1.ItemIndex = 3 then begin  //'Schallweg s(B) [mm]'
+               if form12.ComboBox1.ItemIndex = 1 then begin  //'Schallweg s(B) [mm]'
                   j:=2;
                   r_val:=US_Mess[j].tof;
                   if TRCal((r_val-us_probe_delay)*us_calc) > 0 then
@@ -3462,15 +3450,7 @@ begin
                         Form15.label2.Caption :='s(B) : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                end;
 
-               if form12.ComboBox1.ItemIndex = 4 then begin  //'DT = T(B)-T(A) [us]'
-                  j:=1;
-                  r_val :=US_Mess[1].tof;
-                  r_val1:=US_Mess[2].tof;
-                  r_val := r_val1- r_val;
-                  Form15.label2.Caption :='DT : '+FloatToStrF(r_val ,ffFixed,6,2)+' [us]';
-               end;
-
-               if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
+               if form12.ComboBox1.ItemIndex = 2 then begin  //'Ds = s(B)-s(A) [mm]'
                   j:=1;
                   r_val :=TRCal((US_Mess[1].tof-us_probe_delay)*us_calc);
                   r_val1 :=TRCal((US_Mess[2].tof-us_probe_delay)*us_calc);
@@ -3482,7 +3462,19 @@ begin
                         Form15.label2.Caption :='Ds : '+FloatToStrF(0  ,ffFixed,6,2)+' [mm]'
                end;
 
-               if form12.ComboBox1.ItemIndex = 6 then begin  //'Laufzeit H[C] %]'
+               if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit H[A] %]'
+                  j:=1;
+                  r_val:=US_Mess[j].amp;
+                  Form15.label2.Caption :='H(A) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [%]';
+               end;
+
+               if form12.ComboBox1.ItemIndex = 4 then begin  //'Laufzeit H[B] %]'
+                  j:=2;
+                  r_val:=US_Mess[j].amp;
+                  Form15.label2.Caption :='H(B) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [%]';
+               end;
+
+               if form12.ComboBox1.ItemIndex = 5 then begin  //'Laufzeit H[C] %]'
                   j:=3;
                   r_val:=US_Mess[j].amp;
                   Form15.label2.Caption :='H(C) : '+FloatToStrF(r_val ,ffFixed,6,2)+' [%]';
@@ -3514,33 +3506,28 @@ begin
                  else
                      r_val:=scann_arr[l].US_Mess[j].amp;
               end else begin
-                  if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit T(A) [us]'
-                     r_val:=scann_arr[l].US_Mess[1].tof;
-                  end;
-                  if form12.ComboBox1.ItemIndex = 1 then begin  //'Laufzeit s(A) [mm]'
+                  if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit s(A) [mm]'
                      r_val:=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
                      r_val:=scann_arr[l].US_Mess[1].tof;
                   end;
-                  if form12.ComboBox1.ItemIndex = 2 then begin  //'Laufzeit T(B) [us]'
-                     r_val:=scann_arr[l].US_Mess[2].tof;
-                  end;
-                  if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit s(B) [mm]'
+                  if form12.ComboBox1.ItemIndex = 1 then begin  //'Laufzeit s(B) [mm]'
                      r_val:=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
                      r_val:=scann_arr[l].US_Mess[2].tof;
                   end;
-                  if form12.ComboBox1.ItemIndex = 4 then begin  //'DT = T(B)-T(A) [us]'
-                     r_val :=scann_arr[l].US_Mess[1].tof;
-                     r_val1:=scann_arr[l].US_Mess[2].tof;
-                     r_val := r_val1- r_val;
-                  end;
-                  if form12.ComboBox1.ItemIndex = 5 then begin  //'Ds = s(B)-s(A) [mm]'
+                  if form12.ComboBox1.ItemIndex = 2 then begin  //'Ds = s(B)-s(A) [mm]'
 //                     r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
 //                     r_val1 :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
                      r_val :=scann_arr[l].US_Mess[1].tof;
                      r_val1:=scann_arr[l].US_Mess[2].tof;
                      r_val := r_val1- r_val;
                   end;
-                  if form12.ComboBox1.ItemIndex = 6 then begin  //'Laufzeit H[C] %]'
+                  if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit H[A] %]'
+                     r_val:=scann_arr[l].US_Mess[1].amp;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 4 then begin  //'Laufzeit H[B] %]'
+                     r_val:=scann_arr[l].US_Mess[2].amp;
+                  end;
+                  if form12.ComboBox1.ItemIndex = 5 then begin  //'Laufzeit H[C] %]'
                      r_val:=scann_arr[l].US_Mess[3].amp;
                   end;
               end;
@@ -3582,7 +3569,8 @@ begin
                   end;
                 end;
 
-                r_val:=form6.GetColor(live_scan[round(x11),round(y11)].US_Mess[j].tof );
+                r_val:=form6.GetColor(r_val);
+               // r_val:=form6.GetColor(live_scan[round(x11),round(y11)].US_Mess[j].tof ); //by cristi according b-a
 
                 x1:=round(x11)*x_axis_rez;
                 y1:=round(y11)*y_axis_rez;
@@ -3687,11 +3675,15 @@ begin
             form15.Image1.Canvas.Font.Color:=clWhite;
             form15.Image1.Canvas.Brush.Color:=clBlack;
 
+                form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
+{
             if (SpTBXCheckBox11.Checked) or (SpTBXCheckBox32.Checked)
                                          or (SpTBXCheckBox33.Checked)
                                          or (SpTBXCheckBox34.Checked) then begin
                 form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
+
             end else begin
+
               if form1.radiobutton26.Checked  then begin
                 form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
               end;
@@ -3702,8 +3694,9 @@ begin
                       form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1-4),'±');
 
               end;
-            end ;
 
+            end ;
+         }
 
             form15.image1.canvas.Pen.Mode:=penmode;
 
