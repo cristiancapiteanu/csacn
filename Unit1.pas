@@ -1,6 +1,5 @@
 unit Unit1;
 
-{$MAXSTACKSIZE $2000000}
 
 interface
 
@@ -2225,7 +2224,8 @@ try
                      if enc_cur_x > old_x_position then scan_direction:=true else scan_direction:=false;
                      old_x_position:= enc_cur_x;
                   end;
-                  if r_val = 0 then tmp4:=0;
+                  if r_val = 0 then enc_cur_x:=old_x_position;
+               //   if r_val = 0 then tmp4:=0;
                   //enc_cur_x := enc_cur_x +0.1; scan_direction:=true;
 
                   tmp11^:=data_optel^; //13 + 3 =16
@@ -2239,8 +2239,10 @@ try
                   r_val:=tmp11^+256*tmp21^+256*256*tmp31^+256*256*256*tmp41^;
                   if (scaner_type <> 2)and(r_val<>0) then begin
                      enc_cur_y:=r_val;
+                     old_y_position:= enc_cur_y;
                   end;
-                  if r_val = 0 then tmp4:=0;
+                  if r_val = 0 then enc_cur_y:=old_y_position;
+                //  if r_val = 0 then tmp4:=0;
 
                   tmp1:=data_optel^; //17 + 3 =20            ///alaram
                   inc(data_optel);
@@ -3507,19 +3509,20 @@ begin
                      r_val:=scann_arr[l].US_Mess[j].amp;
               end else begin
                   if form12.ComboBox1.ItemIndex = 0 then begin  //'Laufzeit s(A) [mm]'
-                     r_val:=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+                 ///    r_val:=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
                      r_val:=scann_arr[l].US_Mess[1].tof;
                   end;
                   if form12.ComboBox1.ItemIndex = 1 then begin  //'Laufzeit s(B) [mm]'
-                     r_val:=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+                //     r_val:=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
                      r_val:=scann_arr[l].US_Mess[2].tof;
                   end;
                   if form12.ComboBox1.ItemIndex = 2 then begin  //'Ds = s(B)-s(A) [mm]'
-//                     r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
-//                     r_val1 :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
+            //         r_val :=TRCal((scann_arr[l].US_Mess[1].tof-us_probe_delay)*us_calc);
+             //        r_val1 :=TRCal((scann_arr[l].US_Mess[2].tof-us_probe_delay)*us_calc);
                      r_val :=scann_arr[l].US_Mess[1].tof;
                      r_val1:=scann_arr[l].US_Mess[2].tof;
-                     r_val := r_val1- r_val;
+                     r_val := r_val1 - r_val;
+                     r_val:=r_val + us_probe_delay;
                   end;
                   if form12.ComboBox1.ItemIndex = 3 then begin  //'Laufzeit H[A] %]'
                      r_val:=scann_arr[l].US_Mess[1].amp;
@@ -3675,7 +3678,7 @@ begin
             form15.Image1.Canvas.Font.Color:=clWhite;
             form15.Image1.Canvas.Brush.Color:=clBlack;
 
-                form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(r_val1,ffFixed,6,2));
+            form15.Image1.Canvas.TextOut(trunc(x1+10),trunc(y1+0),FloatToStrF(TRCal((r_val1-us_probe_delay)*us_calc),ffFixed,6,2));
 {
             if (SpTBXCheckBox11.Checked) or (SpTBXCheckBox32.Checked)
                                          or (SpTBXCheckBox33.Checked)

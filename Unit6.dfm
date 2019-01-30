@@ -1,6 +1,6 @@
 object Form6: TForm6
-  Left = 206
-  Top = 0
+  Left = 317
+  Top = 24
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
@@ -222,7 +222,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 689
+      Top = 739
       Width = 458
       Height = 16
       Align = alTop
@@ -1312,7 +1312,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 673
+      Top = 723
       Width = 458
       Height = 16
       Align = alTop
@@ -3064,7 +3064,7 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 705
+      Top = 755
       Width = 458
       Height = 16
       Align = alTop
@@ -3158,7 +3158,7 @@ object Form6: TForm6
       Left = 1
       Top = 407
       Width = 458
-      Height = 250
+      Height = 16
       Align = alTop
       Caption = '     C-SCAN Move/Zoom'
       Font.Charset = DEFAULT_CHARSET
@@ -4309,8 +4309,8 @@ object Form6: TForm6
         Visible = False
       end
       object SpTBXCheckBox12: TSpTBXCheckBox
-        Left = 8
-        Top = 168
+        Left = 0
+        Top = 232
         Width = 71
         Height = 15
         Caption = 'Mirror OY'
@@ -4320,8 +4320,8 @@ object Form6: TForm6
         State = cbChecked
       end
       object SpTBXCheckBox13: TSpTBXCheckBox
-        Left = 80
-        Top = 168
+        Left = 72
+        Top = 232
         Width = 71
         Height = 15
         Caption = 'Mirror OX'
@@ -4365,9 +4365,9 @@ object Form6: TForm6
     end
     object GroupBox27: TGroupBox
       Left = 1
-      Top = 657
+      Top = 423
       Width = 458
-      Height = 16
+      Height = 300
       Align = alTop
       Caption = '     C-SCAN'
       Font.Charset = DEFAULT_CHARSET
@@ -4673,7 +4673,7 @@ object Form6: TForm6
           object SpTBXCheckBox14: TSpTBXCheckBox
             Left = 314
             Top = 72
-            Width = 52
+            Width = 55
             Height = 15
             Caption = 'On/Off'
             TabOrder = 4
@@ -5028,9 +5028,9 @@ object Form6: TForm6
                   Width = 65
                   Height = 21
                   ItemHeight = 13
-                  ItemIndex = 1
+                  ItemIndex = 0
                   TabOrder = 17
-                  Text = 'Min'
+                  Text = 'Over'
                   Visible = False
                   OnChange = SpTBXComboBox4Change
                   Items.Strings = (

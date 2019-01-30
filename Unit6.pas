@@ -1,5 +1,7 @@
 unit Unit6;
 
+
+
 interface
 
 uses
@@ -720,7 +722,12 @@ d_gain:real;
 amp:real;
 begin
 //with form1 do begin
-      SpTBXProgressBar1.Position:=0;
+  if not form19.visible then  form19.show;
+         if not form19.visible  then form19.BringToFront;
+         application.ProcessMessages;
+
+
+    SpTBXProgressBar1.Position:=0;
     if SpTBXCheckBox1.Checked or SpTBXCheckBox2.Checked then
         SpTBXProgressBar1.Max :=scann_counter;
 
@@ -772,6 +779,8 @@ begin
        end;
     end;
 
+
+    //set gates positions
     us_sv1:= edit12.Value ;
     if RadioButton25.Checked then begin
       if SpTBXRadioButton1.Checked then begin
@@ -807,76 +816,45 @@ begin
       end;
     end;                                              
 
+    // refill with data the data set
+    if SpTBXCheckBox1.Checked or SpTBXCheckBox2.Checked then   //peak or flank
+       for I:=1 to scann_counter-1 do begin
+              SpTBXProgressBar1.Position:=i;
+              if scann_arr[i].have_ascan then begin
 
-
-
-                                                             {
-
-          x_start:=(gates1[1].start-us_delay1)/1.0;
-          x_stop:=(gates1[1].start+gates1[1].width-us_delay1)/1.0;
-
-          image8.Canvas.Pen.Color:=clBlue;
-          image8.Canvas.Pen.Width:=2;
-          if (us_ascan_hf1=0) then begin
-              image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))),trunc(Image8.height/2-(gates1[1].height/100)*Image8.height/2));
-              image8.Canvas.LineTo(trunc(x_stop/(US_Width1/(image8.Width))),trunc(Image8.height/2-(gates1[1].height/100)*Image8.height/2));
-          end else begin
-              image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))),trunc(Image8.height-(gates1[1].height/100)*Image8.height));
-              image8.Canvas.LineTo(trunc(x_stop/(US_Width1/(image8.Width))),trunc(Image8.height-(gates1[1].height/100)*Image8.height));
-          end;
-
-
-
-                                                              }
-
-
-                  x1_start:= image8.Width*(gates1[1].start-us_delay1) / US_Width1;
-                  x1_stop := image8.Width*(gates1[1].start+gates1[1].width-us_delay1) / US_Width1;
+                  //set gates coordonates
+                  x1_start:= image8.Width*(gates1[1].start-scann_arr[i].us_delay) / US_Width1;
+                  x1_stop := image8.Width*(gates1[1].start+gates1[1].width-scann_arr[i].us_delay) / US_Width1;
                   if us_ascan_hf1=0 then
                     x1_height:=gates1[1].height/2*image8.Height/100
                   else
                     x1_height:=gates1[1].height*image8.Height/100 ;
 
-                  x2_start:= image8.Width*(gates1[2].start-us_delay1)/US_Width1;
-                  x2_stop := image8.Width*(gates1[2].start+gates1[2].width-us_delay1) /US_Width1;
+                  x2_start:= image8.Width*(gates1[2].start-scann_arr[i].us_delay)/US_Width1;
+                  x2_stop := image8.Width*(gates1[2].start+gates1[2].width-scann_arr[i].us_delay) /US_Width1;
                   if us_ascan_hf1=0 then
                     x2_height:=gates1[2].height/2*image8.Height/100
                   else
                     x2_height:=gates1[2].height*image8.Height/100;
 
-                  x3_start:= image8.Width*(gates1[3].start-us_delay1)/(US_Width1/(image8.Width));
-                  x3_stop := image8.Width*(gates1[3].start+gates1[3].width-us_delay1) /US_Width1;
+                  x3_start:= image8.Width*(gates1[3].start-scann_arr[i].us_delay)/US_Width1;
+                  x3_stop := image8.Width*(gates1[3].start+gates1[3].width-scann_arr[i].us_delay) /US_Width1;
                   if us_ascan_hf1=0 then
                     x3_height:=gates1[3].height/2*image8.Height/100
                   else
                     x3_height:=gates1[3].height*image8.Height/100;
 
 
+                 scann_arr[i].US_Mess[1].tof :=0;
+                 scann_arr[i].US_Mess[2].tof :=0;
+                 scann_arr[i].US_Mess[3].tof :=0;
+                 scann_arr[i].US_Mess[1].amp :=0;
+                 scann_arr[i].US_Mess[2].amp :=0;
+                 scann_arr[i].US_Mess[3].amp :=0;
 
-
-    if SpTBXCheckBox1.Checked or SpTBXCheckBox2.Checked then
-       for I:=1 to scann_counter-1 do begin
-              SpTBXProgressBar1.Position:=i;
-              if scann_arr[i].have_ascan then begin
-                  scann_arr[i].US_Mess[1].tof :=0;
-                  scann_arr[i].US_Mess[2].tof :=0;
-                  scann_arr[i].US_Mess[3].tof :=0;
-                  if us_ascan_hf1=0 then
-                     scann_arr[i].US_Mess[1].amp :=0
-                  else
-                     scann_arr[i].US_Mess[1].amp :=0;
-                  if us_ascan_hf1=0 then
-                     scann_arr[i].US_Mess[2].amp :=0
-                  else
-                     scann_arr[i].US_Mess[2].amp :=0;
-                  if us_ascan_hf1=0 then
-                     scann_arr[i].US_Mess[3].amp :=0
-                  else
-                     scann_arr[i].US_Mess[3].amp :=0;
-
-                  if SpTBXCheckBox1.Checked then begin
+                  if SpTBXCheckBox1.Checked then begin       //flank   tof
                       for k:=1 to 400 do  //flank
-                        if (k>=x1_start)and (k<=x1_stop) then
+                        if ((k/400*image8.Width)>=x1_start)and ((k/400*image8.Width)<=x1_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then begin
                                       scann_arr[i].US_Mess[1].tof :=k/400*US_Width1+scann_arr[i].us_delay ; break; end;
@@ -886,7 +864,7 @@ begin
                               end;
 
                       for k:=1 to 400 do  //flank
-                        if (k>=x2_start)and (k<=x2_stop) then
+                        if ((k/400*image8.Width)>=x2_start)and ((k/400*image8.Width)<=x2_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then  begin
                                       scann_arr[i].US_Mess[2].tof :=k/400*US_Width1+scann_arr[i].us_delay ; break; end;
@@ -896,7 +874,7 @@ begin
                               end;
 
                       for k:=1 to 400 do  //flank
-                        if (k>=x3_start)and (k<=x3_stop) then
+                        if ((k/400*image8.Width)>=x3_start)and ((k/400*image8.Width)<=x3_stop) then
                               if us_ascan_hf1=0 then  begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then  begin
                                       scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+scann_arr[i].us_delay; break; end;
@@ -904,63 +882,13 @@ begin
                                 if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x3_height then begin
                                       scann_arr[i].US_Mess[3].tof :=k/400*US_Width1+scann_arr[i].us_delay;; break; end;
                               end;
-                  end;
 
-                  if SpTBXCheckBox2.Checked then begin
+                  ///amplitude
                       r_val1:=0;
                       r_val2:=0;
                       r_val3:=0;
-                      for k:=1 to 400 do begin  //peak
-                        if (k>=x1_start)and (k<=x1_stop) then
-                              if us_ascan_hf1=0 then begin
-                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then
-                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
-                                     r_val1 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
-                                  end;
-                              end else begin
-                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x1_height then
-                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
-                                     r_val1 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
-                                  end;
-                              end;
-                        if (k>=x2_start)and (k<=x2_stop) then
-                              if us_ascan_hf1=0 then begin
-                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then
-                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
-                                     r_val2 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
-                                  end;
-                              end else begin
-                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x2_height then
-                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
-                                     r_val2 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
-                                  end;
-                              end;
-                        if (k>=x3_start)and (k<=x3_stop) then
-                              if us_ascan_hf1=0 then begin
-                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then
-                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
-                                     r_val3 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
-                                  end;
-                              end else begin
-                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x3_height then
-                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
-                                     r_val3 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
-                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
-                                  end;
-                              end;
-                      end;
-                  end;//if SpTBXCheckBox2.Checked then begin
-///amplitude
-                      r_val1:=0;
-                      r_val2:=0;
-                      r_val3:=0;
-                      for k:=1 to 400 do begin  //peak
-                        if (k>=x1_start)and (k<=x1_stop) then
+                      for k:=1 to 400 do begin
+                        if ((k/400*image8.Width)>=x1_start)and ((k/400*image8.Width)<=x1_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
@@ -974,7 +902,7 @@ begin
                                      scann_arr[i].US_Mess[1].amp :=trunc((Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)*100/image8.Height);
                                   end;
                               end;
-                        if (k>=x2_start)and (k<=x2_stop) then
+                        if ((k/400*image8.Width)>=x2_start)and ((k/400*image8.Width)<=x2_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
@@ -988,7 +916,7 @@ begin
                                      scann_arr[i].US_Mess[2].amp :=trunc((Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)*100/image8.Height);
                                   end;
                               end;
-                        if (k>=x3_start)and (k<=x3_stop) then
+                        if ((k/400*image8.Width)>=x3_start)and ((k/400*image8.Width)<=x3_stop) then
                               if us_ascan_hf1=0 then begin
                                 if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then
                                   if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
@@ -1004,38 +932,140 @@ begin
                               end;
 
                       end;
+
+                  end;
+
+                  if SpTBXCheckBox2.Checked then begin     //peak    tof
+                      r_val1:=0;
+                      r_val2:=0;
+                      r_val3:=0;
+                      for k:=1 to 400 do begin  //peak
+                        if ((k/400*image8.Width)>=x1_start)and ((k/400*image8.Width)<=x1_stop) then
+                              if us_ascan_hf1=0 then begin
+                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
+                                     r_val1 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
+                                  end;
+                              end else begin
+                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x1_height then
+                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
+                                     r_val1 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[1].tof := k/400*US_Width1+scann_arr[i].us_delay;
+                                  end;
+                              end;
+                        if ((k/400*image8.Width)>=x2_start)and ((k/400*image8.Width)<=x2_stop) then
+                              if us_ascan_hf1=0 then begin
+                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
+                                     r_val2 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
+                                  end;
+                              end else begin
+                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x2_height then
+                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
+                                     r_val2 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[2].tof := k/400*US_Width1+scann_arr[i].us_delay;
+                                  end;
+                              end;
+                        if ((k/400*image8.Width)>=x3_start)and ((k/400*image8.Width)<=x3_stop) then
+                              if us_ascan_hf1=0 then begin
+                                if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
+                                     r_val3 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
+                                  end;
+                              end else begin
+                                if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=x3_height then
+                                  if (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
+                                     r_val3 := (Image8.height-Image8.height*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[3].tof := k*image8.Width/400*US_Width1/(image8.Width)+scann_arr[i].us_delay;
+                                  end;
+                              end;
+                      end;
+                  ///amplitude
+                      r_val1:=0;
+                      r_val2:=0;
+                      r_val3:=0;
+                      for k:=1 to 400 do begin
+                        if ((k/400*image8.Width)>=x1_start)and ((k/400*image8.Width)<=x1_stop) then
+                              if us_ascan_hf1=0 then begin
+                              //  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x1_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
+                                     r_val1 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[1].amp :=trunc(((Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200))*100/image8.Height);
+                                  end;
+                              end else begin
+                              //  if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/100)>=x1_height then
+                                  if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)>=r_val1 then begin
+                                     r_val1 := (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[1].amp :=trunc((Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)*100/image8.Height);
+                                  end;
+                              end;
+                        if ((k/400*image8.Width)>=x2_start)and ((k/400*image8.Width)<=x2_stop) then
+                              if us_ascan_hf1=0 then begin
+                              //  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x2_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
+                                     r_val2 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[2].amp :=trunc(((Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200))*100/image8.Height);
+                                  end;
+                              end else begin
+                             //   if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/100)>=x2_height then
+                                  if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)>=r_val2 then begin
+                                     r_val2 := (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[2].amp :=trunc((Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)*100/image8.Height);
+                                  end;
+                              end;
+                        if ((k/400*image8.Width)>=x3_start)and ((k/400*image8.Width)<=x3_stop) then
+                              if us_ascan_hf1=0 then begin
+                              //  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=x3_height then
+                                  if (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
+                                     r_val3 := (Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[3].amp :=trunc(((Image8.height/2-(Image8.height/2)*scann_arr[i].US_arr1[k]/200))*100/image8.Height);
+                                  end;
+                              end else begin
+                                //if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)>=x3_height then
+                                  if (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)>=r_val3 then begin
+                                     r_val3 := (Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200);
+                                     scann_arr[i].US_Mess[3].amp :=trunc((Image8.height-(Image8.height)*scann_arr[i].US_arr1[k]/200)*100/image8.Height);
+                                  end;
+                              end;
+
+                      end;
+
+
+                  end;//if SpTBXCheckBox2.Checked then begin
               end;
        end;
 
   //SpTBXCheckBox1.Checked:=false;
   //SpTBXCheckBox2.Checked:=false;
-Screen.Cursor := crHourGlass;
-  //  start_zoom_offset:=true;
-    have_data2:=false;
-        have_data1:=false;
-        have_data10:=false;
-        up_date_graph:=true;
-        x_old:=0;
-        y_old:=0;
-    Image2MouseMove(sender,[],1,1);
-    start_zoom_offset:=false;
-    Screen.Cursor := crArrow;
-{
-      Screen.Cursor := crHourGlass;
-      start_zoom_offset_ox:=true;
 
+  Screen.Cursor := crHourGlass;
+
+  have_data2:=false;
+  up_date_graph:=true;
+
+  memo1.Lines.Add('roi line1');
   Draw_scann;
+  memo1.Lines.Add('roi line2');
   Draw_axes;
+  memo1.Lines.Add('roi line3');
   Draw_ASCAN;
+  memo1.Lines.Add('roi line4');
   Draw_CalcTxt;
+  memo1.Lines.Add('roi line5');
   Draw_SideView;
+  memo1.Lines.Add('roi line6');
   Draw_TOFD_OX;
+  memo1.Lines.Add('roi line7');
   Draw_TOFD_OY;
+  memo1.Lines.Add('roi line8');
 
-      start_zoom_offset_ox:=false;
-      Screen.Cursor := crArrow;
- }
- //end;
+  have_data2:=true;
+
+  Screen.Cursor := crArrow;
+
 end;
 
 procedure TForm6.CropBitmap(InBitmap, OutBitMap : TBitmap; X, Y, W, H :Integer);
@@ -1687,7 +1717,7 @@ var
 i:integer;
 begin
 
-up_date_graph:= not up_date_graph;
+  up_date_graph:= not up_date_graph;
 
   exit;
 //  if not up_date_graph then exit;
@@ -2036,8 +2066,8 @@ begin
               image8.Canvas.LineTo((k),trunc(mod_scan[i,j].US_arr1[trunc(k*400/image8.Width)]*image8.Height/200));
           end;
 
-          x_start:=(gates1[1].start-us_delay1)/1.0;
-          x_stop:=(gates1[1].start+gates1[1].width-us_delay1)/1.0;
+          x_start:=(gates1[1].start-mod_scan[i,j].us_delay)/1.0;
+          x_stop:=(gates1[1].start+gates1[1].width-mod_scan[i,j].us_delay)/1.0;
 
           image8.Canvas.Pen.Color:=clBlue;
           image8.Canvas.Pen.Width:=2;
@@ -2049,8 +2079,8 @@ begin
               image8.Canvas.LineTo(trunc(x_stop/(US_Width1/(image8.Width))),trunc(image8.Height-(gates1[1].height/100)*image8.Height));
           end;
 
-          x_start:=(gates1[2].start-us_delay1)/1;
-          x_stop:=(gates1[2].start+gates1[2].width-us_delay1)/1;
+          x_start:=(gates1[2].start-mod_scan[i,j].us_delay)/1;
+          x_stop:=(gates1[2].start+gates1[2].width-mod_scan[i,j].us_delay)/1;
           image8.Canvas.Pen.Color:=clRed;//clOlive;
           image8.Canvas.Pen.Width:=2;
           if (us_ascan_hf1=0) then begin
@@ -2061,8 +2091,8 @@ begin
               image8.Canvas.LineTo(trunc(x_stop/(US_Width1/image8.Width)),trunc(image8.Height-(gates1[2].height/100)*image8.Height));
           end;
 
-          x_start:=(gates1[3].start-us_delay1)/1;
-          x_stop:=(gates1[3].start+gates1[3].width-us_delay1)/1;
+          x_start:=(gates1[3].start-mod_scan[i,j].us_delay)/1;
+          x_stop:=(gates1[3].start+gates1[3].width-mod_scan[i,j].us_delay)/1;
 
           image8.Canvas.Pen.Color:=clYellow;//clGreen;
           image8.Canvas.Pen.Width:=2;
@@ -3149,17 +3179,19 @@ d:real;
 x1,y1,x2,y2,r_temp:real;
 r_val, r_val1,r_val3,r_val4:real;
 r_val5,r_val6,r_val7:integer;
+r_val4_max, r_val6_max:integer;
 point_rezx,point_rezy,point_rez:real;
 //mod_scan:array of array  of TScann_arr;
 Scann_arr2:TScann_arr;
 k1,k2:real;
+c:integer;
 
 
 label 1;
 begin
   try
    if scann_counter<2 then exit;
-   memo1.Clear;
+   //memo1.Clear;
    if (not have_data2)or(  start_zoom_offset) then begin
 
          Screen.Cursor := crHourGlass;
@@ -3172,7 +3204,9 @@ begin
 
       memo1.Lines.Add('line 1');
       SetLength(mod_scan,0,0);
+
       SetLength(mod_scan,round(X_axis_len/x_axis_rez)+2,round(y_axis_len/y_axis_rez)+2);
+
       for i:=0 to round(X_axis_len/x_axis_rez)-1 do
           for j:=0 to round(y_axis_len/y_axis_rez)-1 do 
               mod_scan[i,j].have_ascan:=false;                                                                                                    
@@ -3195,7 +3229,7 @@ begin
           if radiobutton18.Checked then k:=3;
           //amplitude eval
           if radiobutton19.Checked then begin
-             if scann_arr[i].US_Mess[k].amp >0 then
+             //if scann_arr[i].US_Mess[k].amp >0 then
                 case SpTBXComboBox4.ItemIndex of
                   0:begin
                       mod_scan[round(x1),round(y1)]:=scann_arr[i];
@@ -3212,7 +3246,7 @@ begin
 
           //tof eval
           if radiobutton20.Checked then begin
-             if scann_arr[i].US_Mess[k].tof >0 then
+             //if scann_arr[i].US_Mess[k].tof >0 then
                 case SpTBXComboBox4.ItemIndex of
                   0:begin
                       mod_scan[round(x1),round(y1)]:=scann_arr[i];
@@ -3239,32 +3273,51 @@ begin
 
          r_val5:=0;
          r_val6:=round(X_axis_len/x_axis_rez)-1;
+         c:= trunc(10/y_axis_rez);
 
-         for j:=0 to round(r_val4) do begin
-              if (mod_scan[10,j].xy_coor.x=0) and (mod_scan[10,j].xy_coor.y=0) then begin
-                 r_val3:=r_val3+1;
-                 if  r_val3>10 then begin
-                     r_val4:= j-10;
-                     break;
-                 end;
-              end else begin
-                  r_val3:=0;
-              end;
+         r_val4_max:=0;
+         for i:= 0 to round(r_val6) do begin   //oy
+
+             r_val4:=round(y_axis_len/y_axis_rez)-1;
+             for j:=0 to round(r_val4) do begin      //oy
+                  if (mod_scan[i,j].xy_coor.x=0) and (mod_scan[i,j].xy_coor.y=0) then begin
+                     r_val3:=r_val3+1;
+                     if  r_val3>c then begin
+                         r_val4:= j-c;
+                         break;
+                     end;
+                  end else begin
+                      r_val3:=0;
+                  end;
+             end;
+             if r_val4>= r_val4_max then r_val4_max:=round(r_val4);
+
          end;
-         maxim_y:=round(r_val4);
+         maxim_y:=round(r_val4_max);
 
-         for i:=round(r_val6) downto 0 do begin
-              if (mod_scan[i,maxim_y-1].xy_coor.x<>0) and (mod_scan[i,maxim_y-1].xy_coor.y<>0) then begin
+         c:= trunc(10/x_axis_rez);
+         r_val6_max:=0;
+
+         for j:=0 to maxim_y-1 do begin          //ox
+
+           r_val6:=round(X_axis_len/x_axis_rez)-1;
+           for i:=round(r_val6) downto 0 do begin     //ox
+              if (mod_scan[i,j].xy_coor.x<>0) and (mod_scan[i,j].xy_coor.y<>0) then begin
                  r_val5:=r_val5+1;
-                 if  r_val5>10 then begin
-                     r_val6:= i+10;
+                 if  r_val5>c then begin
+                     r_val6:= i+c;
                      break;
                  end;
               end else begin
                   r_val5:=0;
               end;
+           end;
+
+           if r_val6>=r_val6_max then r_val6_max:=r_val6;
          end;
-         maxim_x:=round(r_val6);
+
+
+         maxim_x:=round(r_val6_max);
 
      for i:=0 to maxim_x-1 do  begin
      // for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
@@ -3626,7 +3679,7 @@ memo1.Lines.Add('line 5');
 
   end;
 
-        memo1.Lines.Add('line 9');
+      //  memo1.Lines.Add('line 9');
 
   //draw cursor
   image2.Canvas.Pen.Width :=1;

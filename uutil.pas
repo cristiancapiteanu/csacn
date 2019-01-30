@@ -551,6 +551,7 @@ cccc:double;
 ii100:integer;
 possbar:integer;
 old_x_position:real;
+old_y_position:real;
 scan_direction:boolean;
 
 s_b, s_c, s_t:boolean;
@@ -770,8 +771,9 @@ try
           begin
                   dx:= abs(scann_arr[scann_counter].xy_coor.x - enc_cur_x);
                   dy:= abs(scann_arr[scann_counter].xy_coor.y - enc_cur_y);
-           //       if ( (dx >= (x_axis_rez/2)) ) or ( dy >= (y_axis_rez) ) then begin
-                  if ( (dx >= (x_axis_rez/2)) and scan_direction) or ( dy >= (y_axis_rez) ) then begin
+
+                  if ( (dx >= (abs(encoder[encoder_index].enc_x_rez))) and scan_direction) or ( dy >= (y_axis_rez) ) then begin
+             //     if ( (dx >= (x_axis_rez/2)) and scan_direction) or ( dy >= (y_axis_rez) ) then begin
                  // if ( dy >= (y_axis_rez/4) )then x_temp:=enc_cur_x;
                          //if scan_direction then begin
                   //if scann_counter > 3 then
