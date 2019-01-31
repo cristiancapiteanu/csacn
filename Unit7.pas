@@ -365,14 +365,20 @@ begin
           if FileExists(s+'.ms') then begin
             if MessageDlg('Do you want to overwriten ?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
+                  try
                   lFile := TFileStream.Create(s+'.ms', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_ms));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
               end else begin end;
           end else begin
+                  try
                   lFile := TFileStream.Create(s+'.ms', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_ms));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
           end;
       end;
   except
@@ -1394,6 +1400,7 @@ tt2:integer;
 have_off:boolean;
 begin
 //  if timer2_fire then exit;
+ {
   try
   if (not comport1.Connected )and checkbox1.Checked then checkbox1.Checked:=false;
 
@@ -1401,31 +1408,31 @@ begin
       inc(com_time_count);
       input_counter:=comport1.InputCount;
      //label64.Caption :=IntToStr(input_counter);
-    if comport1.InputCount >0 then begin
-      j:=comport1.InputCount;
+     if comport1.InputCount >0 then begin
+        j:=comport1.InputCount;
 
-      //setleght(rec_aa,j);
-      if j>=10000 then
-        j:=10000;
-      comport1.Read(rec_aa,j);
+        //setleght(rec_aa,j);
+        if j>=10000 then
+           j:=10000;
+        comport1.Read(rec_aa,j);
 
-      if (j>1)and(status<>1) then
+        if (j>1)and(status<>1) then
           status:=3
-      else
-        if status<>1 then status:=0;
+        else
+            if status<>1 then status:=0;
 
-      if status = 0 then begin
-        inputstr:='';
-       // for i:=1 to j do
-       //   inputstr:=inputstr+IntTostr(aa[i])+' ';
-       // memo1.Lines.Add(inputstr);
-      end;
+        if status = 0 then begin
+           inputstr:='';
+           // for i:=1 to j do
+           //   inputstr:=inputstr+IntTostr(aa[i])+' ';
+           // memo1.Lines.Add(inputstr);
+        end;
 
-      if status = 1 then begin
-        ProcessScannSetings;
-      end;
+        if status = 1 then begin
+          ProcessScannSetings;
+        end;
 
-      if status = 3 then begin
+        if status = 3 then begin
           have_off:=false;
           off:=0;
           for i:=1 to (trunc(j/10)-1) do begin
@@ -1470,7 +1477,7 @@ begin
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
 
-
+ }
 end;
 
 procedure TForm7.FormCreate(Sender: TObject);

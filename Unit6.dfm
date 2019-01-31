@@ -1,6 +1,6 @@
 object Form6: TForm6
-  Left = 317
-  Top = 24
+  Left = 268
+  Top = 7
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
@@ -222,7 +222,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 739
+      Top = 789
       Width = 458
       Height = 16
       Align = alTop
@@ -1312,7 +1312,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 723
+      Top = 773
       Width = 458
       Height = 16
       Align = alTop
@@ -3064,7 +3064,7 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 755
+      Top = 805
       Width = 458
       Height = 16
       Align = alTop
@@ -4367,7 +4367,7 @@ object Form6: TForm6
       Left = 1
       Top = 423
       Width = 458
-      Height = 300
+      Height = 350
       Align = alTop
       Caption = '     C-SCAN'
       Font.Charset = DEFAULT_CHARSET
@@ -4612,7 +4612,7 @@ object Form6: TForm6
         Top = 98
         Width = 380
         Height = 217
-        ActivePage = TabSheet9
+        ActivePage = TabSheet8
         TabOrder = 1
         object TabSheet8: TTabSheet
           Caption = '1. Defects'
@@ -5085,6 +5085,7 @@ object Form6: TForm6
                   Width = 97
                   Height = 13
                   Caption = 'X Scan resolution'
+                  Visible = False
                 end
                 object Label49: TLabel
                   Left = 296
@@ -5092,6 +5093,7 @@ object Form6: TForm6
                   Width = 32
                   Height = 13
                   Caption = '[mm]'
+                  Visible = False
                 end
                 object Label50: TLabel
                   Left = 176
@@ -5099,6 +5101,7 @@ object Form6: TForm6
                   Width = 97
                   Height = 13
                   Caption = 'Y Scan resolution'
+                  Visible = False
                 end
                 object Label51: TLabel
                   Left = 296
@@ -5106,6 +5109,7 @@ object Form6: TForm6
                   Width = 32
                   Height = 13
                   Caption = '[mm]'
+                  Visible = False
                 end
                 object Label62: TLabel
                   Left = 1
@@ -5267,6 +5271,7 @@ object Form6: TForm6
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 8
+                  Visible = False
                   SpinButton.Left = 51
                   SpinButton.Top = 0
                   SpinButton.Width = 14
@@ -5290,6 +5295,7 @@ object Form6: TForm6
                   Font.Style = []
                   ParentFont = False
                   TabOrder = 9
+                  Visible = False
                   OnClick = SpTBXButton50Click
                 end
                 object SpTBXButton51: TSpTBXButton
@@ -5305,6 +5311,7 @@ object Form6: TForm6
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 10
+                  Visible = False
                   OnClick = SpTBXButton51Click
                 end
                 object SpTBXButton52: TSpTBXButton
@@ -5320,6 +5327,7 @@ object Form6: TForm6
                   Font.Style = []
                   ParentFont = False
                   TabOrder = 11
+                  Visible = False
                   OnClick = SpTBXButton52Click
                 end
                 object SpTBXSpinEdit7: TSpTBXSpinEdit
@@ -5334,6 +5342,7 @@ object Form6: TForm6
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 12
+                  Visible = False
                   SpinButton.Left = 51
                   SpinButton.Top = 0
                   SpinButton.Width = 14
@@ -5357,6 +5366,7 @@ object Form6: TForm6
                   Font.Style = []
                   ParentFont = False
                   TabOrder = 13
+                  Visible = False
                   OnClick = SpTBXButton53Click
                 end
                 object SpTBXButton54: TSpTBXButton
@@ -5372,6 +5382,7 @@ object Form6: TForm6
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 14
+                  Visible = False
                   OnClick = SpTBXButton54Click
                 end
                 object SpTBXButton55: TSpTBXButton
@@ -5387,6 +5398,7 @@ object Form6: TForm6
                   Font.Style = []
                   ParentFont = False
                   TabOrder = 15
+                  Visible = False
                   OnClick = SpTBXButton55Click
                 end
                 object SpTBXSpinEdit12: TSpTBXSpinEdit
@@ -5503,7 +5515,7 @@ object Form6: TForm6
     end
   end
   object GroupBox1: TGroupBox
-    Left = 208
+    Left = 96
     Top = 824
     Width = 729
     Height = 57

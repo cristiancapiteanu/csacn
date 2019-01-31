@@ -1183,7 +1183,7 @@ lFile: TFileStream;
 file_data:TScan_File;
 scanFile: File of TScann_arr;
 
-s_tmp,s,s1,s2,s3,s10:string;
+s_tmp,s,s1,s2,s3,s10,s20:string;
 is_tmp,i1,i2:integer;
 
 lFile1: TFileStream;
@@ -1224,30 +1224,37 @@ have_data11 := false;
           ExecuteAndWait('rar.exe '+s3);
 
 
+          s20:=s2;
+          if not FileExists(s+s20+'\'+s2+s1) then begin
+             s2:= '000';
+          end;
+         try
 
-          lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmOpenRead or fmShareDenyWrite);
+          lFile := TFileStream.Create(s+s20+'\'+s2+s1, fmOpenRead or fmShareDenyWrite) ;
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(TScan_File));
-		      lFile.Free;
-
+		     finally
+          lFile.Free;
+         end;
           //checkbox2.Checked:=false;
           scann_counter:=file_data.scann_counter;
           //SetLength(scann_arr, scann_counter+2);
 
-          pallete_file_name:=s+s2+'\'+s2+s1 + '_pal';
+          pallete_file_name:=s+s20+'\'+s2+s1 + '_pal';
 
-          AssignFile(scanFile,s+s2+'\'+s2+s1 + '_raw');
-          Reset(scanFile);
           try
+
+          AssignFile(scanFile,s+s20+'\'+s2+s1 + '_raw');
+          Reset(scanFile);
              for i:=0 to scann_counter-1 do
                  Read(scanFile, scann_arr[i]);
           finally
                  CloseFile(scanFile);
           end;
 
-          if fileexists(s+s2+'\'+s2+s1+'_ini') then begin
-                  AssignFile(txtFile,s+s2+'\'+s2+s1+'_ini');
-                  Reset(txtFile);
+          if fileexists(s+s20+'\'+s2+s1+'_ini') then begin
                   try
+                  AssignFile(txtFile,s+s20+'\'+s2+s1+'_ini');
+                  Reset(txtFile);
                       Readln(txtFile, s10);
                       form6.combobox1.itemindex:=StrToInt(s10);
                       form12.combobox1.itemindex:=StrToInt(s10);
@@ -1441,49 +1448,78 @@ have_data11 := false;
           end;
 
           have_data2:=false;
-          have_data4:=false;
-          have_data8:=false;
-          have_data3:=false;
-          have_data1:=false;
-          have_data10:=false;
+         // have_data4:=false;
+         // have_data8:=false;
+         // have_data3:=false;
+         // have_data1:=false;
+         // have_data10:=false;
 
 
           Screen.Cursor := crHourGlass;
 
           try
+             memo1.Lines.Add('load line1');
              form12.OpenPallete;
+             memo1.Lines.Add('load line2');
+             have_data2:=false;
+             Draw_axes;
+             memo1.Lines.Add('load line3');
+             Draw_ASCAN;
+             memo1.Lines.Add('load line4');
+             Draw_CalcTxt;
+             memo1.Lines.Add('load line5');
+             Draw_SideView;
+             memo1.Lines.Add('load line6');
+             Draw_TOFD_OX;
+             memo1.Lines.Add('load line7');
+             Draw_TOFD_OY;
+             memo1.Lines.Add('load line8');
+              have_data2:=true;
           except
                 on E : Exception do
                    ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
           end;
 
+          DeleteDirectory(s+s20);
+
+
+ {
+Screen.Cursor := crHourGlass;
+
+  have_data2:=false;
+  up_date_graph:=true;
+
           form12.Only_Draw_Pallete;;
+  memo1.Lines.Add('load line-2');
+
           application.ProcessMessages;
-          have_data2:=false;
-          Draw_axes;
-          have_data2:=true;
+  memo1.Lines.Add('load line-1');
+
           form1.Up_date_gates;
+  memo1.Lines.Add('load line0');
           //application.ProcessMessages;
-          Screen.Cursor := crHourGlass;
-          Cursor:=crHourGlass;
 
-//     form6.have_data11:=true;
+  memo1.Lines.Add('load line1');
+  Draw_scann;
+  memo1.Lines.Add('load line2');
+  Draw_axes;
+  memo1.Lines.Add('load line3');
+  Draw_ASCAN;
+  memo1.Lines.Add('load line4');
+  Draw_CalcTxt;
+  memo1.Lines.Add('load line5');
+  Draw_SideView;
+  memo1.Lines.Add('load line6');
+  Draw_TOFD_OX;
+  memo1.Lines.Add('load line7');
+  Draw_TOFD_OY;
+  memo1.Lines.Add('load line8');
 
-          up_date_graph:=true;
+  have_data2:=true;
 
+  Screen.Cursor := crArrow;
 
-
-          ///draw_scann;
-          //Draw_axes;
-          //Draw_SideView;
-          Draw_TOFD_OX;
-          DeleteDirectory(s+s2);
-     //     timer1.Enabled :=true;
-          Screen.Cursor := crArrow;
-          //have_data5:=false;
-//          Image1MouseMove(sender,[],10,10);
-
-
+     }
       end;
 
   except
@@ -1503,7 +1539,7 @@ lFile: TFileStream;
 scanFile: File of TScann_arr;
     file_data:TScan_File;
     file_scan: TScann_arr;
-s,s1,s2,s3,s4,s5:string;
+s,s1,s2,s3,s4,s5,s20:string;
 txtFile:TextFile;
 lFile1: TFileStream;
 file_data1:Tfile_pal;
@@ -1621,33 +1657,40 @@ begin
               if s[i]='\' then j:=i;
           end;
           s2:=copy(s,j+1,length(s));
+          s20:=s2;
+          s2:='000';
           s:=copy(s,0,j);
 
           //if FileExists(s+s2+s1) then begin
             //if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then begin
 
-                  DeleteDirectory(s+s2);
-                  CreateDir(s+s2);
-                  lFile := TFileStream.Create(s+s2+'\'+s2+s1, fmCreate);
+                  DeleteDirectory(s+s20);
+                  CreateDir(s+s20);
+                 try
+                  lFile := TFileStream.Create(s+s20+'\'+s2+s1, fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TScan_File));
-		              lFile.Free;
-
-                  lFile1 := TFileStream.Create(s+s2+'\'+s2+s1+'_pal', fmCreate);
+		             finally
+                  lFile.Free;
+                 end;
+                 try
+                  lFile1 := TFileStream.Create(s+s20+'\'+s2+s1+'_pal', fmCreate);
       		        TKBDynamic.WriteTo(lFile1, file_data1, TypeInfo(Tfile_pal));
-		              lFile1.Free;
+		             finally
+                  lFile1.Free;
+                 end;
 
-                  AssignFile(scanFile,s+s2+'\'+s2+s1+'_raw');
-                  Rewrite(scanFile);
                   try
+                   AssignFile(scanFile,s+s20+'\'+s2+s1+'_raw');
+                   Rewrite(scanFile);
                    for i:=0 to scann_counter-1 do
                       write(scanFile, scann_arr[i]);
                   finally
                          CloseFile(scanFile);
                   end;
 
-                  AssignFile(txtFile,s+s2+'\'+s2+s1+'_ini');
-                  Rewrite(txtFile);
                   try
+                   AssignFile(txtFile,s+s20+'\'+s2+s1+'_ini');
+                   Rewrite(txtFile);
                       if form6.Visible then
                          writeln(txtFile, IntToStr(form6.combobox1.itemindex))
                       else
@@ -1657,8 +1700,8 @@ begin
                          CloseFile(txtFile);
                   end;
 
-                  DeleteFile(s+s2+s1);
-                  s3:='a -ep '+ '"' +s2 +s1+ '"'+ ' ' + '"' + s +s2+ '"';
+                  DeleteFile(s+s20+s1);
+                  s3:='a -ep '+ '"' +s20 +s1+ '"'+ ' ' + '"' + s +s20+ '"';
                   ExecuteAndWait('rar.exe '+s3);
 
 
@@ -1675,26 +1718,31 @@ begin
                //overwrite
                    DeleteFile(s4+s1);
 
-                   RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
-                   RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
-                   RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
-                   RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
-                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s2 + '"';
+                   //RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
+                  // RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
+                  // RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
+                 //  RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
+
+                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s20 + '"';
                    ExecuteAndWait('rar.exe '+s3);
-      DeleteFile(s+s2+s1);
-      DeleteDirectory(s+s2);
+
+                   DeleteFile(s+s20+s1);
+                   DeleteDirectory(s+s20);
                end else begin
                end;
             end else begin
                 //write
-                   RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
-                   RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
-                   RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
-                   RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
-                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s2 + '"';
+                   //RenameFile(s+s2+'\'+s2+s1,s+s2+'\'+s5+s1);
+                   //RenameFile(s+s2+'\'+s2+s1+'_raw',s+s2+'\'+s5+s1+'_raw');
+                   //RenameFile(s+s2+'\'+s2+s1+'_pal',s+s2+'\'+s5+s1+'_pal');
+                   //RenameFile(s+s2+'\'+s2+s1+'_ini',s+s2+'\'+s5+s1+'_ini');
+
+                   s3:='a -ep '+ '"' +s5 +s1+ '"'+ ' ' + '"' + s+s20 + '"';
+
                    ExecuteAndWait('rar.exe '+s3);
-      DeleteFile(s+s2+s1);
-      DeleteDirectory(s+s2);
+
+                   DeleteFile(s+s20+s1);
+                   DeleteDirectory(s+s20);
             end;
       end;
 
@@ -1757,6 +1805,7 @@ var
 i,j,k :integer;
 p1,col1:integer;
 r_val, r_val1:real;
+t_x, t_y:integer;
 begin
   if start_scann then exit;
   if scann_counter<2 then exit;
@@ -1791,8 +1840,14 @@ begin
   if (Button = mbRight) and (mouse_step=1) and SpTBXCheckBox14.Checked then begin
         c_scan_mouse_down:=false;
         mouse_step:=2;
-      c_scan_mouse_x_old:=x;
-      c_scan_mouse_y_old:=y;
+
+        c_scan_mouse_x_old:=x;
+        c_scan_mouse_y_old:=y;
+        if SpTBXCheckBox12.Checked then
+           c_scan_mouse_y_old:=image2.Height-y;
+        if SpTBXCheckBox13.Checked then
+           c_scan_mouse_x_old:=image2.Width-x;
+
       //defect[defect_count].mx2:=x;
      // defect[defect_count].my2:=y;
 
@@ -1807,7 +1862,7 @@ begin
 
       c_scan_mouse_down:=true;
       c_scan_mouse_x:=x;
-      c_scan_mouse_y:=y;
+      c_scan_mouse_y:=y;//image2.height-y;
       defect[defect_count].mx1:=trunc(-x_offset+x/(z_zoom/100));
       defect[defect_count].my1:=trunc(-y_offset+y/(z_zoom/100));
 
@@ -1821,8 +1876,16 @@ begin
           d_rap:=imgwidth/y_axis_len;
       end;
 
-      i:=trunc(x/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
-      j:=trunc((y/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
+        t_x:=x;
+        t_y:=y;
+        if SpTBXCheckBox12.Checked then
+           t_y:=image2.Height-t_y;
+        if SpTBXCheckBox13.Checked then
+           t_x:=image2.width-t_x;
+
+
+      i:=trunc(t_x/x_axis_rez/d_rap/(z_zoom/100)  -x_offset/x_axis_rez/d_rap);
+      j:=trunc(t_y/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap);
       if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
       if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
 
@@ -1830,6 +1893,9 @@ begin
         label65.Caption :=FloatToStrF(mod_scan[i,0].xy_coor.x ,ffFixed,6,2)
        else
         label65.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,2);
+
+
+
       if form8.SpTBXListBox2.ItemIndex=0 then
         defect[defect_count].x1:=mod_scan[i,0].xy_coor.x
       else
@@ -2280,6 +2346,7 @@ var
 i1,j1,i0,j0,i,j,k,l:integer;
 r_val, r_val1:real;
 point_rez:real;
+t_x, t_y:integer;
 begin
   try
         if scann_counter<2 then exit;
@@ -2379,15 +2446,16 @@ begin
             c_scan_mouse_x_old:=x_old;
             c_scan_mouse_y_old:=y_old;
 
-            defect[defect_count].mx2:=trunc(-x_offset+x_old/(z_zoom/100));
-            defect[defect_count].my2:=trunc(-y_offset+y_old/(z_zoom/100));
-            //defect[defect_count].mx2:=x_old;
-            //defect[defect_count].my2:=y_old;
+            defect[defect_count].mx2:=trunc((-x_offset+x_old)/(z_zoom/100));
+            defect[defect_count].my2:=trunc((-y_offset+y_old)/(z_zoom/100));
+           // defect[defect_count].mx2:=x_old;
+           // defect[defect_count].my2:=y_old;
           //  label78.Caption:=label31.Caption;
             label79.Caption:=label28.Caption;
             label80.Caption:=label32.Caption;
             defect[defect_count].x21:=defect[defect_count].x2-defect[defect_count].x1;
             defect[defect_count].y21:=defect[defect_count].y2-defect[defect_count].y1;
+
         end;
 
         image2.Canvas.Pen.Style:=psDot	;
@@ -2395,9 +2463,18 @@ begin
         image2.Canvas.Pen.Color:=clYellow;
         image2.Canvas.Brush.Style:=bsSolid		;
 
+        t_x:=c_scan_mouse_x_old;
+        t_y:=c_scan_mouse_y_old;
+        if SpTBXCheckBox12.Checked then
+           t_y:=image2.Height-t_y;
+        if SpTBXCheckBox13.Checked then
+           t_x:=image2.width-t_x;
+
         image2.Canvas.MoveTo(c_scan_mouse_x,c_scan_mouse_y);
-        image2.Canvas.LineTo(c_scan_mouse_x_old,c_scan_mouse_y_old);
-        image2.Canvas.Rectangle(c_scan_mouse_x,c_scan_mouse_y,c_scan_mouse_x_old,c_scan_mouse_y_old);
+        image2.Canvas.LineTo(t_x,t_y);
+
+        image2.Canvas.Rectangle(c_scan_mouse_x,c_scan_mouse_y,
+                                t_x,t_y);
 {
          if defect_count>0 then
          for i:=0 to defect_count-1 do begin
@@ -3185,7 +3262,7 @@ point_rezx,point_rezy,point_rez:real;
 Scann_arr2:TScann_arr;
 k1,k2:real;
 c:integer;
-
+t_x,t_y:integer;
 
 label 1;
 begin
@@ -3279,6 +3356,7 @@ begin
          for i:= 0 to round(r_val6) do begin   //oy
 
              r_val4:=round(y_axis_len/y_axis_rez)-1;
+              r_val3:=0;
              for j:=0 to round(r_val4) do begin      //oy
                   if (mod_scan[i,j].xy_coor.x=0) and (mod_scan[i,j].xy_coor.y=0) then begin
                      r_val3:=r_val3+1;
@@ -3298,14 +3376,18 @@ begin
          c:= trunc(10/x_axis_rez);
          r_val6_max:=0;
 
-         for j:=0 to maxim_y-1 do begin          //ox
+         for j:=trunc(maxim_y/4) to trunc(maxim_y/2) do begin ;//maxim_y-1 do begin          //ox
 
            r_val6:=round(X_axis_len/x_axis_rez)-1;
-           for i:=round(r_val6) downto 0 do begin     //ox
-              if (mod_scan[i,j].xy_coor.x<>0) and (mod_scan[i,j].xy_coor.y<>0) then begin
+           r_val5:=0;
+           for i:=round(r_val6) downto 1 do begin     //ox
+              if (mod_scan[i,j].xy_coor.x-mod_scan[i-1,j].xy_coor.x)<>0  then begin
+//              if (mod_scan[i,j].xy_coor.x<>0) and (mod_scan[i,j].xy_coor.y<>0) then begin
                  r_val5:=r_val5+1;
                  if  r_val5>c then begin
                      r_val6:= i+c;
+           if r_val6>=r_val6_max then
+              r_val6_max:=r_val6;
                      break;
                  end;
               end else begin
@@ -3313,7 +3395,6 @@ begin
               end;
            end;
 
-           if r_val6>=r_val6_max then r_val6_max:=r_val6;
          end;
 
 
@@ -3652,7 +3733,7 @@ memo1.Lines.Add('line 5');
          //   end;
           end;
 
-
+       have_data2:=true;
         memo1.Lines.Add('line 8,1');
 
         image2.Canvas.Pen.Style:=psDot	;
@@ -3660,14 +3741,37 @@ memo1.Lines.Add('line 5');
         image2.Canvas.Pen.Color:=clYellow;
         image2.Canvas.Brush.Style:=bsSolid		;
 
+            k1:=1;
+            if SpTBXCheckBox12.Checked then begin
+                 y1:=image2.Height-y1;
+                 k1:=-1;
+            end;
+
+            k2:=1;
+            if SpTBXCheckBox13.Checked then begin
+                 x1:=image2.Width-x1;
+                 k2:=-1;
+            end;
+
          if defect_count>0 then
          for i:=0 to defect_count-1 do begin
               image2.Canvas.TextOut(trunc((defect[i].mx1+x_offset)*z_zoom/100)-10,
-                                    trunc((defect[i].my1+y_offset)*z_zoom/100)-10,IntToStr(i+1));
-              image2.Canvas.MoveTo(trunc((defect[i].mx1+x_offset)*z_zoom/100),trunc((defect[i].my1+y_offset)*z_zoom/100));
-              image2.Canvas.LineTo(trunc((defect[i].mx2+x_offset)*z_zoom/100),trunc((defect[i].my2+y_offset)*z_zoom/100));
-              image2.Canvas.Rectangle(trunc((defect[i].mx1+x_offset)*z_zoom/100),trunc((defect[i].my1+y_offset)*z_zoom/100),
-                                      trunc((defect[i].mx2+x_offset)*z_zoom/100),trunc((defect[i].my2+y_offset)*z_zoom/100));
+                                    trunc(-(z_zoom/100-1)*image2.Height + (defect[i].my1+y_offset)*z_zoom/100)-10,IntToStr(i+1));
+
+
+              t_x:=trunc((defect[i].mx2+x_offset)*z_zoom/100);
+              t_y:=trunc((defect[i].my2+y_offset)*z_zoom/100);
+              if SpTBXCheckBox12.Checked then
+                 t_y:=image2.Height-t_y;
+              if SpTBXCheckBox13.Checked then
+                 t_x:=image2.width-t_x;
+
+              image2.Canvas.MoveTo(trunc((defect[i].mx1+x_offset)*z_zoom/100),
+                                   trunc(-(z_zoom/100-1)*image2.Height +(defect[i].my1+y_offset)*z_zoom/100));
+              image2.Canvas.LineTo(t_x,t_y);
+
+              image2.Canvas.Rectangle(trunc((defect[i].mx1+x_offset)*z_zoom/100),trunc(-(z_zoom/100-1)*image2.Height +(defect[i].my1+y_offset)*z_zoom/100),
+                                      t_x,t_y);
          end;
 
           bmp2.Assign(image2.picture.Graphic);
@@ -3679,7 +3783,7 @@ memo1.Lines.Add('line 5');
 
   end;
 
-      //  memo1.Lines.Add('line 9');
+        memo1.Lines.Add('line 9');
 
   //draw cursor
   image2.Canvas.Pen.Width :=1;

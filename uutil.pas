@@ -1321,8 +1321,8 @@ var
 	SearchString,   replaceString:string;
 	i:integer;
 begin
-	fs := TFileStream.Create(FileName, fmOpenread or fmShareDenyNone);
 	try
+  fs := TFileStream.Create(FileName, fmOpenread or fmShareDenyNone);
 		SetLength(S, fs.Size);
 		fs.ReadBuffer(S[1], fs.Size);
 	finally
@@ -1936,10 +1936,10 @@ begin
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 
+	try
 	  fs := TFileStream.Create(FileName, fmCreate);
  //   assignfile(tf,'test.htm');
   //  rewrite(tf);
-	try
 		fs.WriteBuffer(S[1], Length(S));
   //  Writeln(tf,s);
 	finally

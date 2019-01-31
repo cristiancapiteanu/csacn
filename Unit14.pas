@@ -253,9 +253,12 @@ Screen.Cursor := crArrow;
 
     if FileExists (file_name)then begin
           //setlength(file_data.encoder,1);
+          try
           lFile := TFileStream.Create(file_name, fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(TFile_encoder));
-		      lFile.Free;
+		      finally
+          lFile.Free;
+          end;
           encoder_count:=file_data.encoder_count;
           setlength(encoder,encoder_count+1);
           for i:=0 to encoder_count-1 do
@@ -1002,10 +1005,12 @@ cha:=true;//  ShellExecute(handle,'open',PChar('osk.exe'), '','',SW_SHOWNORMAL);
       OpenDialog1.Filter :='Encoder scann settings (*.ess)|*.ess';
 	    if OpenDialog1.Execute then begin
        setlength(file_data,1);
+       try
        lFile := TFileStream.Create(OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
 	     TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_enc));
-	     lFile.Free;
-
+	     finally
+       lFile.Free;
+       end;
        X_axis_rez:=file_data[0].X_axis_rez;
        X_axis_len:=file_data[0].X_axis_len;
        Y_axis_rez:=file_data[0].Y_axis_rez;
@@ -1080,14 +1085,20 @@ begin
           if FileExists(s+'.ess') then begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
+                  try
                   lFile := TFileStream.Create(s+'.ess', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_enc));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
               end else begin end;
           end else begin
+                  try
                   lFile := TFileStream.Create(s+'.ess', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_enc));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
           end;
       end;
   except
@@ -1738,10 +1749,12 @@ try
     setlength(file_data.encoder,encoder_count);
     for i:=0 to encoder_count-1 do
       file_data.encoder[i]:=encoder[i];
+    try
     lFile := TFileStream.Create(file_name, fmCreate);
     TKBDynamic.WriteTo(lFile, file_data, TypeInfo(TFile_encoder));
+    finally
     lFile.Free;
-
+    end;
     //encoder_count:=0;
     //SetLength(encoder,0);
   except

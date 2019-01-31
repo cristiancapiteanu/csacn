@@ -1874,24 +1874,6 @@ object Form7: TForm7
     TabOrder = 1
     OnClick = CheckBox3Click
   end
-  object ComPort1: TComPort
-    BaudRate = br115200
-    Port = 'COM3'
-    Parity.Bits = prNone
-    StopBits = sbOneStopBit
-    DataBits = dbEight
-    Events = []
-    FlowControl.OutCTSFlow = False
-    FlowControl.OutDSRFlow = False
-    FlowControl.ControlDTR = dtrDisable
-    FlowControl.ControlRTS = rtsDisable
-    FlowControl.XonXoffOut = False
-    FlowControl.XonXoffIn = False
-    StoredProps = [spBasic]
-    TriggersOnRxChar = True
-    Left = 48
-    Top = 360
-  end
   object Timer1: TTimer
     Interval = 15
     OnTimer = Timer1Timer

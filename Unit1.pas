@@ -1039,7 +1039,8 @@ spinFile:TextFile;
 i:integer;
 begin
 try
-                  if FileExists(filename) then begin
+          if FileExists(filename) then begin
+             try
                   AssignFile(spinFile,filename);
                   Reset(spinFile) ;
                   for i:= 0 to ComponentCount-1 do
@@ -1052,8 +1053,10 @@ try
                          ReadLn(spinFile, s);
                          TSpTBXButton(Components[i]).Caption:=s;
                       end;
+             finally
                   CloseFile(spinFile);
-                  end;
+             end;
+          end;
   except
     on E : Exception do ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
   end;
@@ -1143,9 +1146,12 @@ try
           form1.SpTBXSpinEdit18.SpinOptions.ValueType :=  spnFloat;
           form1.SpTBXSpinEdit21.SpinOptions.ValueType :=  spnFloat;
 
-          lFile := TFileStream.Create(file_name1, fmOpenRead or fmShareDenyWrite);
-		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
-		      lFile.Free;
+          try
+           lFile := TFileStream.Create(file_name1, fmOpenRead or fmShareDenyWrite);
+		       TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
+          finally
+		       lFile.Free;
+          end;
 
           SaveSpinStauus(file_name2);
 
@@ -7063,41 +7069,51 @@ begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
                   us_set_file_name:=s+'.uss';
-                  lFile := TFileStream.Create(us_set_file_name, fmCreate);
+                  try
+                    lFile := TFileStream.Create(us_set_file_name, fmCreate);
+        		        TKBDynamic.WriteTo(lFile, file_data1, TypeInfo(Tfile_us20));
+                  finally
+   		              lFile.Free;
+                  end;
 
-      		        TKBDynamic.WriteTo(lFile, file_data1, TypeInfo(Tfile_us20));
-		              lFile.Free;
-
-                  AssignFile(spinFile,'default.spn');
-//                  AssignFile(spinFile,s+'.spn');
-                  ReWrite(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXSpinEdit then begin
-                         WriteLn(spinFile, TSpTBXSpinEdit(Components[i]).SpinOptions.Increment);
-                      end;
-                  for i:= 0 to ComponentCount-1 do
-                      if Components[i] is TSpTBXButton then begin
-                         WriteLn(spinFile, TSpTBXButton(Components[i]).Caption);
-                      end;
-                  CloseFile(spinFile);
+                  try
+                     AssignFile(spinFile,'default.spn');
+                     ReWrite(spinFile) ;
+                     for i:= 0 to ComponentCount-1 do
+                          if Components[i] is TSpTBXSpinEdit then begin
+                             WriteLn(spinFile, TSpTBXSpinEdit(Components[i]).SpinOptions.Increment);
+                     end;
+                     for i:= 0 to ComponentCount-1 do
+                          if Components[i] is TSpTBXButton then begin
+                             WriteLn(spinFile, TSpTBXButton(Components[i]).Caption);
+                     end;
+                  finally
+                         CloseFile(spinFile);
+                  end;
 
               end else begin end;
           end else begin
                   us_set_file_name:=s+'.uss';
-                  lFile := TFileStream.Create(us_set_file_name, fmCreate);
-      		        TKBDynamic.WriteTo(lFile, file_data1, TypeInfo(Tfile_us20));
-		              lFile.Free;
-                  AssignFile(spinFile,'default.spn');
-                  ReWrite(spinFile) ;
-                  for i:= 0 to ComponentCount-1 do
+                  try
+                     lFile := TFileStream.Create(us_set_file_name, fmCreate);
+      		           TKBDynamic.WriteTo(lFile, file_data1, TypeInfo(Tfile_us20));
+                  finally
+		                     lFile.Free;
+                  end;
+                  try
+                   AssignFile(spinFile,'default.spn');
+                   ReWrite(spinFile) ;
+                   for i:= 0 to ComponentCount-1 do
                       if Components[i] is TSpTBXSpinEdit then begin
                          WriteLn(spinFile, TSpTBXSpinEdit(Components[i]).SpinOptions.Increment);
                       end;
-                  for i:= 0 to ComponentCount-1 do
+                   for i:= 0 to ComponentCount-1 do
                       if Components[i] is TSpTBXButton then begin
                          WriteLn(spinFile, TSpTBXButton(Components[i]).Caption);
                       end;
-                  CloseFile(spinFile);
+                  finally
+                         CloseFile(spinFile);
+                  end;
           end;
 
   except
@@ -7516,13 +7532,16 @@ begin
 	    if OpenDialog1.Execute then begin
           setlength(file_data,1);
           us_set_file_name:=OpenDialog1.FileName;
-          lFile := TFileStream.Create(us_set_file_name, fmOpenRead or fmShareDenyWrite);
-		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
-		      lFile.Free;
-
+          try
+            lFile := TFileStream.Create(us_set_file_name, fmOpenRead or fmShareDenyWrite);
+		        TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_us20));
+		      finally
+            lFile.Free;
+          end;
 
 
            if FileExists(copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn') then begin
+                try
                   AssignFile(spinFile,copy(us_set_file_name,0,length(us_set_file_name)-3)+'spn');
                   Reset(spinFile) ;
                   for i:= 0 to ComponentCount-1 do
@@ -7535,7 +7554,9 @@ begin
                          ReadLn(spinFile, s);
                          TSpTBXButton(Components[i]).Caption:=s;
                       end;
+                 finally
                   CloseFile(spinFile);
+                 end;
                   end;
          // checkbox2.Checked:=false;
 
@@ -10695,15 +10716,21 @@ begin
           if FileExists(s+'.prb') then begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
+                 try
                   lFile := TFileStream.Create(s+'.prb', fmCreate);
       		        TKBDynamic.WriteTo(lFile, prb, TypeInfo(TProbe));
-		              lFile.Free;
+		             finally
+                  lFile.Free;
+                 end;
               end else begin
               end;
           end else begin
+                 try
                   lFile := TFileStream.Create(s+'.prb', fmCreate);
       		        TKBDynamic.WriteTo(lFile, prb, TypeInfo(TProbe));
-		              lFile.Free;
+		             finally
+                  lFile.Free;
+                 end;
           end;
           TntGroupBox4.Visible := false;
           RefreshPrbList;
@@ -10723,9 +10750,12 @@ begin
   try
         //  ShowMessage(appPath+s+'.prb');
 
+         try
           lFile := TFileStream.Create(appPath+s+'.prb', fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, probe, TypeInfo(TProbe));
-		      lFile.Free;
+		     finally
+          lFile.Free;
+         end;
 
           SpTBXRadioButton5.Checked := probe.round;
           SpTBXRadioButton6.Checked := not probe.round;

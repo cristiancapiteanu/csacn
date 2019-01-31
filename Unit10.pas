@@ -687,9 +687,12 @@ begin
       form1.OpenDialog1.Filter :='Time scann settings (*.tss)|*.tss';
 	    if form1.OpenDialog1.Execute then begin
        setlength(file_data,1);
+       try
        lFile := TFileStream.Create(form1.OpenDialog1.FileName, fmOpenRead or fmShareDenyWrite);
 	     TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_ms));
-	     lFile.Free;
+	     finally
+       lFile.Free;
+       end;
        X_axis_rez:=file_data[0].X_axis_rez ;
        X_axis_len:=file_data[0].X_axis_len;
        Y_axis_rez:=file_data[0].Y_axis_rez;
@@ -753,14 +756,20 @@ begin
           if FileExists(s+'.tss') then begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
+                  try
                   lFile := TFileStream.Create(s+'.tss', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_ms));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
               end else begin end;
           end else begin
+                  try
                   lFile := TFileStream.Create(s+'.tss', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_ms));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
           end;
 
       end;

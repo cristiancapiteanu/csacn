@@ -714,14 +714,20 @@ begin
           if FileExists(s+'.pal') then begin
             if MessageDlg('Soll die Datei überschrieben werden?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
               begin
+                  try
                   lFile := TFileStream.Create(s+'.pal', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_pal));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
               end else begin end;
           end else begin
+                  try
                   lFile := TFileStream.Create(s+'.pal', fmCreate);
       		        TKBDynamic.WriteTo(lFile, file_data, TypeInfo(Tfile_pal));
-		              lFile.Free;
+		              finally
+                  lFile.Free;
+                  end;
           end;
 
       end;
@@ -1252,9 +1258,12 @@ begin
   try
           setlength(file_data,1);
           label29.Caption :=srtTras[77, srtTras_index]+' '+pallete_file_name;
+          try
           lFile := TFileStream.Create(pallete_file_name, fmOpenRead or fmShareDenyWrite);
 		      TKBDynamic.ReadFrom(lFile, file_data, TypeInfo(Tfile_pal));
-		      lFile.Free;
+		      finally
+          lFile.Free;
+          end;
            for i:=1 to 16 do begin
               pallete[i].color:=file_data[0].color[i];
               pallete[i].value:=file_data[0].value[i] ;
