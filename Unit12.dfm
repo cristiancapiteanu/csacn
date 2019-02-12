@@ -580,6 +580,7 @@ object Form12: TForm12
       Height = 37
       Caption = '[mm]'
       TabOrder = 3
+      Visible = False
       OnClick = SpTBXCheckBox1Click
       Checked = True
       State = cbChecked
@@ -679,6 +680,7 @@ object Form12: TForm12
       Font.Style = []
       ParentFont = False
       TabOrder = 1
+      OnClick = SpTBXCheckBox2Click
     end
   end
   object Button10: TLMDButton

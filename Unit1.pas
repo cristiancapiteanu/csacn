@@ -1034,9 +1034,9 @@ end;
 
 function TForm1.SaveSpinStauus(filename:string):integer;
 var
-s:string;
+s,s1:string;
 spinFile:TextFile;
-i:integer;
+i,j:integer;
 begin
 try
           if FileExists(filename) then begin
@@ -1046,11 +1046,17 @@ try
                   for i:= 0 to ComponentCount-1 do
                       if Components[i] is TSpTBXSpinEdit then begin
                          ReadLn(spinFile,s);
-                          TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
+                         for j:=0 to length(s) do
+                             if s[j]=',' then
+                                s[j]:='.';
+                         TSpTBXSpinEdit(Components[i]).SpinOptions.Increment:= strtofloat(s);
                       end;
                   for i:= 0 to ComponentCount-1 do
                       if Components[i] is TSpTBXButton then begin
                          ReadLn(spinFile, s);
+                         for j:=0 to length(s) do
+                             if s[j]=',' then
+                                s[j]:='.';
                          TSpTBXButton(Components[i]).Caption:=s;
                       end;
              finally

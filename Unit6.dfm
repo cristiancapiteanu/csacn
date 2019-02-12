@@ -1,6 +1,6 @@
 object Form6: TForm6
-  Left = 268
-  Top = 7
+  Left = 197
+  Top = 10
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
@@ -49,7 +49,7 @@ object Form6: TForm6
       Left = 1
       Top = 137
       Width = 458
-      Height = 270
+      Height = 272
       Align = alTop
       Caption = '      View A-Scan'
       Font.Charset = DEFAULT_CHARSET
@@ -95,9 +95,16 @@ object Form6: TForm6
         Ctl3D = True
         ParentCtl3D = False
         TabOrder = 0
+        object Label61: TLabel
+          Left = 184
+          Top = 24
+          Width = 81
+          Height = 13
+          Caption = 'Echo Start OFF'
+        end
         object RadioButton20: TSpTBXRadioButton
-          Left = 64
-          Top = 66
+          Left = 104
+          Top = 58
           Width = 39
           Height = 15
           Caption = 'TOF'
@@ -105,8 +112,8 @@ object Form6: TForm6
           OnClick = RadioButton20Click
         end
         object RadioButton19: TSpTBXRadioButton
-          Left = 9
-          Top = 66
+          Left = 161
+          Top = 58
           Width = 44
           Height = 15
           Caption = 'Amp'
@@ -132,7 +139,7 @@ object Form6: TForm6
           OnChange = ComboBox1Change
         end
         object RadioButton25: TSpTBXCheckBox
-          Left = 127
+          Left = 223
           Top = 64
           Width = 50
           Height = 15
@@ -145,7 +152,7 @@ object Form6: TForm6
       end
       object GroupBox14: TGroupBox
         Left = 12
-        Top = 272
+        Top = 296
         Width = 69
         Height = 161
         Caption = 'Gates'
@@ -222,7 +229,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 789
+      Top = 791
       Width = 458
       Height = 16
       Align = alTop
@@ -1312,7 +1319,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 773
+      Top = 775
       Width = 458
       Height = 16
       Align = alTop
@@ -2936,15 +2943,6 @@ object Form6: TForm6
       ParentFont = False
       TabOrder = 3
       OnDblClick = GroupBox11DblClick
-      object Label33: TLabel
-        Left = 8
-        Top = 64
-        Width = 345
-        Height = 25
-        AutoSize = False
-        Caption = 'File Name: '
-        WordWrap = True
-      end
       object Label41: TLabel
         Left = 8
         Top = 18
@@ -3061,10 +3059,23 @@ object Form6: TForm6
         TabOrder = 6
         OnClick = SpTBXButton34Click
       end
+      object Label33: TEdit
+        Left = 8
+        Top = 64
+        Width = 441
+        Height = 22
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        Color = clTeal
+        ReadOnly = True
+        TabOrder = 7
+        Text = 'File Name: '
+      end
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 805
+      Top = 807
       Width = 458
       Height = 16
       Align = alTop
@@ -3156,7 +3167,7 @@ object Form6: TForm6
     end
     object GroupBox12: TGroupBox
       Left = 1
-      Top = 407
+      Top = 409
       Width = 458
       Height = 16
       Align = alTop
@@ -4365,7 +4376,7 @@ object Form6: TForm6
     end
     object GroupBox27: TGroupBox
       Left = 1
-      Top = 423
+      Top = 425
       Width = 458
       Height = 350
       Align = alTop
@@ -4378,50 +4389,50 @@ object Form6: TForm6
       ParentFont = False
       TabOrder = 6
       OnDblClick = GroupBox27DblClick
-      object Shape7: TShape
-        Left = 16
-        Top = 20
-        Width = 195
-        Height = 19
-        Brush.Style = bsClear
-      end
-      object Shape8: TShape
-        Left = 16
-        Top = 54
-        Width = 195
-        Height = 18
-        Brush.Style = bsClear
-      end
-      object Shape5: TShape
-        Left = 34
-        Top = 20
-        Width = 89
-        Height = 69
-        Brush.Style = bsClear
-      end
       object Shape6: TShape
-        Left = 122
+        Left = 146
         Top = 20
-        Width = 89
+        Width = 111
         Height = 69
         Brush.Style = bsClear
       end
       object Shape4: TShape
         Left = 16
         Top = 20
-        Width = 345
+        Width = 409
+        Height = 69
+        Brush.Style = bsClear
+      end
+      object Shape7: TShape
+        Left = 16
+        Top = 20
+        Width = 241
+        Height = 19
+        Brush.Style = bsClear
+      end
+      object Shape8: TShape
+        Left = 16
+        Top = 54
+        Width = 241
+        Height = 18
+        Brush.Style = bsClear
+      end
+      object Shape5: TShape
+        Left = 34
+        Top = 20
+        Width = 113
         Height = 69
         Brush.Style = bsClear
       end
       object Label73: TLabel
-        Left = 216
+        Left = 272
         Top = 24
         Width = 74
         Height = 13
         Caption = 'Lenght [mm]'
       end
       object Label74: TLabel
-        Left = 216
+        Left = 272
         Top = 40
         Width = 65
         Height = 13
@@ -4435,7 +4446,7 @@ object Form6: TForm6
         Caption = 'Position [mm]'
       end
       object Label78: TLabel
-        Left = 128
+        Left = 152
         Top = 24
         Width = 66
         Height = 13
@@ -4455,7 +4466,7 @@ object Form6: TForm6
         ParentFont = False
       end
       object Label80: TLabel
-        Left = 128
+        Left = 152
         Top = 74
         Width = 21
         Height = 13
@@ -4481,7 +4492,7 @@ object Form6: TForm6
         ParentFont = False
       end
       object Label66: TLabel
-        Left = 128
+        Left = 152
         Top = 56
         Width = 21
         Height = 13
@@ -4494,7 +4505,7 @@ object Form6: TForm6
         ParentFont = False
       end
       object Label67: TLabel
-        Left = 280
+        Left = 352
         Top = 24
         Width = 21
         Height = 13
@@ -4507,7 +4518,7 @@ object Form6: TForm6
         ParentFont = False
       end
       object Label68: TLabel
-        Left = 280
+        Left = 352
         Top = 40
         Width = 21
         Height = 13
@@ -4520,20 +4531,20 @@ object Form6: TForm6
         ParentFont = False
       end
       object Image13: TImage
-        Left = 216
-        Top = 70
-        Width = 33
-        Height = 17
+        Left = 272
+        Top = 72
+        Width = 73
+        Height = 15
       end
       object Label69: TLabel
-        Left = 280
+        Left = 352
         Top = 72
         Width = 24
         Height = 13
         Caption = '0.00'
       end
       object Label70: TLabel
-        Left = 280
+        Left = 352
         Top = 56
         Width = 24
         Height = 13
@@ -4553,7 +4564,7 @@ object Form6: TForm6
         ParentFont = False
       end
       object Label32: TLabel
-        Left = 128
+        Left = 152
         Top = 40
         Width = 44
         Height = 13
@@ -4612,7 +4623,7 @@ object Form6: TForm6
         Top = 98
         Width = 380
         Height = 217
-        ActivePage = TabSheet8
+        ActivePage = TabSheet9
         TabOrder = 1
         object TabSheet8: TTabSheet
           Caption = '1. Defects'
@@ -4621,6 +4632,7 @@ object Form6: TForm6
             Top = 8
             Width = 305
             Height = 177
+            DefaultColWidth = 85
             DefaultRowHeight = 16
             TabOrder = 0
             OnSelectCell = StringGrid2SelectCell
@@ -4677,6 +4689,7 @@ object Form6: TForm6
             Height = 15
             Caption = 'On/Off'
             TabOrder = 4
+            OnClick = SpTBXCheckBox14Click
           end
         end
         object TabSheet9: TTabSheet
@@ -4752,15 +4765,15 @@ object Form6: TForm6
                 object SpTBXRadioButton1: TSpTBXRadioButton
                   Left = 7
                   Top = 16
-                  Width = 50
+                  Width = 55
                   Height = 15
                   Caption = 'Gate 1'
-                  Color = clBtnHighlight
+                  Color = clTeal
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clBlue
                   Font.Height = -11
                   Font.Name = 'Tahoma'
-                  Font.Style = []
+                  Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 0
                   TabStop = True
@@ -4768,33 +4781,33 @@ object Form6: TForm6
                   Checked = True
                 end
                 object SpTBXRadioButton2: TSpTBXRadioButton
-                  Left = 63
+                  Left = 71
                   Top = 17
-                  Width = 50
+                  Width = 55
                   Height = 15
                   Caption = 'Gate 2'
-                  Color = clBtnHighlight
+                  Color = clTeal
                   Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clOlive
+                  Font.Color = clRed
                   Font.Height = -11
                   Font.Name = 'Tahoma'
-                  Font.Style = []
+                  Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 1
                   OnClick = SpTBXRadioButton2Click
                 end
                 object SpTBXRadioButton3: TSpTBXRadioButton
-                  Left = 127
+                  Left = 135
                   Top = 18
-                  Width = 50
+                  Width = 55
                   Height = 15
                   Caption = 'Gate 3'
-                  Color = clBtnHighlight
+                  Color = clTeal
                   Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clGreen
+                  Font.Color = clYellow
                   Font.Height = -11
                   Font.Name = 'Tahoma'
-                  Font.Style = []
+                  Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 2
                   OnClick = SpTBXRadioButton3Click
@@ -4805,7 +4818,7 @@ object Form6: TForm6
                   Width = 48
                   Height = 15
                   Caption = 'Flank'
-                  Color = clBtnHighlight
+                  Color = clTeal
                   TabOrder = 3
                   OnClick = SpTBXCheckBox1Click
                   Checked = True
@@ -4817,7 +4830,7 @@ object Form6: TForm6
                   Width = 46
                   Height = 15
                   Caption = 'Peak'
-                  Color = clBtnHighlight
+                  Color = clTeal
                   TabOrder = 4
                   OnClick = SpTBXCheckBox2Click
                 end
@@ -5496,8 +5509,8 @@ object Form6: TForm6
         end
       end
       object SpTBXCheckBox20: TSpTBXCheckBox
-        Left = 306
-        Top = 72
+        Left = 274
+        Top = 56
         Width = 55
         Height = 15
         Caption = 'On/Off'

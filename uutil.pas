@@ -1398,7 +1398,7 @@ begin
 //file name
 		SearchString:='%file_name%';
     replaceString:='';
-    replaceString:=replaceString+form6.label33.caption+'<br> ' ;
+    replaceString:=replaceString+form6.label33.text+'<br> ' ;
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
 //scaner type

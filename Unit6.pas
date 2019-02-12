@@ -91,7 +91,6 @@ type
     Image7: TImage;
     GroupBox11: TGroupBox;
     Button10: TButton;
-    Label33: TLabel;
     Button33: TSpTBXButton;
     Button12: TSpTBXButton;
     Button16: TSpTBXButton;
@@ -306,6 +305,8 @@ type
     Label58: TLabel;
     Label59: TLabel;
     Label60: TLabel;
+    Label33: TEdit;
+    Label61: TLabel;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -526,6 +527,7 @@ type
     procedure SpTBXButton66Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
+    procedure SpTBXCheckBox14Click(Sender: TObject);
   private
     { Private declarations }
         procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
@@ -721,7 +723,7 @@ US_Gain1_temp:real;
 d_gain:real;
 amp:real;
 begin
-//with form1 do begin
+load_file:=true;//with form1 do begin
   if not form19.visible then  form19.show;
          if not form19.visible  then form19.BringToFront;
          application.ProcessMessages;
@@ -1065,7 +1067,7 @@ begin
   have_data2:=true;
 
   Screen.Cursor := crArrow;
-
+load_file:=false;
 end;
 
 procedure TForm6.CropBitmap(InBitmap, OutBitMap : TBitmap; X, Y, W, H :Integer);
@@ -1195,6 +1197,7 @@ load_file:=true;
 have_data11 := false;
 
   try
+      load_file:=true;
       if form8.SpTBXListBox2.ItemIndex=0 then form1.OpenDialog1.Filter :='B-Scan (*.lsc)|*.lsc';
       if form8.SpTBXListBox2.ItemIndex=1 then form1.OpenDialog1.Filter :='TOF-D (*.tofd)|*.tofd';
       if form8.SpTBXListBox2.ItemIndex=2 then form1.OpenDialog1.Filter :='C-Scan (*.csc)|*.csc';
@@ -1203,9 +1206,9 @@ have_data11 := false;
          Screen.Cursor := crHourGlass;
          if not form19.visible then  form19.show;
          if not form19.visible then  form19.BringToFront;
-          application.ProcessMessages;
+         application.ProcessMessages;
 
-          label33.Caption :='File name : '+form1.OpenDialog1.FileName;
+          label33.text :='File name : '+form1.OpenDialog1.FileName;
           s:=form1.OpenDialog1.FileName;
           if form8.SpTBXListBox2.ItemIndex=0 then s1:='.lsc';
           if form8.SpTBXListBox2.ItemIndex=1 then s1:='.tofd';
@@ -1447,6 +1450,57 @@ have_data11 := false;
             ox_mark_line_y[0]:=0;
           end;
 
+          if  us_echo_start =  0 then Label61.Caption:='Echo Start OFF';
+          if  us_echo_start =  1 then Label61.Caption:='Echo Start ON on Gate 1';
+          if  us_echo_start =  2 then Label61.Caption:='Echo Start ON on Gate 2';
+          if  us_echo_start =  3 then Label61.Caption:='Echo Start ON on Gate 3';
+
+          SpTBXComboBox3.ItemIndex:=4;
+          c_scan_mouse_x_old:=0;
+          c_scan_mouse_y_old:=0;
+          c_scan_mouse_x:=0;
+          c_scan_mouse_y:=0;
+
+      case form6.combobox1.ItemIndex of
+        0 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
+        end ;
+        1 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
+        end ;
+        2 :begin
+            RadioButton20.Checked:= true;
+            RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
+        end ;
+        3 :begin
+            RadioButton19.Checked:= true;
+            RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
+        end ;
+        4 :begin
+            RadioButton19.Checked:= true;
+            RadioButton17.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
+        end ;
+        5 :begin
+            RadioButton19.Checked:= true;
+            RadioButton18.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
+        end ;
+      end;
+
+          if RadioButton20.Checked then
+             if RadioButton25.Checked then
+                Label78.caption:='Value [mm]'
+             else
+                 Label78.caption:='Value [us]'
+          else
+              Label78.caption:='Value [%]';
           have_data2:=false;
          // have_data4:=false;
          // have_data8:=false;
@@ -1458,22 +1512,26 @@ have_data11 := false;
           Screen.Cursor := crHourGlass;
 
           try
-             memo1.Lines.Add('load line1');
+                         memo1.Lines.Add('load line1');
              form12.OpenPallete;
-             memo1.Lines.Add('load line2');
+
+    Draw_scann;
+  //  image3.Picture:=nil;
+
+                                memo1.Lines.Add('load line2');
              have_data2:=false;
              Draw_axes;
-             memo1.Lines.Add('load line3');
+                       memo1.Lines.Add('load line3');
              Draw_ASCAN;
-             memo1.Lines.Add('load line4');
+                        memo1.Lines.Add('load line4');
              Draw_CalcTxt;
-             memo1.Lines.Add('load line5');
+                          memo1.Lines.Add('load line5');
              Draw_SideView;
-             memo1.Lines.Add('load line6');
+                           memo1.Lines.Add('load line6');
              Draw_TOFD_OX;
-             memo1.Lines.Add('load line7');
+                          memo1.Lines.Add('load line7');
              Draw_TOFD_OY;
-             memo1.Lines.Add('load line8');
+                          memo1.Lines.Add('load line8');
               have_data2:=true;
           except
                 on E : Exception do
@@ -1640,7 +1698,7 @@ begin
               file_data1[0].value[i]:=pallete[i].value ;
           end;
 
-          label33.Caption :='File name : '+form1.SaveDialog1.FileName;
+          label33.text :='File name : '+form1.SaveDialog1.FileName;
           //s:=form1.SaveDialog1.FileName;
 
           DecodeTime(now(), myHour, myMin, mySec, myMilli);
@@ -1822,6 +1880,11 @@ begin
     c_scan_mouse_x_old:=0;
     c_scan_mouse_y_old:=0;
  }
+         Screen.Cursor := crHourGlass;
+         if not form19.visible then  form19.show;
+         if not form19.visible  then form19.BringToFront;
+         application.ProcessMessages;
+
       col1:=image2.Canvas.Pixels[x-2,y-2];
       image13.Canvas.Brush.Color :=col1;
       image13.Canvas.Rectangle(0,0,image13.Width,image13.Height );
@@ -1829,7 +1892,11 @@ begin
       for i:=0 to image2.Width do
         for j:=0 to image2.Height do
           if image2.Canvas.Pixels[i,j]=col1 then inc(p1);
+
       label69.Caption:=FloatToStrF(100*p1/(image2.Height*image2.Width ) ,ffFixed,6,1)+' %';
+
+      if form19.visible then form19.Hide;
+      Screen.Cursor := crArrow;
 
   end;
 
@@ -1890,9 +1957,9 @@ begin
       if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
 
        if form8.SpTBXListBox2.ItemIndex=0 then
-        label65.Caption :=FloatToStrF(mod_scan[i,0].xy_coor.x ,ffFixed,6,2)
+        label65.Caption :=FloatToStrF(mod_scan[i,0].xy_coor.x ,ffFixed,6,1)
        else
-        label65.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,2);
+        label65.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,1)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,1);
 
 
 
@@ -2015,6 +2082,7 @@ try
   if start_scann then exit;
   if scann_counter<2 then exit;
   if mouse_move_precessing then exit;
+  if load_file then exit;
 
   mouse_move_precessing:=true;
   if  up_date_graph then begin
@@ -2036,13 +2104,13 @@ try
   application.ProcessMessages ;
 
 
+  Draw_CalcTxt;
   Draw_scann;
   Draw_axes;
   //if form8.SpTBXListBox2.ItemIndex=0 then have_data7:=false;
   if form8.SpTBXListBox2.ItemIndex=2 then have_data7:=false;
   Draw_SideView;
   Draw_ASCAN;
-  Draw_CalcTxt;
 
   //Draw_TOFD_OX;
   //Draw_TOFD_OY;
@@ -2057,7 +2125,7 @@ end;
 procedure TForm6.Draw_ASCAN;
 var
 x0,y0,x1,y1,x2,y2:real;
-x_start,x_stop:real;
+x_start,x_stop, x_lev:real;
 i,j,k,l,i1,j1:integer;
 r_val:real;
 point_rez:real;
@@ -2076,8 +2144,8 @@ begin
       j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
       if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
       if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
-      label1.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1)*us1_calc) ,ffFixed,6,2);;  //+ 1000*us_delay1/us_sv1
-      label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1+US_Width1)*us1_calc) ,ffFixed,6,2);;//us_probe_delay1
+      label1.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1)*us1_calc) ,ffFixed,6,1)+' [mm]';  //+ 1000*us_delay1/us_sv1
+      label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1+US_Width1)*us1_calc) ,ffFixed,6,1)+' [mm]';//us_probe_delay1
 
 {
       image8.Canvas.Pen.Color:=clBlack;
@@ -2145,6 +2213,24 @@ begin
               image8.Canvas.LineTo(trunc(x_stop/(US_Width1/(image8.Width))),trunc(image8.Height-(gates1[1].height/100)*image8.Height));
           end;
 
+          image8.Canvas.Pen.Color:=clYellow;
+          image8.Canvas.Pen.Width:=2;
+          if SpTBXCheckBox1.Checked then begin
+             r_val:=mod_scan[i,j].US_Mess[1].tof;
+             x_lev:=gates1[1].height;
+          end else begin
+             r_val:=mod_scan[i,j].US_Mess[1].tof1;
+             x_lev:=mod_scan[i,j].US_Mess[1].amp;
+          end;
+          x_start:=(r_val-mod_scan[i,j].us_delay)/1.0;
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
+
+
+
+
           x_start:=(gates1[2].start-mod_scan[i,j].us_delay)/1;
           x_stop:=(gates1[2].start+gates1[2].width-mod_scan[i,j].us_delay)/1;
           image8.Canvas.Pen.Color:=clRed;//clOlive;
@@ -2156,6 +2242,22 @@ begin
               image8.Canvas.MoveTo(trunc(x_start/(US_Width1/image8.Width)),trunc(image8.Height-(gates1[2].height/100)*image8.Height));
               image8.Canvas.LineTo(trunc(x_stop/(US_Width1/image8.Width)),trunc(image8.Height-(gates1[2].height/100)*image8.Height));
           end;
+
+          image8.Canvas.Pen.Color:=clYellow;
+          image8.Canvas.Pen.Width:=2;
+          if SpTBXCheckBox1.Checked then begin
+             r_val:=mod_scan[i,j].US_Mess[2].tof;
+             x_lev:=gates1[2].height;
+          end else begin
+             r_val:=mod_scan[i,j].US_Mess[2].tof1;
+             x_lev:=mod_scan[i,j].US_Mess[2].amp;
+          end;
+          x_start:=(r_val-mod_scan[i,j].us_delay)/1.0;
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
+
 
           x_start:=(gates1[3].start-mod_scan[i,j].us_delay)/1;
           x_stop:=(gates1[3].start+gates1[3].width-mod_scan[i,j].us_delay)/1;
@@ -2169,6 +2271,21 @@ begin
               image8.Canvas.MoveTo(trunc(x_start/(US_Width1/image8.Width)),trunc(image8.Height-(gates1[3].height/100)*image8.Height));
               image8.Canvas.LineTo(trunc(x_stop/(US_Width1/image8.Width)),trunc(image8.Height-(gates1[3].height/100)*image8.Height));
           end;
+
+          image8.Canvas.Pen.Color:=clYellow;
+          image8.Canvas.Pen.Width:=2;
+          if SpTBXCheckBox1.Checked then begin
+             r_val:=mod_scan[i,j].US_Mess[3].tof;
+             x_lev:=gates1[3].height;
+          end else begin
+             r_val:=mod_scan[i,j].US_Mess[3].tof1;
+             x_lev:=mod_scan[i,j].US_Mess[3].amp;
+          end;
+          x_start:=(r_val-mod_scan[i,j].us_delay)/1.0;
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.MoveTo(trunc(x_start/(US_Width1/(image8.Width))-2),trunc(image8.Height-(x_lev/100)*image8.Height)+2);
+          image8.Canvas.LineTo(trunc(x_start/(US_Width1/(image8.Width))+2),trunc(image8.Height-(x_lev/100)*image8.Height)-2);
 
           
           //draw gate on -scan
@@ -2358,9 +2475,9 @@ begin
         if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
 
         if form8.SpTBXListBox2.ItemIndex=0 then
-          label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)
+          label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,1)
         else
-          label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,2)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,2);
+          label28.Caption :=FloatToStrF(mod_scan[i,j].xy_coor.x ,ffFixed,6,1)+' x '+FloatToStrF(mod_scan[i,j].xy_coor.y,ffFixed,6,1);
 
         if c_scan_mouse_down then defect[defect_count].x2:=mod_scan[i,j].xy_coor.x;
         if c_scan_mouse_down then defect[defect_count].y2:=mod_scan[i,j].xy_coor.y;
@@ -2492,15 +2609,18 @@ begin
         if (j1<0) or (j1>(y_axis_len/y_axis_rez)) then j1:=0;
         if (i0<0) or (i0>(X_axis_len/x_axis_rez)) then i0:=0;
         if (j0<0) or (j0>(y_axis_len/y_axis_rez)) then j0:=0;
+
         r_val:=sqrt(sqr(mod_scan[i0,j0].xy_coor.y-mod_scan[i1,j1].xy_coor.y)+
-                      sqr(mod_scan[i0,j0].xy_coor.x-mod_scan[i1,j1].xy_coor.x));
+                    sqr(mod_scan[i0,j0].xy_coor.x-mod_scan[i1,j1].xy_coor.x));
         if c_scan_mouse_down then defect[defect_count].h21:=r_val;
-        label67.Caption :=FloatToStrF(r_val ,ffFixed,6,2);
-        r_val:=(mod_scan[i0,j0].xy_coor.y-mod_scan[i1,j1].xy_coor.x)*
+        label67.Caption :=FloatToStrF(r_val ,ffFixed,6,1);
+
+        r_val:=(mod_scan[i0,j0].xy_coor.y-mod_scan[i1,j1].xy_coor.y)*
                (mod_scan[i0,j0].xy_coor.x-mod_scan[i1,j1].xy_coor.x);
         if c_scan_mouse_down then defect[defect_count].d:=r_val;
-        label68.Caption :=FloatToStrF(abs(r_val) ,ffFixed,6,2);
-        label70.Caption :=FloatToStrF(abs(100*r_val/(X_axis_len*y_axis_len)) ,ffFixed,6,2)+' [%]';
+        label68.Caption :=FloatToStrF(abs(r_val) ,ffFixed,6,1);
+
+        label70.Caption :=FloatToStrF(abs(100*r_val/(X_axis_len*y_axis_len)) ,ffFixed,6,1)+' [%]';
 
  except
     on E : Exception do
@@ -5588,12 +5708,16 @@ procedure TForm6.SpTBXCheckBox1Click(Sender: TObject);
 begin
   if SpTBXCheckBox1.Checked then
     if SpTBXCheckBox2.Checked then SpTBXCheckBox2.Checked:=false;
+  if not SpTBXCheckBox1.Checked then
+    SpTBXCheckBox2.Checked:=true;
 end;
 
 procedure TForm6.SpTBXCheckBox2Click(Sender: TObject);
 begin
   if SpTBXCheckBox2.Checked then
     if SpTBXCheckBox1.Checked then SpTBXCheckBox1.Checked:=false;
+  if not SpTBXCheckBox2.Checked then
+    SpTBXCheckBox1.Checked:=true;
 
 end;
 
@@ -6484,22 +6608,22 @@ begin
      stringgrid2.ColCount :=11;
      stringgrid2.RowCount :=1;
      stringgrid2.Cells[0,0]:='ID';
-     stringgrid2.Cells[1,0]:='X1[mm]=';
-     stringgrid2.Cells[2,0]:='Y1[mm]=';
-     stringgrid2.Cells[3,0]:='X2[mm]=';
-     stringgrid2.Cells[4,0]:='Y2[mm]=';
+     stringgrid2.Cells[1,0]:='X1[mm]=  ';
+     stringgrid2.Cells[2,0]:='Y1[mm]=  ';
+     stringgrid2.Cells[3,0]:='X2[mm]=  ';
+     stringgrid2.Cells[4,0]:='Y2[mm]=  ';
      if RadioButton20.checked then begin
-      stringgrid2.Cells[5,0]:='V1[us]=';
-      stringgrid2.Cells[6,0]:='V2[us]=';
+      stringgrid2.Cells[5,0]:='V1[us]=  ';
+      stringgrid2.Cells[6,0]:='V2[us]=  ';
      end else begin
-      stringgrid2.Cells[5,0]:='V1[%]=';
-      stringgrid2.Cells[6,0]:='V2[%]=';
+      stringgrid2.Cells[5,0]:='V1[%]=  ';
+      stringgrid2.Cells[6,0]:='V2[%]=  ';
      end;
-     stringgrid2.Cells[7,0]:='X2-X1[mm]=';
-     stringgrid2.Cells[8,0]:='Y2-Y1[mm]=';
-     stringgrid2.Cells[10,0]:='D[mm]=';
-     stringgrid2.Cells[9,0]:='S[mm x mm]=';
-     stringgrid2.ColWidths[0]:=20;
+     stringgrid2.Cells[7,0]:='X2-X1[mm]=  ';
+     stringgrid2.Cells[8,0]:='Y2-Y1[mm]=  ';
+     stringgrid2.Cells[10,0]:='D[mm]=  ';
+     stringgrid2.Cells[9,0]:='S[mm x mm]=  ';
+     stringgrid2.ColWidths[0]:=30;
 
      if form8.SpTBXListBox2.ItemIndex=0 then begin
      stringgrid2.ColWidths[2]:=0;
@@ -8051,6 +8175,7 @@ end;
 
 procedure TForm6.SpTBXButton66Click(Sender: TObject);
 begin
+if MessageDlg('Do you want to exit?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then begin
  form6.hide;
  //form1.Timer2.Enabled:=true;
   us_connected:=false;
@@ -8121,8 +8246,18 @@ begin
 //form1.SpTBXButton75Click(sender);
 end;
 
+end;
+
 procedure TForm6.FormShow(Sender: TObject);
 begin
+        form6.label54.Caption:='';
+        form6.label55.Caption:='';
+
+        form6.label57.Caption:=form6.label55.Caption;
+        form6.label56.Caption:=form6.label54.Caption;
+        form6.label58.Caption:=form6.label54.Caption;
+        form6.label59.Caption:=form6.label55.Caption;
+        form6.label60.Caption:=form6.label54.Caption;
 Screen.Cursor := crArrow;
 end;
 
@@ -8132,32 +8267,46 @@ begin
         0 :begin
             RadioButton20.Checked:= true;
             RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
         end ;
         1 :begin
             RadioButton20.Checked:= true;
             RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
         end ;
         2 :begin
             RadioButton20.Checked:= true;
             RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [mm]';
         end ;
         3 :begin
             RadioButton19.Checked:= true;
             RadioButton16.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
         end ;
         4 :begin
             RadioButton19.Checked:= true;
             RadioButton17.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
         end ;
         5 :begin
             RadioButton19.Checked:= true;
             RadioButton18.Checked:= true;
+            form12.GroupBox1.Caption:='Pallete [%]';
         end ;
       end;
 
 
 
-  have_data2:=false;
+//  have_data2:=false;
+
+  form6.have_data11:=true;
+        form6.have_data2:=false;
+        form6.have_data1:=false;
+        form6.have_data10:=false;
+        up_date_graph:=true;
+
+
 
   Draw_scann;
   Draw_axes;
@@ -8166,6 +8315,18 @@ begin
   Draw_SideView;
   Draw_TOFD_OX;
   Draw_TOFD_OY;
+
+
+end;
+
+procedure TForm6.SpTBXCheckBox14Click(Sender: TObject);
+begin
+     if not SpTBXCheckBox14.Checked then begin
+          c_scan_mouse_x_old:=0;
+          c_scan_mouse_y_old:=0;
+          c_scan_mouse_x:=0;
+          c_scan_mouse_y:=0;
+     end;
 
 
 end;
