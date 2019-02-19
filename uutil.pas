@@ -429,7 +429,8 @@ timer2_fire:boolean;
 
   start_scann:boolean;
   scann_counter_old1,scann_counter:integer;
-  scann_arr:array[0..2000000] of TScann_arr;
+  scann_arr:array[0..1000000] of TScann_arr;
+  scann_arr_old:array[0..1000000] of TScann_arr;
   draw_ascn_new:TAS;
   avr_const:real;
   mess_avg_11,mess_avg_12,mess_avg_13:real;

@@ -1,10 +1,10 @@
 object Form6: TForm6
-  Left = 197
-  Top = 10
+  Left = 75
+  Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 832
+  ClientHeight = 740
   ClientWidth = 1286
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -229,7 +229,7 @@ object Form6: TForm6
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 791
+      Top = 821
       Width = 458
       Height = 16
       Align = alTop
@@ -1319,7 +1319,7 @@ object Form6: TForm6
     end
     object GroupBox9: TGroupBox
       Left = 1
-      Top = 775
+      Top = 805
       Width = 458
       Height = 16
       Align = alTop
@@ -3075,7 +3075,7 @@ object Form6: TForm6
     end
     object GroupBox7: TGroupBox
       Left = 1
-      Top = 807
+      Top = 837
       Width = 458
       Height = 16
       Align = alTop
@@ -4373,12 +4373,43 @@ object Form6: TForm6
           TabOrder = 2
         end
       end
+      object SpTBXSpinEdit8: TSpTBXSpinEdit
+        Left = 56
+        Top = 156
+        Width = 65
+        Height = 19
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        SpinButton.Left = 51
+        SpinButton.Top = 0
+        SpinButton.Width = 14
+        SpinButton.Height = 19
+        SpinButton.Align = alRight
+        SpinOptions.Decimal = 0
+        SpinOptions.MaxValue = 180.000000000000000000
+        SpinOptions.MinValue = -180.000000000000000000
+        SpinOptions.ValueType = spnFloat
+      end
+      object SpTBXButton65: TSpTBXButton
+        Left = 136
+        Top = 152
+        Width = 75
+        Height = 25
+        Caption = 'SpTBXButton65'
+        TabOrder = 8
+        OnClick = SpTBXButton65Click
+      end
     end
     object GroupBox27: TGroupBox
       Left = 1
       Top = 425
       Width = 458
-      Height = 350
+      Height = 380
       Align = alTop
       Caption = '     C-SCAN'
       Font.Charset = DEFAULT_CHARSET
@@ -4623,7 +4654,7 @@ object Form6: TForm6
         Top = 98
         Width = 380
         Height = 217
-        ActivePage = TabSheet9
+        ActivePage = TabSheet8
         TabOrder = 1
         object TabSheet8: TTabSheet
           Caption = '1. Defects'
@@ -4700,7 +4731,7 @@ object Form6: TForm6
             Top = 0
             Width = 353
             Height = 153
-            ActivePage = TabSheet10
+            ActivePage = TabSheet11
             TabOrder = 0
             object TabSheet10: TTabSheet
               Caption = '1. Gates'
@@ -5218,6 +5249,7 @@ object Form6: TForm6
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 4
+                  OnChange = Edit5Change
                   SpinButton.Left = 51
                   SpinButton.Top = 0
                   SpinButton.Width = 14
@@ -5515,6 +5547,7 @@ object Form6: TForm6
         Height = 15
         Caption = 'On/Off'
         TabOrder = 2
+        OnClick = SpTBXCheckBox20Click
       end
     end
     object Memo1: TMemo

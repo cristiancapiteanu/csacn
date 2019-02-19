@@ -307,6 +307,8 @@ type
     Label60: TLabel;
     Label33: TEdit;
     Label61: TLabel;
+    SpTBXSpinEdit8: TSpTBXSpinEdit;
+    SpTBXButton65: TSpTBXButton;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -528,6 +530,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
     procedure SpTBXCheckBox14Click(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
+    procedure SpTBXCheckBox20Click(Sender: TObject);
   private
     { Private declarations }
         procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
@@ -549,6 +553,7 @@ type
     y_offset_start:integer;
     mouse_move_precessing:boolean;
     start_zoom_offset:boolean;
+    alfa:real;
 
     z_zoom:integer;
     z_zoom_ox:integer;
@@ -745,6 +750,7 @@ load_file:=true;//with form1 do begin
        for I:=1 to scann_counter-1 do begin
               SpTBXProgressBar1.Position:=SpTBXProgressBar1.Position+1;
               if scann_arr[i].have_ascan then begin
+
                    for k:=1 to 400 do begin
                           if us_ascan_hf1=0 then begin
                                       amp:=scann_arr[i].US_arr1[k];
@@ -777,6 +783,7 @@ load_file:=true;//with form1 do begin
 
                           end;
                    end;
+
               end;
        end;
     end;
@@ -1248,11 +1255,13 @@ have_data11 := false;
 
           AssignFile(scanFile,s+s20+'\'+s2+s1 + '_raw');
           Reset(scanFile);
-             for i:=0 to scann_counter-1 do
+          for i:=0 to scann_counter-1 do
                  Read(scanFile, scann_arr[i]);
           finally
                  CloseFile(scanFile);
           end;
+          for i:=0 to scann_counter-1 do
+            scann_arr_old[i]:=scann_arr[i];
 
           if fileexists(s+s20+'\'+s2+s1+'_ini') then begin
                   try
@@ -1501,6 +1510,7 @@ have_data11 := false;
                  Label78.caption:='Value [us]'
           else
               Label78.caption:='Value [%]';
+
           have_data2:=false;
          // have_data4:=false;
          // have_data8:=false;
@@ -1515,7 +1525,7 @@ have_data11 := false;
                          memo1.Lines.Add('load line1');
              form12.OpenPallete;
 
-    Draw_scann;
+            Draw_scann;
   //  image3.Picture:=nil;
 
                                 memo1.Lines.Add('load line2');
@@ -1533,6 +1543,7 @@ have_data11 := false;
              Draw_TOFD_OY;
                           memo1.Lines.Add('load line8');
               have_data2:=true;
+              //image8.Picture:=nil;
           except
                 on E : Exception do
                    ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
@@ -1839,7 +1850,7 @@ begin
     end;
     ox_color_Index:=0;
     oy_color_Index:=0;
-    
+
       image17.Canvas.Pen.Color:=clWhite;
       image17.Canvas.Pen.Width:=1;
       image17.Canvas.Brush.Style:=bsSolid	 ;
@@ -1885,15 +1896,30 @@ begin
          if not form19.visible  then form19.BringToFront;
          application.ProcessMessages;
 
-      col1:=image2.Canvas.Pixels[x-2,y-2];
-      image13.Canvas.Brush.Color :=col1;
+      if (x>= c_scan_mouse_x)and (x<=t_x) then begin
+        if (y>= c_scan_mouse_y)and (y<=t_y) then begin
+
+        t_x:=c_scan_mouse_x_old;
+        t_y:=c_scan_mouse_y_old;
+        if SpTBXCheckBox12.Checked then
+           t_y:=image2.Height-t_y;
+        if SpTBXCheckBox13.Checked then
+           t_x:=image2.width-t_x;
+
+      col1:=bmp2.Canvas.Pixels[x-2,y-2];
+      image13.Canvas.Brush.Color :=col1;//clWhite-col1;
       image13.Canvas.Rectangle(0,0,image13.Width,image13.Height );
       p1:=0;
-      for i:=0 to image2.Width do
-        for j:=0 to image2.Height do
-          if image2.Canvas.Pixels[i,j]=col1 then inc(p1);
+      for i:=(c_scan_mouse_x) to (t_x-1) do
+        for j:=(c_scan_mouse_y) to (t_y-1) do
+          if bmp2.Canvas.Pixels[i,j]=col1 then inc(p1);
 
-      label69.Caption:=FloatToStrF(100*p1/(image2.Height*image2.Width ) ,ffFixed,6,1)+' %';
+      label69.Caption:=FloatToStrF(100*p1/((t_x-c_scan_mouse_x)*(t_y-c_scan_mouse_y) ) ,ffFixed,6,1)+' %';
+
+        end;
+      end;
+
+
 
       if form19.visible then form19.Hide;
       Screen.Cursor := crArrow;
@@ -2087,7 +2113,7 @@ try
   mouse_move_precessing:=true;
   if  up_date_graph then begin
       if SpTBXCheckBox13.Checked then
-        x_old:=image2.Width-x
+        x_old:=image2.Width -x
       else
         x_old:=x;
       if SpTBXCheckBox12.Checked then
@@ -2104,8 +2130,8 @@ try
   application.ProcessMessages ;
 
 
-  Draw_CalcTxt;
   Draw_scann;
+  Draw_CalcTxt;
   Draw_axes;
   //if form8.SpTBXListBox2.ItemIndex=0 then have_data7:=false;
   if form8.SpTBXListBox2.ItemIndex=2 then have_data7:=false;
@@ -2127,8 +2153,9 @@ var
 x0,y0,x1,y1,x2,y2:real;
 x_start,x_stop, x_lev:real;
 i,j,k,l,i1,j1:integer;
-r_val:real;
+r_val,US_Gain1_temp,d_gain,amp:real;
 point_rez:real;
+ r_val5, r_val4, r_val3:real;
 begin
   try
 //            if not image2.Visible then exit;
@@ -2140,10 +2167,66 @@ begin
      if y_axis_rez = 0 then exit;
 
 
-      i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
+      i:=trunc((x_old/x_axis_rez/d_rap/(z_zoom/100) - x_offset/x_axis_rez/d_rap));
       j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
-      if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
-      if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+
+
+
+
+            x1:=i;
+            y1:=j;
+            {
+            if alfa<>0 then begin
+              x1:=x1-maxim_x/2;
+              y1:=y1-maxim_y/2;
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+            }
+            i:=trunc(x1);
+            j:=trunc(y1);
+
+
+
+
+
+
+      if (i<=0) or (i>(X_axis_len/x_axis_rez)) then i:=1;
+      if (j<=0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+      
       label1.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1)*us1_calc) ,ffFixed,6,1)+' [mm]';  //+ 1000*us_delay1/us_sv1
       label8.Caption:= FloatToStrF(TRCal((mod_scan[i,j].us_delay-us_probe_delay1+US_Width1)*us1_calc) ,ffFixed,6,1)+' [mm]';//us_probe_delay1
 
@@ -2194,10 +2277,54 @@ begin
       //if (i>0)and(j>0) then
       if mod_scan[i,j].have_ascan then begin
           image8.Canvas.MoveTo(0,0);
+
           for k:=1 to image8.Width do begin
               if k=1 then
               image8.Canvas.MoveTo((k),trunc(mod_scan[i,j].US_arr1[trunc(k*400/image8.Width)]*image8.Height/200));
               image8.Canvas.LineTo((k),trunc(mod_scan[i,j].US_arr1[trunc(k*400/image8.Width)]*image8.Height/200));
+          end;
+
+          if (not up_date_graph)  then begin
+            image8.Canvas.Pen.Color:=clWhite;
+            US_Gain1_temp:=edit5.Value ;
+            d_gain:=US_Gain1_temp-US_Gain1;
+            if d_gain<>0 then begin
+                   for k:=1 to image8.Width do begin
+                          if us_ascan_hf1=0 then begin
+                                      amp:=mod_scan[i,j].US_arr1[trunc(k*400/image8.Width)];
+                                      amp :=trunc(((100-amp)/2));
+                                      if amp<50 then begin
+                                          amp:=-amp;
+                                          amp:=amp*power(10,d_gain/20);
+                                          amp:=50+amp;
+                                          amp:=amp*2;
+                                      if amp<0 then amp:=0;
+                                      if amp>200 then amp:=200;
+                                          scann_arr[i].US_arr1[k]:=trunc(amp);
+                                      end else begin
+                                          amp:=amp;
+                                          amp:=amp*power(10,d_gain/20);
+                                          amp:=50-amp;
+                                          amp:=amp*2;
+                                      if amp<0 then amp:=0;
+                                      if amp>200 then amp:=200;
+              if k=1 then image8.Canvas.MoveTo((k),trunc(amp*image8.Height/200));
+              image8.Canvas.LineTo((k),trunc(amp*image8.Height/200));
+                                      end;
+                          end else begin
+                                      amp:=mod_scan[i,j].US_arr1[trunc(k*400/image8.Width)];
+                                      amp :=trunc(((200-amp)/2));
+                                      amp:=amp*power(10,d_gain/20);
+                                      amp:=(200-(amp*2));
+                                      if amp<0 then amp:=0;
+                                      if amp>200 then amp:=200;
+              if k=1 then image8.Canvas.MoveTo((k),trunc(amp*image8.Height/200));
+              image8.Canvas.LineTo((k),trunc(amp*image8.Height/200));
+
+                          end;
+                   end;
+
+            end;
           end;
 
           x_start:=(gates1[1].start-mod_scan[i,j].us_delay)/1.0;
@@ -2464,12 +2591,60 @@ i1,j1,i0,j0,i,j,k,l:integer;
 r_val, r_val1:real;
 point_rez:real;
 t_x, t_y:integer;
+x1,y1, r_val5, r_val4, r_val3:real;
 begin
   try
         if scann_counter<2 then exit;
 
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
+
+            x1:=i;
+            y1:=j;
+            {
+            if alfa<>0 then begin
+              x1:=x1-maxim_x/2;
+              y1:=y1-maxim_y/2;
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+            }
+          //  i:=trunc(x1);
+          //  j:=trunc(y1);
+
 
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
         if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
@@ -2587,8 +2762,8 @@ begin
         if SpTBXCheckBox13.Checked then
            t_x:=image2.width-t_x;
 
-        image2.Canvas.MoveTo(c_scan_mouse_x,c_scan_mouse_y);
-        image2.Canvas.LineTo(t_x,t_y);
+      //  image2.Canvas.MoveTo(c_scan_mouse_x,c_scan_mouse_y);
+     //   image2.Canvas.LineTo(t_x,t_y);
 
         image2.Canvas.Rectangle(c_scan_mouse_x,c_scan_mouse_y,
                                 t_x,t_y);
@@ -2630,9 +2805,10 @@ end;
 
 procedure TForm6.Draw_SideView;
 var
-i,j,k,l:integer;
+i,i1, j,j1, k,l:integer;
 r_val, r_val1:real;
 point_rez:real;
+x1,y1, r_val5, r_val4, r_val3:real;
 begin
   try
 
@@ -2642,7 +2818,7 @@ begin
       exit;
     end;
 
-    if (not have_data2)or(not have_data7)or(  start_zoom_offset) then begin
+    if (not have_data2) or (not have_data7) or (start_zoom_offset) then begin
 
       image3.Canvas.Pen.Width:=1;
       image3.Canvas.Pen.Style :=psSolid;
@@ -2659,22 +2835,127 @@ begin
       image6.Canvas.Rectangle(0,0,image6.Width,image6.Height );
 
 
-
      //   if radiobutton16.Checked then k:=1;
      //   if radiobutton17.Checked then k:=2;
      //   if radiobutton18.Checked then k:=3;
-        i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
+        i:=trunc((x_old/x_axis_rez/d_rap/(z_zoom/100) - x_offset/x_axis_rez/d_rap));
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
 
+            x1:=i;
+            y1:=j;
+
+
+            {
+            if (alfa<>0) then begin
+            x1:=x1-X_axis_len/2;
+            y1:=y1-y_axis_len/2;
+            if (x1<>0)and(y1<>0) then begin
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+            end; }
+
+            i:=trunc(x1);
+            j1:=trunc(y1);
+
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
-        if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+        if (j1<0) or (j1>(y_axis_len/y_axis_rez)) then j1:=0;
 
         point_rez:=(imgwidth/(X_axis_len/x_axis_rez));
 
         if image3.Visible then
-        for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
+        for i1:=0 to round(X_axis_len/x_axis_rez)-1 do begin
           //if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
          // if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+
+
+
+            x1:=i1;
+            y1:=j1;
+            {
+
+            if (alfa<>0) then begin
+              x1:=x1-X_axis_len/2;
+              y1:=y1-y_axis_len/2;
+            if (x1<>0) and(y1<>0) then begin
+
+
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+            end;
+            }
+            i:=trunc(x1);
+            j:=trunc(y1);
+
+        if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
+        if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
 
       case form6.combobox1.ItemIndex of
         0 :begin
@@ -2711,18 +2992,18 @@ begin
         end ;
       end;
 
-
-
           if SpTBXRadioButton4.Checked then begin               //solid
             for l:=2 to 16 do begin
                 if ( r_val>(pallete[l-1].value) ) then begin
                    image3.Canvas.Brush.Color:=clBlue;
                    image3.Canvas.Pen.Color:=clBlue ;
-                   if SpTBXCheckBox13.Checked then
-                      image3.Canvas.Rectangle(trunc(image3.Width -(i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),
-                                              trunc(image3.Width -(d_rap*x_axis_rez*(i-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
-                   else
-                      image3.Canvas.Rectangle(trunc((i*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),trunc(image3.Height -(l-1)*image3.Height /16),trunc((d_rap*x_axis_rez*(i+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) );
+                   if SpTBXCheckBox13.Checked then begin
+                      image3.Canvas.Rectangle(trunc(image3.Width -(i1*d_rap*x_axis_rez+x_offset)    *(z_zoom/100)) ,trunc(image3.Height -(l-1)*image3.Height /16),
+                                              trunc(image3.Width -(d_rap*x_axis_rez*(i1-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) )
+                   end else begin
+                      image3.Canvas.Rectangle(trunc((i1*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),     trunc(image3.Height -(l-1)*image3.Height /16),
+                                              trunc((d_rap*x_axis_rez*(i1+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height -(l)*image3.Height /16) );
+                  end
                 end else begin
                    break;
                 end;
@@ -2781,13 +3062,119 @@ begin
 
         i:=trunc(x_old/x_axis_rez/d_rap/(z_zoom/100)-x_offset/x_axis_rez/d_rap);
         j:=trunc((y_old/y_axis_rez/d_rap/(z_zoom/100) - y_offset/y_axis_rez/d_rap));
+
+
+            x1:=i;
+            y1:=j;
+            {
+            if alfa<>0 then begin
+              x1:=x1-maxim_x/2;
+              y1:=y1-maxim_y/2;
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+            }
+            i:=trunc(x1);
+            j:=trunc(y1);
+
+
+
         if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
         if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
         point_rez:=(imgwidth/(X_axis_len/x_axis_rez));
         if image6.Visible then
-        for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
+        for j1:=0 to round(y_axis_len/y_axis_rez)-1 do begin
 //          if radiobutton19.Checked then r_val:=mod_scan[i,j].US_Mess[k].amp;
 //          if radiobutton20.Checked then r_val:=mod_scan[i,j].US_Mess[k].tof;
+
+         {
+            x1:=i;
+            y1:=j1;
+
+            if alfa<>0 then begin
+              x1:=x1-maxim_x/2;
+              y1:=y1-maxim_y/2;
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 - r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;  }
+           // i:=trunc(x1);
+            j:=trunc(j1);
+
+        if (i<0) or (i>(X_axis_len/x_axis_rez)) then i:=0;
+        if (j<0) or (j>(y_axis_len/y_axis_rez)) then j:=0;
+
+
+
+
+
+
+
 
       case form6.combobox1.ItemIndex of
         0 :begin
@@ -3384,6 +3771,7 @@ k1,k2:real;
 c:integer;
 t_x,t_y:integer;
 
+
 label 1;
 begin
   try
@@ -3398,6 +3786,70 @@ begin
 
 
       if have_data11 then goto 1;
+
+      memo1.Lines.Add('line 0');
+      for i:=0 to scann_counter-1 do
+            scann_arr[i]:=scann_arr_old[i];
+
+      if alfa<>0 then begin
+        for i:=1 to scann_counter-1 do begin
+             x1:=(scann_arr[i].xy_coor.x);
+             y1:=(scann_arr[i].xy_coor.y);
+
+             x1:=x1-X_axis_len/2;
+             y1:=y1-y_axis_len/2;
+             if (x1<>0)and(y1<>0)then begin
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 + r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + X_axis_len/2;
+                y1:= y1 + y_axis_len/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + X_axis_len/2;
+                y1:= y1 + y_axis_len/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + X_axis_len/2;
+                y1:=-y1 + y_axis_len/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + X_axis_len/2;
+                y1:=-y1 + y_axis_len/2;
+              end;
+             end;
+             scann_arr[i].xy_coor.x:=x1;
+             scann_arr[i].xy_coor.y:=y1;
+            end;
+            r_val3:=0;
+            r_val4:=0;
+            for i:=1 to scann_counter-1 do begin
+              if r_val3>scann_arr[i].xy_coor.x then r_val3:=scann_arr[i].xy_coor.x;
+              if r_val4>scann_arr[i].xy_coor.y then r_val3:=scann_arr[i].xy_coor.y;
+            end;
+            for i:=1 to scann_counter-1 do begin
+              scann_arr[i].xy_coor.x:=scann_arr[i].xy_coor.x-r_val3;
+              scann_arr[i].xy_coor.y:=scann_arr[i].xy_coor.y-r_val4;
+            end;
+      end;
+
 
       memo1.Lines.Add('line 1');
       SetLength(mod_scan,0,0);
@@ -3463,8 +3915,12 @@ begin
       end;
 
        memo1.Lines.Add('line 3');
+       
+       maxim_x:=round(x_axis_len/x_axis_rez)-1;
+       maxim_y:=round(y_axis_len/y_axis_rez)-1;
+
     //if not start_scann then
-      if SpTBXCheckBox11.Checked then begin
+      if   SpTBXCheckBox11.Checked then begin
          r_val3:=0;
          r_val4:=round(y_axis_len/y_axis_rez)-1;
 
@@ -3519,7 +3975,7 @@ begin
 
 
          maxim_x:=round(r_val6_max);
-
+     Scann_arr2:=mod_scan[0,0];
      for i:=0 to maxim_x-1 do  begin
      // for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
           for j:=0 to maxim_y-1 do begin
@@ -3771,8 +4227,53 @@ memo1.Lines.Add('line 5');
           for j:=0 to maxim_y-1 do begin
           // if (mod_scan[i,j].have_ascan)and(mod_scan[i,j].xy_coor.x>0)and(mod_scan[i,j].xy_coor.y>0) then begin
 
-            x1:=i*d_rap*x_axis_rez+x_offset;
-            y1:=j*d_rap*y_axis_rez+y_offset ;
+
+            x1:=i;
+            y1:=j;
+
+{
+            if alfa<>0 then begin
+              x1:=x1-maxim_x/2;
+              y1:=y1-maxim_y/2;
+              if (x1>=0) and (y1>=0) then r_val5:=0;
+              if (x1<0)  and (y1>=0) then r_val5:=1;
+              if (x1<0)  and (y1<0)  then r_val5:=2;
+              if (x1>=0) and (y1<0)  then r_val5:=3;
+
+              if x1<0 then x1:=-1*x1;
+              if y1<0 then y1:=-1*y1;
+
+              r_val:=sqrt(x1*x1+y1*y1);//diag
+              r_val4:= arcsin(y1/r_val);
+              r_val3:=alfa*pi/180;//radiani
+              if r_val5 = 0 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 1 then r_val3 := r_val4 + r_val3;//beta
+              if r_val5 = 2 then r_val3 := r_val4 - r_val3;//beta
+              if r_val5 = 3 then r_val3 := r_val4 + r_val3;//beta
+
+              x1:=r_val*cos(r_val3);
+              y1:=r_val*sin(r_val3);
+
+              if r_val5 = 0 then begin
+                x1:= x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 1 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:= y1 + maxim_y/2;
+              end;
+              if r_val5 = 2 then begin
+                x1:=-x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+              if r_val5 = 3 then begin
+                x1:= x1 + maxim_x/2;
+                y1:=-y1 + maxim_y/2;
+              end;
+            end;
+   }
+            x1:=x1*d_rap*x_axis_rez+x_offset;
+            y1:=y1*d_rap*y_axis_rez+y_offset;
 
             x1:=x1*z_zoom/100 ;
             y1:=y1*z_zoom/100;
@@ -3783,7 +4284,8 @@ memo1.Lines.Add('line 5');
 
       //      if radiobutton19.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].amp;
       //      if radiobutton20.Checked then r_val:=mod_scan[i,trunc(r_val3)].US_Mess[k].tof;
-
+           // i:=x1;
+           // j:=y1;
 
 
       case form6.combobox1.ItemIndex of
@@ -3808,7 +4310,7 @@ memo1.Lines.Add('line 5');
             r_val:=r_val + us_probe_delay1
         end ;
         3 :begin
-            k:=1;                                                                                                    
+            k:=1;
             r_val:=mod_scan[i,j].US_Mess[k].amp;
         end ;
         4 :begin
@@ -7690,7 +8192,7 @@ begin
         have_data1:=false;
         have_data10:=false;
         up_date_graph:=true;
-    y_offset:=y_offset-50;
+    y_offset:=y_offset+50;
         x_old:=0;
         y_old:=0;
     Image2MouseMove(sender,[],1,1);
@@ -7704,13 +8206,14 @@ begin
     Screen.Cursor := crHourGlass;
   //  start_zoom_offset:=true;
     have_data2:=false;
-        have_data1:=false;
-        have_data10:=false;        form6.have_data11:=true;
+    have_data1:=false;
+    have_data10:=false;
+    form6.have_data11:=true;
 
-        up_date_graph:=true;
-    y_offset:=y_offset+50;
-        x_old:=0;
-        y_old:=0;
+    up_date_graph:=true;
+    y_offset:=y_offset-50;
+    x_old:=0;
+    y_old:=0;
     Image2MouseMove(sender,[],1,1);
     start_zoom_offset:=false;
     Screen.Cursor := crArrow;
@@ -8169,7 +8672,33 @@ end;
 
 procedure TForm6.SpTBXButton65Click(Sender: TObject);
 begin
-  hide;
+    Screen.Cursor := crHourGlass;
+  //  start_zoom_offset:=true;
+  alfa:=SpTBXSpinEdit8.Value;
+        form6.have_data2:=false;
+
+  Draw_scann;
+  Draw_axes;
+  Draw_ASCAN;
+  Draw_CalcTxt;
+  Draw_SideView;
+  Draw_TOFD_OX;
+  Draw_TOFD_OY;
+
+
+    //have_data2:=false;
+    //have_data1:=false;
+    //have_data10:=false;
+    //form6.have_data11:=false;
+   {
+    up_date_graph:=true;                                                     `
+
+    x_old:=0;
+    y_old:=0;
+    Image2MouseMove(sender,[],1,1);
+    start_zoom_offset:=false;
+    }
+    Screen.Cursor := crArrow;
 
 end;
 
@@ -8300,7 +8829,7 @@ begin
 
 //  have_data2:=false;
 
-  form6.have_data11:=true;
+        form6.have_data11:=true;
         form6.have_data2:=false;
         form6.have_data1:=false;
         form6.have_data10:=false;
@@ -8329,6 +8858,16 @@ begin
      end;
 
 
+end;
+
+procedure TForm6.Edit5Change(Sender: TObject);
+begin
+Draw_ASCAN;
+end;
+
+procedure TForm6.SpTBXCheckBox20Click(Sender: TObject);
+begin
+    SpTBXCheckBox14.Checked:= SpTBXCheckBox20.Checked;
 end;
 
 end.
