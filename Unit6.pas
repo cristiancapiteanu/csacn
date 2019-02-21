@@ -583,6 +583,7 @@ type
       start_drw_gate:boolean;
       start_drw_gate_str_ox:integer;
       start_drw_gate_str_oy:integer;
+      bmp21:TBitmap;
       bmp2:TBitmap;
       bmp3:TBitmap;
       bmp4:TBitmap;
@@ -607,13 +608,13 @@ type
       r_val0:integer;
 
 
-    procedure Draw_axes;
     function GetColor(x:real):real;
     procedure Draw_scann;
     procedure Draw_TOFD_OX;
     procedure Draw_TOFD_OY;
-    procedure Draw_SideView;
     procedure Draw_CalcTxt;
+    procedure Draw_SideView;
+    procedure Draw_axes;
     procedure Draw_ASCAN;
     procedure Draw_ASCAN_OX(x,y:integer);
     procedure Draw_ASCAN_OY(x,y:integer);
@@ -1270,6 +1271,10 @@ have_data11 := false;
                       Readln(txtFile, s10);
                       form6.combobox1.itemindex:=StrToInt(s10);
                       form12.combobox1.itemindex:=StrToInt(s10);
+                      if not eof(txtFile) then begin
+                          Readln(txtFile, s10);
+                          form12.SpTBXTrackBar4.Position:=StrToInt(s10);
+                      end;
                   finally
                          CloseFile(txtFile);
                   end;
@@ -1764,7 +1769,7 @@ begin
                          writeln(txtFile, IntToStr(form6.combobox1.itemindex))
                       else
                          writeln(txtFile, IntToStr(form12.combobox1.itemindex));
-
+                      writeln(txtFile, IntToStr(form12.SpTBXTrackBar4.Position));
                   finally
                          CloseFile(txtFile);
                   end;
@@ -1896,8 +1901,6 @@ begin
          if not form19.visible  then form19.BringToFront;
          application.ProcessMessages;
 
-      if (x>= c_scan_mouse_x)and (x<=t_x) then begin
-        if (y>= c_scan_mouse_y)and (y<=t_y) then begin
 
         t_x:=c_scan_mouse_x_old;
         t_y:=c_scan_mouse_y_old;
@@ -1906,16 +1909,19 @@ begin
         if SpTBXCheckBox13.Checked then
            t_x:=image2.width-t_x;
 
+      if (x>= c_scan_mouse_x)and (x<=t_x) then begin
+        if (y>= c_scan_mouse_y)and (y<=t_y) then begin
+      if ((t_x-c_scan_mouse_x)>0) and ((t_y-c_scan_mouse_y)>0) then begin
       col1:=bmp2.Canvas.Pixels[x-2,y-2];
       image13.Canvas.Brush.Color :=col1;//clWhite-col1;
       image13.Canvas.Rectangle(0,0,image13.Width,image13.Height );
       p1:=0;
-      for i:=(c_scan_mouse_x) to (t_x-1) do
-        for j:=(c_scan_mouse_y) to (t_y-1) do
-          if bmp2.Canvas.Pixels[i,j]=col1 then inc(p1);
+            for i:=(c_scan_mouse_x) to (t_x-1) do
+                for j:=(c_scan_mouse_y) to (t_y-1) do
+                    if bmp2.Canvas.Pixels[i,j]=col1 then inc(p1);
 
-      label69.Caption:=FloatToStrF(100*p1/((t_x-c_scan_mouse_x)*(t_y-c_scan_mouse_y) ) ,ffFixed,6,1)+' %';
-
+            label69.Caption:=FloatToStrF(100*p1/((t_x-c_scan_mouse_x)*(t_y-c_scan_mouse_y) ) ,ffFixed,6,1)+' %';
+      end;
         end;
       end;
 
@@ -2701,6 +2707,7 @@ begin
       else
         label32.Caption :='±';
 
+        
       if c_scan_mouse_down then defect[defect_count].h2:=r_val;
 
       {
@@ -2753,7 +2760,7 @@ begin
         image2.Canvas.Pen.Style:=psDot	;
         image2.Canvas.Pen.Mode :=pmNot	;
         image2.Canvas.Pen.Color:=clYellow;
-        image2.Canvas.Brush.Style:=bsSolid		;
+        image2.Canvas.Brush.Style:=bsClear;//bsSolid		;
 
         t_x:=c_scan_mouse_x_old;
         t_y:=c_scan_mouse_y_old;
@@ -2824,14 +2831,14 @@ begin
       image3.Canvas.Pen.Style :=psSolid;
       image3.Canvas.Pen.Color:=clWhite;//clBtnFace;//clBlack;
       image3.Canvas.Brush.Style:=bsSolid	 ;
-      image3.Canvas.Brush.Color :=clWhite;//clBtnFace;//clWhite;
+      image3.Canvas.Brush.Color :=clGray;//clWhite;//clBtnFace;//clWhite;
       image3.Canvas.Rectangle(0,0,image3.Width,image3.Height );
 
       image6.Canvas.Pen.Color:=clWhite;//clBtnFace;//clBlack;
       image6.Canvas.Pen.Width:=1;
       image6.Canvas.Pen.Style :=psSolid;
       image6.Canvas.Brush.Style:=bsSolid	 ;
-      image6.Canvas.Brush.Color :=clWhite;//clBtnFace;//clWhite;
+      image6.Canvas.Brush.Color :=clGray;//clWhite;//clBtnFace;//clWhite;
       image6.Canvas.Rectangle(0,0,image6.Width,image6.Height );
 
 
@@ -2992,8 +2999,19 @@ begin
         end ;
       end;
 
+      if mod_scan[i,j].have_ascan then begin
+                   image3.Canvas.Brush.Color:=clWhite;
+                   image3.Canvas.Pen.Color:=clWhite ;
+                   if SpTBXCheckBox13.Checked then begin
+                      image3.Canvas.Rectangle(trunc(image3.Width -(i1*d_rap*x_axis_rez+x_offset)    *(z_zoom/100)) ,trunc(0),
+                                              trunc(image3.Width -(d_rap*x_axis_rez*(i1-1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height ) )
+                   end else begin
+                      image3.Canvas.Rectangle(trunc((i1*d_rap*x_axis_rez+x_offset)*(z_zoom/100)),     trunc(0),
+                                              trunc((d_rap*x_axis_rez*(i1+1)+x_offset)*(z_zoom/100)) ,trunc(image3.Height ));
+                  end;
           if SpTBXRadioButton4.Checked then begin               //solid
             for l:=2 to 16 do begin
+
                 if ( r_val>(pallete[l-1].value) ) then begin
                    image3.Canvas.Brush.Color:=clBlue;
                    image3.Canvas.Pen.Color:=clBlue ;
@@ -3040,8 +3058,9 @@ begin
                    break;
                 end;
             end;//for
-          end;//if
 
+          end;//if
+          end;
         end;
       {
         image3.Canvas.Brush.Style:=bsClear;
@@ -3211,7 +3230,15 @@ begin
         end ;
       end;
 
-
+      if mod_scan[i,j].have_ascan then begin
+                   image6.Canvas.Brush.Color:=clWhite ;
+                   image6.Canvas.Pen.Color:=clWhite ;
+                   if SpTBXCheckBox12.Checked then
+                   image6.Canvas.Rectangle(0,trunc(image6.Height-(d_rap*y_axis_rez*(j-0)+y_offset)*(z_zoom/100)),
+                                           image6.Width,trunc(image6.Height-(d_rap*y_axis_rez*(j+1)+y_offset)*(z_zoom/100))  )
+                   else
+                   image6.Canvas.Rectangle(0,trunc((d_rap*y_axis_rez*(j+0)+y_offset)*(z_zoom/100)),
+                                          image6.Width,trunc((d_rap*y_axis_rez*(j+1)+y_offset)*(z_zoom/100))  );
           if SpTBXRadioButton4.Checked then begin             //solid
             for l:=2 to 16 do begin
                 if ( r_val>(pallete[l-1].value) ) then begin
@@ -3261,6 +3288,7 @@ begin
            end;//for
           end;//if
         end;
+        end;
 
           bmp3.Assign(image3.picture.Graphic);
           bmp6.Assign(image6.picture.Graphic);
@@ -3283,10 +3311,11 @@ begin
     image3.Canvas.LineTo(x_old,image3.Height );
   end;
   //draw cursor
+
   image6.Canvas.Pen.Width :=1;
   image6.Canvas.Pen.Color:=clBlack;
   image6.Canvas.Pen.Style :=psDot;
-   if  SpTBXCheckBox12.Checked then begin
+  if  SpTBXCheckBox12.Checked then begin
     image6.Canvas.MoveTo(0,image6.Height - y_old);
     image6.Canvas.LineTo(image6.Width ,image6.height - y_old );
   end else begin
@@ -3698,13 +3727,22 @@ begin
   image5.Canvas.Pen.Color:=clBlack;
   image5.Canvas.Pen.Style :=psDot;
   if  SpTBXCheckBox12.Checked then begin
-    image5.Canvas.MoveTo(0,            image5.Height  - y_old  - 140 );
-    image5.Canvas.LineTo(image5.Width ,image5.Height  - y_old  - 140 );
+    image5.Canvas.MoveTo(0,            image5.Height  - y_old -8  );
+    image5.Canvas.LineTo(image5.Width ,image5.Height  - y_old -8 );
   end else begin
     image5.Canvas.MoveTo(0,y_old+8);
     image5.Canvas.LineTo(image5.Width ,y_old +8);
   end;
 
+ {
+  if SpTBXCheckBox12.Checked then begin
+    image6.Canvas.MoveTo(0            ,image6.Height - y_old);
+    image6.Canvas.LineTo(image6.Width ,image6.height - y_old );
+  end else begin
+    image6.Canvas.MoveTo(0,y_old);
+    image6.Canvas.LineTo(image6.Width ,y_old );
+  end;
+  }
   except
     on E : Exception do
       ShowMessage1(E.ClassName+' error raised, with message : '+E.Message);
@@ -4166,6 +4204,7 @@ memo1.Lines.Add('line 5');
       image1.Width:=image2.Width ;
 
       image6.Height:=image2.Height ;
+      image5.Height:=image2.Height+16 ;
       image10.Height:=image2.Height ;
    {
       //clean canvas
@@ -4329,6 +4368,7 @@ memo1.Lines.Add('line 5');
 
             r_val:=GetColor(r_val);
 
+         //   bmp21.Assign(image2.picture.Graphic);
 
 
             image2.Canvas.Pen.Color:=trunc(r_val);
@@ -4361,7 +4401,7 @@ memo1.Lines.Add('line 5');
         image2.Canvas.Pen.Style:=psDot	;
         image2.Canvas.Pen.Mode :=pmNot	;
         image2.Canvas.Pen.Color:=clYellow;
-        image2.Canvas.Brush.Style:=bsSolid		;
+        image2.Canvas.Brush.Style:=bsClear;//bsSolid		;
 
             k1:=1;
             if SpTBXCheckBox12.Checked then begin
@@ -4395,6 +4435,9 @@ memo1.Lines.Add('line 5');
               image2.Canvas.Rectangle(trunc((defect[i].mx1+x_offset)*z_zoom/100),trunc(-(z_zoom/100-1)*image2.Height +(defect[i].my1+y_offset)*z_zoom/100),
                                       t_x,t_y);
          end;
+
+
+       //   image2.Canvas.CopyRect(image2.Canvas.ClipRect,bmp21.Canvas,bmp21.Canvas.ClipRect);
 
           bmp2.Assign(image2.picture.Graphic);
 
@@ -4472,6 +4515,7 @@ begin
           have_data1:=false;
           have_data10:=false;
     bmp2:=TBitmap.create;
+    bmp21:=TBitmap.create;
     bmp3:=TBitmap.create;
     bmp4:=TBitmap.create;
     bmp5:=TBitmap.create;
@@ -5738,15 +5782,17 @@ begin
     image5.Width:=75;
     image5.Height:=316;
 
+    image6.Top:=112;
+    image6.Left:=714;
+    image6.Width:=100;
+    image6.Height:=300;
+
+
     image14.Top:=460;
     image14.Left:=328;
     image14.Width:=75;
     image14.Height:=316;
 
-    image6.Top:=112;
-    image6.Left:=714;
-    image6.Width:=100;
-    image6.Height:=300;
 
     image16.Top:=472;
     image16.Left:=714;
@@ -5786,7 +5832,7 @@ Screen.Cursor := crHourGlass;
 Button3Click(sender);
 
 if  imgwidth = 300 then begin
-  have_data2:=false;
+   have_data2:=false;
 
     imgwidth:=600;
 
@@ -6543,6 +6589,7 @@ end;
 procedure TForm6.FormDestroy(Sender: TObject);
 begin
  bmp2.Free;
+ bmp21.Free;
  bmp3.Free;
  bmp4.Free;
  bmp5.Free;

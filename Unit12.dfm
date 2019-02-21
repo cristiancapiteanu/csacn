@@ -1,11 +1,11 @@
 object Form12: TForm12
-  Left = 894
-  Top = 3
+  Left = 608
+  Top = 0
   HorzScrollBar.Visible = False
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'Pallete'
-  ClientHeight = 811
+  ClientHeight = 814
   ClientWidth = 662
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -422,6 +422,21 @@ object Form12: TForm12
       ParentFont = False
       TabOrder = 2
       OnClick = Button22Click
+    end
+    object SpTBXButton4: TSpTBXButton
+      Left = 128
+      Top = 88
+      Width = 90
+      Height = 40
+      Caption = '[%]'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = SpTBXButton4Click
     end
   end
   object GroupBox5: TGroupBox

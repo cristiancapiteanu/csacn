@@ -425,6 +425,7 @@ timer2_fire:boolean;
   us_probe_delay1:real;
 
   Pallete:array[1..16] of TPallete;
+  pallete_old_value:array[1..16] of real;
   curentColor:integer;
 
   start_scann:boolean;
@@ -660,6 +661,8 @@ s:='';
              form1.SpTBXButton98.Visible:=s_c;
              form1.SpTBXButton96.Visible:=s_t;
              form1.SpTBXButton174.Visible:=po_c;
+             form1.SpTBXButton174Click(nil);
+
 end;
 
 procedure DeleteDirectory(const Name: string);
@@ -1409,6 +1412,15 @@ begin
     if form8.SpTBXListBox2.ItemIndex = 2 then replaceString:='C-Scan';
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
+//%us_echo_start%
+		SearchString:='%us_echo_start%';
+          if  us_echo_start =  0 then replaceString:='Echo Start OFF';
+          if  us_echo_start =  1 then replaceString:='Echo Start ON on Gate 1';
+          if  us_echo_start =  2 then replaceString:='Echo Start ON on Gate 2';
+          if  us_echo_start =  3 then replaceString:='Echo Start ON on Gate 3';
+		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
+
+
 		SearchString:='%scaner_type%';
     case scaner_type of
       1:replaceString:='RoboScaner';
@@ -1528,7 +1540,7 @@ begin
 		replaceString:=FloatToStrF( us_angle ,ffFixed,6,2) ;
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 
-		SearchString:='%ang10le%';
+		SearchString:='%angle%';
 		replaceString:=FloatToStrF( us_angle ,ffFixed,6,2) ;
 		S:=StringReplace(S,SearchString , replaceString, [rfReplaceAll, rfIgnoreCase]);
 

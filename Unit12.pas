@@ -78,6 +78,7 @@ type
     TntOpenDialog1: TTntOpenDialog;
     LMDOpenDialog1: TLMDOpenDialog;
     LMDFileOpenDialog1: TLMDFileOpenDialog;
+    SpTBXButton4: TSpTBXButton;
     procedure RadioButton23Click(Sender: TObject);
     procedure RadioButton24Click(Sender: TObject);
     procedure SpTBXTrackBar1Change(Sender: TObject);
@@ -127,6 +128,7 @@ type
     procedure LMDButton1Click(Sender: TObject);
     procedure SpTBXTrackBar4Change(Sender: TObject);
     procedure SpTBXCheckBox2Click(Sender: TObject);
+    procedure SpTBXButton4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -1571,6 +1573,46 @@ end;
 procedure TForm12.SpTBXCheckBox2Click(Sender: TObject);
 begin
       if SpTBXCheckBox2.Checked then Edit11Change(Sender)   ;
+end;
+
+procedure TForm12.SpTBXButton4Click(Sender: TObject);
+var
+i:integer;
+r1,r2,r3:real ;
+begin
+  Screen.Cursor := crHourGlass;
+
+  if SpTBXButton4.Caption='[%]' then begin
+  SpTBXButton4.Caption:='[mm]';
+    for i:= 1 to 16 do
+      pallete_old_value[i]:=pallete[i].value;
+
+  if active_form=1 then begin
+    for i:= 1 to 16 do begin
+        r1:=0+(i-1)*100/15;
+        r2:=InvTRCal(r1);
+        pallete[i].value := r2*1000/(0.5*us_sv1)+us_probe_delay1;
+    end;
+  end else begin
+    for i:= 1 to 16 do begin
+        r1:=0+(i-1)*100/15;
+        r2:=InvTRCal(r1);
+        pallete[i].value := r2*1000/(0.5*us_sv)+us_probe_delay;
+    end;
+  end;
+  end else begin
+  SpTBXButton4.Caption:='[%]';
+    for i:= 1 to 16 do
+      pallete[i].value:=pallete_old_value[i];
+
+  end;
+
+    Only_Draw_Pallete;
+
+     Screen.Cursor := crArrow;
+
+
+
 end;
 
 end.
