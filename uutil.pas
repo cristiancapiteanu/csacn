@@ -558,6 +558,7 @@ scan_direction:boolean;
 
 s_b, s_c, s_t:boolean;
 po_b, po_c, po_t:boolean;
+aria_surface:real;
 
 
 

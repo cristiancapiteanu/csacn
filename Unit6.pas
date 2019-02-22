@@ -163,7 +163,6 @@ type
     SpTBXTrackBar3: TSpTBXTrackBar;
     SpTBXTrackBar4: TSpTBXTrackBar;
     GroupBox27: TGroupBox;
-    Label73: TLabel;
     Label74: TLabel;
     Label77: TLabel;
     Label78: TLabel;
@@ -171,11 +170,9 @@ type
     Label80: TLabel;
     Label65: TLabel;
     Label66: TLabel;
-    Label67: TLabel;
     Label68: TLabel;
     Image13: TImage;
     Label69: TLabel;
-    Label70: TLabel;
     Button8: TButton;
     PageControl2: TPageControl;
     TabSheet8: TTabSheet;
@@ -309,6 +306,10 @@ type
     Label61: TLabel;
     SpTBXSpinEdit8: TSpTBXSpinEdit;
     SpTBXButton65: TSpTBXButton;
+    Label73: TLabel;
+    Label67: TLabel;
+    Label70: TLabel;
+    Label64: TLabel;
     procedure RadioButton19Click(Sender: TObject);
     procedure RadioButton20Click(Sender: TObject);
     procedure RadioButton16Click(Sender: TObject);
@@ -1450,6 +1451,7 @@ have_data11 := false;
 
           SpTBXProgressBar1.Position:=0;
           SpTBXRadioButton1.Checked:=true;
+          SpTBXCheckBox20.Checked:=false;
 
           if not SpTBXCheckBox10.Checked then begin
             ox_color_Index:=1;
@@ -1877,7 +1879,7 @@ procedure TForm6.Image2MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
 i,j,k :integer;
-p1,col1:integer;
+p1,col1,a1,a2,b1,b2:integer;
 r_val, r_val1:real;
 t_x, t_y:integer;
 begin
@@ -1904,23 +1906,57 @@ begin
 
         t_x:=c_scan_mouse_x_old;
         t_y:=c_scan_mouse_y_old;
+
+
         if SpTBXCheckBox12.Checked then
            t_y:=image2.Height-t_y;
         if SpTBXCheckBox13.Checked then
            t_x:=image2.width-t_x;
+{
+      if t_x<c_scan_mouse_x then begin
+         r_val:=c_scan_mouse_x;
+         c_scan_mouse_x:=t_x;
+         t_x:=trunc(r_val);
+      end;
 
-      if (x>= c_scan_mouse_x)and (x<=t_x) then begin
-        if (y>= c_scan_mouse_y)and (y<=t_y) then begin
-      if ((t_x-c_scan_mouse_x)>0) and ((t_y-c_scan_mouse_y)>0) then begin
+      if t_y<c_scan_mouse_y then begin
+         r_val:=c_scan_mouse_y;
+         c_scan_mouse_y:=t_y;
+         t_y:=trunc(r_val);
+      end;
+      }
+
+      if ((x>= c_scan_mouse_x)and (x<=t_x))or((x>= t_x)and (x<=c_scan_mouse_x)) then begin
+      if ((y>= c_scan_mouse_y)and (y<=t_y))or((y>= t_y)and (y<=c_scan_mouse_y)) then begin
+//        if (y>= c_scan_mouse_y)and (y<=t_y) then begin
+
+      if ((t_x-c_scan_mouse_x)<>0) and ((t_y-c_scan_mouse_y)<>0) then begin
       col1:=bmp2.Canvas.Pixels[x-2,y-2];
       image13.Canvas.Brush.Color :=col1;//clWhite-col1;
       image13.Canvas.Rectangle(0,0,image13.Width,image13.Height );
       p1:=0;
-            for i:=(c_scan_mouse_x) to (t_x-1) do
-                for j:=(c_scan_mouse_y) to (t_y-1) do
+      if c_scan_mouse_x<= t_x then begin
+         a1:=c_scan_mouse_x;
+         a2:=t_x;
+      end else begin
+         a2:=c_scan_mouse_x;
+         a1:=t_x;
+      end;
+      if c_scan_mouse_y<= t_y then begin
+         b1:=c_scan_mouse_y;
+         b2:=t_y;
+      end else begin
+         b2:=c_scan_mouse_y;
+         b1:=t_y;
+      end;
+            for i:=(a1) to (a2-1) do
+                for j:=(b1) to (b2-1) do
                     if bmp2.Canvas.Pixels[i,j]=col1 then inc(p1);
 
-            label69.Caption:=FloatToStrF(100*p1/((t_x-c_scan_mouse_x)*(t_y-c_scan_mouse_y) ) ,ffFixed,6,1)+' %';
+            r_val:=100*p1/((a2-a1)*(b2-b1));
+
+            label69.Caption:=FloatToStrF(r_val ,ffFixed,6,1)+' %';
+            label64.Caption:=FloatToStrF(r_val*aria_surface/100 ,ffFixed,6,1)+' [mm2';
       end;
         end;
       end;
@@ -2757,7 +2793,7 @@ begin
 
         end;
 
-        image2.Canvas.Pen.Style:=psDot	;
+        image2.Canvas.Pen.Style:=psDashDot;//psDot	;
         image2.Canvas.Pen.Mode :=pmNot	;
         image2.Canvas.Pen.Color:=clYellow;
         image2.Canvas.Brush.Style:=bsClear;//bsSolid		;
@@ -2800,7 +2836,8 @@ begin
         r_val:=(mod_scan[i0,j0].xy_coor.y-mod_scan[i1,j1].xy_coor.y)*
                (mod_scan[i0,j0].xy_coor.x-mod_scan[i1,j1].xy_coor.x);
         if c_scan_mouse_down then defect[defect_count].d:=r_val;
-        label68.Caption :=FloatToStrF(abs(r_val) ,ffFixed,6,1);
+        aria_surface:= abs(r_val);
+        label68.Caption :=FloatToStrF((aria_surface) ,ffFixed,6,1);
 
         label70.Caption :=FloatToStrF(abs(100*r_val/(X_axis_len*y_axis_len)) ,ffFixed,6,1)+' [%]';
 
@@ -4398,7 +4435,7 @@ memo1.Lines.Add('line 5');
        have_data2:=true;
         memo1.Lines.Add('line 8,1');
 
-        image2.Canvas.Pen.Style:=psDot	;
+        image2.Canvas.Pen.Style:=psDashDot;//psDot	;
         image2.Canvas.Pen.Mode :=pmNot	;
         image2.Canvas.Pen.Color:=clYellow;
         image2.Canvas.Brush.Style:=bsClear;//bsSolid		;
@@ -8915,6 +8952,15 @@ end;
 procedure TForm6.SpTBXCheckBox20Click(Sender: TObject);
 begin
     SpTBXCheckBox14.Checked:= SpTBXCheckBox20.Checked;
+    if not SpTBXCheckBox20.Checked then begin
+       Image13.Picture:=nil;
+       label67.Caption:='';
+       label64.Caption:='';
+       label68.Caption:='';
+       label69.Caption:='';
+       label70.Caption:='';
+
+    end;
 end;
 
 end.

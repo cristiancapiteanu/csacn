@@ -1,11 +1,11 @@
 object Form6: TForm6
-  Left = 75
-  Top = 0
+  Left = 98
+  Top = 12
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 740
-  ClientWidth = 1286
+  ClientHeight = 811
+  ClientWidth = 1296
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -34,6 +34,33 @@ object Form6: TForm6
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
+  end
+  object Label73: TLabel
+    Left = 1312
+    Top = 440
+    Width = 60
+    Height = 13
+    Caption = 'Lenght [mm]'
+  end
+  object Label67: TLabel
+    Left = 1392
+    Top = 440
+    Width = 21
+    Height = 13
+    Caption = '0.00'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label70: TLabel
+    Left = 1312
+    Top = 456
+    Width = 40
+    Height = 13
+    Caption = '0.00'
   end
   object GroupBox10: TGroupBox
     Left = 832
@@ -4455,16 +4482,9 @@ object Form6: TForm6
         Height = 69
         Brush.Style = bsClear
       end
-      object Label73: TLabel
-        Left = 272
-        Top = 24
-        Width = 74
-        Height = 13
-        Caption = 'Lenght [mm]'
-      end
       object Label74: TLabel
         Left = 272
-        Top = 40
+        Top = 24
         Width = 65
         Height = 13
         Caption = 'Aria [mm2]'
@@ -4535,22 +4555,9 @@ object Form6: TForm6
         Font.Style = []
         ParentFont = False
       end
-      object Label67: TLabel
-        Left = 352
-        Top = 24
-        Width = 21
-        Height = 13
-        Caption = '0.00'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
       object Label68: TLabel
         Left = 352
-        Top = 40
+        Top = 24
         Width = 21
         Height = 13
         Caption = '0.00'
@@ -4564,17 +4571,10 @@ object Form6: TForm6
       object Image13: TImage
         Left = 272
         Top = 72
-        Width = 73
+        Width = 41
         Height = 15
       end
       object Label69: TLabel
-        Left = 352
-        Top = 72
-        Width = 24
-        Height = 13
-        Caption = '0.00'
-      end
-      object Label70: TLabel
         Left = 352
         Top = 56
         Width = 24
@@ -4633,6 +4633,13 @@ object Form6: TForm6
         Width = 7
         Height = 13
         Caption = '2'
+      end
+      object Label64: TLabel
+        Left = 352
+        Top = 40
+        Width = 24
+        Height = 13
+        Caption = '0.00'
       end
       object Button8: TButton
         Left = 0
@@ -5541,8 +5548,8 @@ object Form6: TForm6
         end
       end
       object SpTBXCheckBox20: TSpTBXCheckBox
-        Left = 274
-        Top = 56
+        Left = 322
+        Top = 72
         Width = 55
         Height = 15
         Caption = 'On/Off'
@@ -5698,8 +5705,8 @@ object Form6: TForm6
     TabOrder = 2
     Visible = False
     object NTGraph3D1: TNTGraph3D
-      Left = 8
-      Top = 16
+      Left = 176
+      Top = 72
       Width = 801
       Height = 745
       ParentColor = False
