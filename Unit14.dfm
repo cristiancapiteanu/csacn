@@ -7,7 +7,7 @@ object Form14: TForm14
   VertScrollBar.Tracking = True
   BorderStyle = bsNone
   Caption = 'Back'
-  ClientHeight = 809
+  ClientHeight = 829
   ClientWidth = 632
   Color = clTeal
   Font.Charset = ANSI_CHARSET

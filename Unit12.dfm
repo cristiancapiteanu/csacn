@@ -5,7 +5,7 @@ object Form12: TForm12
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'Pallete'
-  ClientHeight = 814
+  ClientHeight = 829
   ClientWidth = 662
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET

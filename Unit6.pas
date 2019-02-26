@@ -1477,6 +1477,8 @@ have_data11 := false;
           c_scan_mouse_x:=0;
           c_scan_mouse_y:=0;
 
+          alfa:=0;
+          SpTBXSpinEdit8.Value:=alfa;
       case form6.combobox1.ItemIndex of
         0 :begin
             RadioButton20.Checked:= true;
@@ -4049,13 +4051,20 @@ begin
          end;
 
 
-         maxim_x:=round(r_val6_max);
+     maxim_x:=round(r_val6_max);
      Scann_arr2:=mod_scan[0,0];
      for i:=0 to maxim_x-1 do  begin
      // for i:=0 to round(X_axis_len/x_axis_rez)-1 do begin
           for j:=0 to maxim_y-1 do begin
           //for j:=0 to round(y_axis_len/y_axis_rez)-1 do begin
-              if (mod_scan[i,j].xy_coor.x=0) and (mod_scan[i,j].xy_coor.y=0) then
+              k:=0;
+              for l:=j to maxim_y-1 do
+                  if (mod_scan[i,l].xy_coor.x=0) and (mod_scan[i,l].xy_coor.y=0) then
+                     inc(k)
+                  else
+                      break;
+
+              if (k<10) and (mod_scan[i,j].xy_coor.x=0) and (mod_scan[i,j].xy_coor.y=0) then
               begin
                   if (Scann_arr2.xy_coor.x<>0) or (Scann_arr2.xy_coor.y<>0) then mod_scan[i,j]:=Scann_arr2;
               end else begin
@@ -4399,11 +4408,14 @@ memo1.Lines.Add('line 5');
         end ;
       end;
 
+      if not mod_scan[i,j].have_ascan then r_val:=-1;
+//      if r_val >= 0 then
+        r_val:=GetColor(r_val) ;
+  //    else
+    //    r_val:=
 
 
 
-
-            r_val:=GetColor(r_val);
 
          //   bmp21.Assign(image2.picture.Graphic);
 
@@ -8790,6 +8802,7 @@ procedure TForm6.SpTBXButton66Click(Sender: TObject);
 begin
 if MessageDlg('Do you want to exit?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then begin
  form6.hide;
+ form1.SpTBXButton83Click(Sender);
  //form1.Timer2.Enabled:=true;
   us_connected:=false;
  form1.CheckBox2.Checked:=true;

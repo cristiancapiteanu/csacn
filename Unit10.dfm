@@ -4,7 +4,7 @@ object Form10: TForm10
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'Time scanner'
-  ClientHeight = 823
+  ClientHeight = 829
   ClientWidth = 632
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET

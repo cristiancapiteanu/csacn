@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 10
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 811
+  ClientHeight = 829
   ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET

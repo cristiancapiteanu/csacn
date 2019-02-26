@@ -565,6 +565,7 @@ aria_surface:real;
 implementation
 
 uses unit1, unit15, unit4, unit9, unit7,unit6,unit3,unit8 , unit12, unit14;
+
 procedure SetOffline;
 var
 s, s1:string;
@@ -662,7 +663,9 @@ s:='';
              form1.SpTBXButton98.Visible:=s_c;
              form1.SpTBXButton96.Visible:=s_t;
              form1.SpTBXButton174.Visible:=po_c;
-             form1.SpTBXButton174Click(nil);
+             if po_c then form1.SpTBXButton174Click(nil);
+             if po_t then form1.SpTBXButton72Click(nil);
+             if po_b then form1.SpTBXButton173Click(nil);
 
 end;
 

@@ -8202,9 +8202,9 @@ begin
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
 
-   // SpTBXButton95.visible := false;
-   // SpTBXButton96.visible := false;
-   // SpTBXButton98.visible := false;
+    SpTBXButton95.visible := false;
+    SpTBXButton96.visible := false;
+    SpTBXButton98.visible := false;
     if j=0 then begin
       SpTBXButton99.visible := false;
       SpTBXButton100.visible := false;
@@ -8245,9 +8245,9 @@ begin
               if radiobutton9.Checked and SpTBXCheckBox17.Checked then j:=1;
               if radiobutton10.Checked and SpTBXCheckBox18.Checked then j:=2;
               if radiobutton11.Checked and SpTBXCheckBox19.Checked then j:=3;
-  //  SpTBXButton95.visible := false;
-  //  SpTBXButton96.visible := false;
-  //  SpTBXButton98.visible := false;
+    SpTBXButton95.visible := false;
+    SpTBXButton96.visible := false;
+    SpTBXButton98.visible := false;
     if j=0 then begin
       SpTBXButton99.visible := false;
       SpTBXButton100.visible := false;
@@ -9480,7 +9480,7 @@ SpTBXButton92.Color := clMenu;
 
 
 
-               form1.SpTBXButton72.Visible:=po_t;
+             form1.SpTBXButton72.Visible:=po_t;
              form1.SpTBXButton173.Visible:=po_b;
              form1.SpTBXButton95.Visible:=s_b;
              form1.SpTBXButton98.Visible:=s_c;

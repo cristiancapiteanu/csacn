@@ -1,10 +1,10 @@
 object Form6: TForm6
   Left = 98
-  Top = 12
+  Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsNone
   Caption = 'US Card'
-  ClientHeight = 811
+  ClientHeight = 820
   ClientWidth = 1296
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
@@ -58,7 +58,7 @@ object Form6: TForm6
   object Label70: TLabel
     Left = 1312
     Top = 456
-    Width = 40
+    Width = 22
     Height = 13
     Caption = '0.00'
   end
@@ -5909,7 +5909,7 @@ object Form6: TForm6
       Top = 4
       Width = 122
       Height = 40
-      Caption = 'Back'
+      Caption = 'Exit'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -24

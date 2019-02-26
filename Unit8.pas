@@ -468,7 +468,8 @@ begin
 
 
     //LoadDLL_Optel;     //opcard
-    LoadDLL_opcard;
+
+    if s_b or s_c or s_t then LoadDLL_opcard;
     instrument_type:=1;
     if not form1.Visible then
       form1.show;

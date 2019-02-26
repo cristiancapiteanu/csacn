@@ -3,7 +3,7 @@ object Form15: TForm15
   Top = 0
   BorderStyle = bsNone
   Caption = 'C-SCAN'
-  ClientHeight = 819
+  ClientHeight = 829
   ClientWidth = 1295
   Color = clTeal
   Font.Charset = DEFAULT_CHARSET
